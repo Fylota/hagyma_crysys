@@ -39,7 +39,7 @@ std::string CIFF::parseString(std::vector<uint8_t> &bytes, uint64_t startIndex, 
     std::ostringstream stringStream;
 
     for (int64_t i = startIndex; i < bytesCount; ++i) {
-        stringStream << (int)bytes[i];
+        stringStream << bytes[i];
     }
 
     return stringStream.str();
@@ -170,7 +170,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
     ciff.setContentSize(parse8ByteNumber(bytes, bytesRead));
     bytesRead += 8;
 
-    if (ciff.getContentSize()) {
+    if (ciff.getContentSize() < 0) {
         std::cout << "Invalid content size" << std::endl;
         ciff.setIsValid(false);
         return bytesRead;
@@ -210,37 +210,37 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
 }
 
 uint64_t CIFF::parseCaption(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize) {
-    std::string caption;
+    std::ostringstream stringStream;
     uint64_t bytesRead = 0;
 
     for (uint64_t i = startIndex; i < headerSize; ++i) {
-        if ((char)bytes[i] == '\n')
-            break;
-        caption += (char)bytes[i];
         ++bytesRead;
+        if (bytes[i] == '\n')
+            break;
+        stringStream << bytes[i];
     }
 
-    ciff.setCaption(caption);
+    ciff.setCaption(stringStream.str());
 
     return bytesRead;
 }
 
 uint64_t CIFF::parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize) {
-    std::string tag;
+    std::ostringstream stringStream;
     uint64_t bytesRead = 0;
     std::vector<std::string> tags;
 
     for (uint64_t i = startIndex; i < headerSize; ++i) {
-        if ((char)bytes[i] == '\n') {
+        if (bytes[i] == '\n') {
             std::cout << "Tags can't contain new line character" << std::endl;
             ciff.setIsValid(false);
             break;
         }
-        if ((char)bytes[i] == '\0') {
-            tags.push_back(tag);
-            tag = "";
+        if (bytes[i] == '\0') {
+            tags.push_back(stringStream.str());
+            stringStream.clear();
         }
-        tag += (char)bytes[i];
+        stringStream << bytes[i];
         ++bytesRead;
     }
 
