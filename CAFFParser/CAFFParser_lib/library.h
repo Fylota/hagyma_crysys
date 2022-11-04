@@ -1,0 +1,6 @@
+#ifndef CAFFPARSER_LIBRARY_H
+#define CAFFPARSER_LIBRARY_H
+
+void hello();
+
+#endif //CAFFPARSER_LIBRARY_H
