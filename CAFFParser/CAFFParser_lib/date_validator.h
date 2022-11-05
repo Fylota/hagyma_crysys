@@ -2,14 +2,15 @@
 // Created by fupn26 on 2022.11.05..
 //
 
-#ifndef CAFFPARSER_DATEVALIDATOR_H
-#define CAFFPARSER_DATEVALIDATOR_H
+#ifndef CAFFPARSER_DATE_VALIDATOR_H
+#define CAFFPARSER_DATE_VALIDATOR_H
 
 
-#include "Date.h"
+#include "date.h"
 
 class DateValidator {
 public:
+    DateValidator() = delete;
     static bool isValidDate(Date &date);
 
 private:
@@ -18,4 +19,4 @@ private:
 };
 
 
-#endif //CAFFPARSER_DATEVALIDATOR_H
+#endif //CAFFPARSER_DATE_VALIDATOR_H

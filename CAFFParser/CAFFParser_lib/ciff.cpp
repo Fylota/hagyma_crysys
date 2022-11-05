@@ -4,8 +4,8 @@
 
 #include <sstream>
 #include <iostream>
-#include "CIFF.h"
-#include "ParseUtils.h"
+#include "ciff.h"
+#include "parse_utils.h"
 
 CIFF::CIFF() {
     headerSize = 0;

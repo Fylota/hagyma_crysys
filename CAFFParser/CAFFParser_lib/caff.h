@@ -7,8 +7,8 @@
 
 
 #include <string>
-#include "CIFF.h"
-#include "Date.h"
+#include "ciff.h"
+#include "date.h"
 
 class CAFF {
 public:

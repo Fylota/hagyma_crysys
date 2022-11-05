@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "CAFF.h"
-#include "ParseUtils.h"
-#include "DateValidator.h"
+#include "caff.h"
+#include "parse_utils.h"
+#include "date_validator.h"
 
 const std::string CAFF::magicChars = "CAFF";
 const uint8_t CAFF::headerId = 0x1;

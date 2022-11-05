@@ -2,8 +2,8 @@
 // Created by fupn26 on 2022.11.05..
 //
 
-#ifndef CAFFPARSER_PARSEUTILS_H
-#define CAFFPARSER_PARSEUTILS_H
+#ifndef CAFFPARSER_PARSE_UTILS_H
+#define CAFFPARSER_PARSE_UTILS_H
 
 
 #include <cstdint>
@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif //CAFFPARSER_PARSEUTILS_H
+#endif //CAFFPARSER_PARSE_UTILS_H

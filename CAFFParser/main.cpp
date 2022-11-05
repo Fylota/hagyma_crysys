@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include <fstream>
-#include "CIFF.h"
-#include "CAFF.h"
+#include "ciff.h"
+#include "caff.h"
 
 std::vector<uint8_t> read_vector_from_disk(const std::string& file_path)
 {
