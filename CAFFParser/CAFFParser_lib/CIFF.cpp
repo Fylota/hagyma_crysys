@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include "CIFF.h"
+#include "ParseUtils.h"
 
 CIFF::CIFF() {
     headerSize = 0;
@@ -33,16 +34,6 @@ CIFF CIFF::parseCIFF(std::vector<uint8_t> bytes) {
     ciff.setPixels(pixels);
 
     return ciff;
-}
-
-std::string CIFF::parseString(std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t bytesCount) {
-    std::ostringstream stringStream;
-
-    for (int64_t i = startIndex; i < bytesCount; ++i) {
-        stringStream << bytes[i];
-    }
-
-    return stringStream.str();
 }
 
 const std::string &CIFF::getMagicChars() const {
@@ -117,17 +108,6 @@ void CIFF::setIsValid(bool isValid) {
     CIFF::valid = isValid;
 }
 
-
-int64_t CIFF::parse8ByteNumber(std::vector<uint8_t> &bytes,
-                               uint64_t startIndex) {
-
-    int64_t result = 0;
-
-    memcpy(&result, bytes.data() + startIndex, sizeof(int64_t));
-
-    return result;
-}
-
 /**
  * Parses the header in the given ciff file and validates the values
  * @param ciff ciff file which will contain the parsed values
@@ -149,7 +129,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    std::string magic = parseString(bytes, bytesRead, 4);
+    std::string magic = ParseUtils::parseString(bytes, bytesRead, 4);
     bytesRead += 4;
 
     if (magic != ciff.getMagicChars()) {
@@ -158,7 +138,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    ciff.setHeaderSize(parse8ByteNumber(bytes, bytesRead));
+    ciff.setHeaderSize(ParseUtils::parse8ByteNumber(bytes, bytesRead));
     bytesRead += 8;
 
     if (ciff.getHeaderSize() < minimumHeaderSize) {
@@ -167,7 +147,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    ciff.setContentSize(parse8ByteNumber(bytes, bytesRead));
+    ciff.setContentSize(ParseUtils::parse8ByteNumber(bytes, bytesRead));
     bytesRead += 8;
 
     if (ciff.getContentSize() < 0) {
@@ -182,9 +162,9 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    ciff.setImageWidth(parse8ByteNumber(bytes, bytesRead));
+    ciff.setImageWidth(ParseUtils::parse8ByteNumber(bytes, bytesRead));
     bytesRead += 8;
-    ciff.setImageHeight(parse8ByteNumber(bytes, bytesRead));
+    ciff.setImageHeight(ParseUtils::parse8ByteNumber(bytes, bytesRead));
     bytesRead += 8;
 
     if (ciff.getImageHeight() < 0 || ciff.getImageWidth() < 0

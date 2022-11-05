@@ -47,8 +47,6 @@ public:
 
     void setIsValid(bool isValid);
 private:
-    static std::string parseString(std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t bytesCount);
-    static int64_t parse8ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex);
     static uint64_t parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes);
     static uint64_t parseCaption(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize);
     static uint64_t parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize);
