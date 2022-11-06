@@ -7,6 +7,8 @@
 #include "ciff.h"
 #include "parse_utils.h"
 
+const std::string CIFF::magicChars = "CIFF";
+
 CIFF::CIFF() {
     headerSize = 0;
     contentSize = 0;
@@ -31,81 +33,41 @@ CIFF CIFF::parseCIFF(std::vector<uint8_t> bytes) {
     std::vector<uint8_t> pixels;
     std::copy(bytes.begin() + bytesRead, bytes.end(), std::back_inserter(pixels));
 
-    ciff.setPixels(pixels);
+    ciff.pixels = pixels;
 
     return ciff;
 }
-
-const std::string &CIFF::getMagicChars() const {
-    return magicChars;
-}
-
 
 int64_t CIFF::getHeaderSize() const {
     return headerSize;
 }
 
-void CIFF::setHeaderSize(int64_t headerSize) {
-    CIFF::headerSize = headerSize;
-}
-
-
 int64_t CIFF::getContentSize() const {
     return contentSize;
 }
 
-void CIFF::setContentSize(int64_t contentSize) {
-    CIFF::contentSize = contentSize;
-}
-
-
 int64_t CIFF::getImageWidth() const {
     return imageWidth;
-}
-
-void CIFF::setImageWidth(int64_t imageWidth) {
-    CIFF::imageWidth = imageWidth;
-}
-
-
-int64_t CIFF::getImageHeight() const {
-    return imageHeight;
-}
-
-void CIFF::setImageHeight(int64_t imageHeight) {
-    CIFF::imageHeight = imageHeight;
 }
 
 const std::string &CIFF::getCaption() const {
     return caption;
 }
 
-void CIFF::setCaption(const std::string &caption) {
-    CIFF::caption = caption;
-}
-
 const std::vector<std::string> &CIFF::getTags() const {
     return tags;
-}
-
-void CIFF::setTags(const std::vector<std::string> &tags) {
-    CIFF::tags = tags;
 }
 
 const std::vector<uint8_t> &CIFF::getPixels() const {
     return pixels;
 }
 
-void CIFF::setPixels(const std::vector<uint8_t> &pixels) {
-    CIFF::pixels = pixels;
-}
-
 bool CIFF::isValid() const {
     return valid;
 }
 
-void CIFF::setIsValid(bool isValid) {
-    CIFF::valid = isValid;
+int64_t CIFF::getImageHeight() const {
+    return imageHeight;
 }
 
 /**
@@ -125,53 +87,53 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
 
     if (dataSize < minimumHeaderSize) {
         std::cout << "Can't parse header" << std::endl;
-        ciff.setIsValid(false);
+        ciff.valid = false;
         return bytesRead;
     }
 
     std::string magic = ParseUtils::parseString(bytes, bytesRead, 4);
     bytesRead += 4;
 
-    if (magic != ciff.getMagicChars()) {
+    if (magic != CIFF::magicChars) {
         std::cout << "Magic chars are invalid" << std::endl;
-        ciff.setIsValid(false);
+        ciff.valid = false;
         return bytesRead;
     }
 
-    ciff.setHeaderSize(ParseUtils::parse8ByteNumber(bytes, bytesRead));
+    ciff.headerSize = ParseUtils::parse8ByteNumber(bytes, bytesRead);
     bytesRead += 8;
 
-    if (ciff.getHeaderSize() < (int64_t)minimumHeaderSize) {
+    if (ciff.headerSize < (int64_t)minimumHeaderSize) {
         std::cout << "Invalid header size" << std::endl;
-        ciff.setIsValid(false);
+        ciff.valid= false;
         return bytesRead;
     }
 
-    ciff.setContentSize(ParseUtils::parse8ByteNumber(bytes, bytesRead));
+    ciff.contentSize = ParseUtils::parse8ByteNumber(bytes, bytesRead);
     bytesRead += 8;
 
-    if (ciff.getContentSize() < 0) {
+    if (ciff.contentSize < 0) {
         std::cout << "Invalid content size" << std::endl;
-        ciff.setIsValid(false);
+        ciff.valid= false;
         return bytesRead;
     }
 
-    if (ciff.getContentSize() + ciff.getHeaderSize() != dataSize) {
+    if (ciff.contentSize + ciff.headerSize != dataSize) {
         std::cout << "CIFF file size invalid" << std::endl;
-        ciff.setIsValid(false);
+        ciff.valid= false;
         return bytesRead;
     }
 
-    ciff.setImageWidth(ParseUtils::parse8ByteNumber(bytes, bytesRead));
+    ciff.imageWidth = ParseUtils::parse8ByteNumber(bytes, bytesRead);
     bytesRead += 8;
-    ciff.setImageHeight(ParseUtils::parse8ByteNumber(bytes, bytesRead));
+    ciff.imageHeight = ParseUtils::parse8ByteNumber(bytes, bytesRead);
     bytesRead += 8;
 
-    if (ciff.getImageHeight() < 0 || ciff.getImageWidth() < 0
+    if (ciff.imageHeight < 0 || ciff.imageWidth < 0
     || ciff.contentSize == 0 && (ciff.imageHeight != 0 || ciff.imageWidth != 0)
-    || ciff.getContentSize() != ciff.getImageWidth() * ciff.getImageHeight() * 3) {
+    || ciff.contentSize != ciff.imageWidth * ciff.imageHeight * 3) {
         std::cout << "Width and height are invalid" << std::endl;
-        ciff.setIsValid(false);
+        ciff.valid= false;
         return bytesRead;
     }
 
@@ -179,13 +141,13 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    bytesRead += parseCaption(ciff, bytes, bytesRead, ciff.getHeaderSize());
+    bytesRead += parseCaption(ciff, bytes, bytesRead, ciff.headerSize);
 
     if (dataSize == bytesRead) {
         return bytesRead;
     }
 
-    bytesRead += parseTags(ciff, bytes, bytesRead, ciff.getHeaderSize());
+    bytesRead += parseTags(ciff, bytes, bytesRead, ciff.headerSize);
 
     return bytesRead;
 }
@@ -201,7 +163,7 @@ uint64_t CIFF::parseCaption(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t st
         stringStream << bytes[i];
     }
 
-    ciff.setCaption(stringStream.str());
+    ciff.caption = stringStream.str();
 
     return bytesRead;
 }
