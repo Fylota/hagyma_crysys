@@ -7,6 +7,7 @@ set(SOURCE_FILES main.cpp)
 
 include_directories(CAFFParser_lib)
 add_subdirectory(CAFFParser_lib)
+add_subdirectory(Tests)
 
 add_executable(CAFFParser_run ${SOURCE_FILES})
 target_link_libraries(CAFFParser_run CAFFParser_lib)
