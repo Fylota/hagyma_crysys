@@ -141,7 +141,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
     ciff.setHeaderSize(ParseUtils::parse8ByteNumber(bytes, bytesRead));
     bytesRead += 8;
 
-    if (ciff.getHeaderSize() < minimumHeaderSize) {
+    if (ciff.getHeaderSize() < (int64_t)minimumHeaderSize) {
         std::cout << "Invalid header size" << std::endl;
         ciff.setIsValid(false);
         return bytesRead;
@@ -168,6 +168,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
     bytesRead += 8;
 
     if (ciff.getImageHeight() < 0 || ciff.getImageWidth() < 0
+    || ciff.contentSize == 0 && (ciff.imageHeight != 0 || ciff.imageWidth != 0)
     || ciff.getContentSize() != ciff.getImageWidth() * ciff.getImageHeight() * 3) {
         std::cout << "Width and height are invalid" << std::endl;
         ciff.setIsValid(false);
@@ -213,18 +214,27 @@ uint64_t CIFF::parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t start
     for (uint64_t i = startIndex; i < headerSize; ++i) {
         if (bytes[i] == '\n') {
             std::cout << "Tags can't contain new line character" << std::endl;
-            ciff.setIsValid(false);
+            ciff.valid = false;
+            stringStream.str("");
+            stringStream.clear();
             break;
         }
         if (bytes[i] == '\0') {
             tags.push_back(stringStream.str());
+            stringStream.str("");
             stringStream.clear();
+        } else {
+            stringStream << bytes[i];
         }
-        stringStream << bytes[i];
         ++bytesRead;
     }
 
-    ciff.setTags(tags);
+    if (!stringStream.str().empty()) {
+        std::cout << "Last '\\0' is missing after the last tag: " << stringStream.str() << std::endl;
+        ciff.valid = false;
+    }
+
+    ciff.tags = tags;
 
     return bytesRead;
 }
