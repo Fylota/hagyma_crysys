@@ -225,7 +225,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     int64_t length = ParseUtils::parse8ByteNumber(bytes, bytesRead);
     bytesRead += 8;
 
-    if (dataSize < bytesRead + length || length < animationBlockMinimumSize) {
+    if (dataSize < bytesRead + length || length < animationMinimumSize) {
         std::cout << "Can't read animation block" << std::endl;
         caff.valid = false;
         return bytesRead - startIndex;

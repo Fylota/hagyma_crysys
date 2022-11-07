@@ -2,10 +2,6 @@
 // Created by fupn26 on 06/11/2022.
 //
 
-//
-// Created by fupn26 on 05/11/2022.
-//
-
 #include "gtest/gtest.h"
 #include "caff.h"
 #include "file_reader.h"
