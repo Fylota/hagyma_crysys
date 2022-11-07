@@ -8,7 +8,7 @@
 
 TEST(CAFFTest, ValidCAFF1){
     //given
-    std::vector<uint8_t> caffBytes = read_vector_from_disk("../../Tests/test_files/CAFF/1.caff");
+    std::vector<uint8_t> caffBytes = readVectorFromDisk("../../Tests/test_files/CAFF/1.caff");
 
     //when
     CAFF caff = CAFF::parseCAFF(caffBytes);
@@ -19,7 +19,7 @@ TEST(CAFFTest, ValidCAFF1){
 
 TEST(CAFFTest, ValidCAFF2){
     //given
-    std::vector<uint8_t> caffBytes = read_vector_from_disk("../../Tests/test_files/CAFF/2.caff");
+    std::vector<uint8_t> caffBytes = readVectorFromDisk("../../Tests/test_files/CAFF/2.caff");
 
     //when
     CAFF caff = CAFF::parseCAFF(caffBytes);
@@ -30,7 +30,7 @@ TEST(CAFFTest, ValidCAFF2){
 
 TEST(CAFFTest, ValidCAFF3){
     //given
-    std::vector<uint8_t> caffBytes = read_vector_from_disk("../../Tests/test_files/CAFF/3.caff");
+    std::vector<uint8_t> caffBytes = readVectorFromDisk("../../Tests/test_files/CAFF/3.caff");
 
     //when
     CAFF caff = CAFF::parseCAFF(caffBytes);

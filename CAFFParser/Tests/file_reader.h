@@ -8,6 +8,6 @@
 #include <fstream>
 #include <vector>
 
-std::vector<uint8_t> read_vector_from_disk(const std::string& file_path);
+std::vector<uint8_t> readVectorFromDisk(const std::string& filePath);
 
 #endif //CAFFPARSER_FILE_READER_H

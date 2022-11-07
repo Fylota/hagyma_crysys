@@ -4,26 +4,62 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include "ciff.h"
 #include "caff.h"
 
-std::vector<uint8_t> read_vector_from_disk(const std::string& file_path)
+std::vector<uint8_t> readVectorFromDisk(const std::string& filePath)
 {
-    std::ifstream instream(file_path, std::ios::in | std::ios::binary);
-    std::vector<uint8_t> data((std::istreambuf_iterator<char>(instream)), std::istreambuf_iterator<char>());
+    std::ifstream inStream(filePath, std::ios::in | std::ios::binary);
+
+    if (!inStream.is_open()) {
+        std::cerr << "Can't open input file: " << filePath << std::endl;
+        exit(-3);
+    }
+
+    std::vector<uint8_t> data((std::istreambuf_iterator<char>(inStream)), std::istreambuf_iterator<char>());
+    inStream.close();
     return data;
+}
+
+void writeVectorFromDisk(const std::string& filePath, const std::vector<uint8_t> &data)
+{
+    std::ofstream outStream(filePath, std::ios::out | std::ios::binary);
+
+    if (!outStream.is_open()) {
+        std::cerr << "Can't create output file: " << filePath << std::endl;
+        exit(-3);
+    }
+
+    for (const uint8_t &e : data) {
+        outStream << e;
+    }
+
+    outStream.close();
+}
+
+void printHelp() {
+    std::cerr << "Usage: ./CAFFParser_run <caff file> -o <ppm file to generate>" << std::endl;
+    exit(-1);
 }
 
 int main(int argc, char *argv[]) {
 
-    if (argc < 1)
-        std::cout << "Give one or more file as argument" << std::endl;
-    else {
-        for (int i = 1; i < argc; ++i) {
-            CAFF caff = CAFF::parseCAFF(read_vector_from_disk(argv[i]));
-            std::cout << argv[i] << '\t' << (caff.isValid() ? "VALID" : "INVALID") << std::endl;
-        }
+    if (argc != 4) {
+        printHelp();
     }
+
+    if (strcmp(argv[2], "-o") != 0) {
+        printHelp();
+    }
+
+    CAFF caff = CAFF::parseCAFF(readVectorFromDisk(argv[1]));
+    std::cout << argv[1] << '\t' << (caff.isValid() ? "VALID" : "INVALID") << std::endl;
+
+    if (!caff.isValid())
+        return -2;
+
+    writeVectorFromDisk(argv[3], caff.generatePpmPreview());
 
     return 0;
 }

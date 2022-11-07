@@ -24,6 +24,8 @@ public:
 
     CAFF_PARSER_LIBRARY_EXPORT bool isValid() const;
 
+    CAFF_PARSER_LIBRARY_EXPORT std::vector<uint8_t> generatePpmPreview();
+
 private:
     static uint64_t parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes);
     static uint64_t parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64_t startIndex);

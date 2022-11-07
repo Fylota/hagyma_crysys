@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <sstream>
 #include "caff.h"
 #include "parse_utils.h"
 #include "date_validator.h"
@@ -276,4 +277,22 @@ const std::vector<std::pair<int64_t, CIFF>> &CAFF::getCiffsWithDuration() const 
 
 bool CAFF::isValid() const {
     return valid;
+}
+
+/**
+ * Generates a preview of the CAFF file from the first CIFF in .ppm format
+ * @return ppm file in bytes
+ */
+std::vector<uint8_t> CAFF::generatePpmPreview() {
+    CIFF ciffToConvert = ciffsWithDuration[0].second;
+
+    std::ostringstream ppm;
+
+    ppm << "P6\n" << ciffToConvert.getImageWidth() << " " << ciffToConvert.getImageHeight()
+    << "\n255\n";
+
+    ppm.write(reinterpret_cast<const char *>(ciffToConvert.getPixels().data()), ciffToConvert.getPixels().size());
+
+    std::string result = ppm.str();
+    return {result.begin(), result.end()};
 }

@@ -8,7 +8,7 @@
 
 TEST(CIFFTest, ValidColor){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/valid_color.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/valid_color.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -19,7 +19,7 @@ TEST(CIFFTest, ValidColor){
 
 TEST(CIFFTest, InvalidMagicChar){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_ciff_magic.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/invalid_with_ciff_magic.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -30,7 +30,7 @@ TEST(CIFFTest, InvalidMagicChar){
 
 TEST(CIFFTest, InvalidMagicChar2){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_CIFc_magic.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/invalid_with_CIFc_magic.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -41,7 +41,7 @@ TEST(CIFFTest, InvalidMagicChar2){
 
 TEST(CIFFTest, InvalidZeroHeaderSize){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_header_size_0.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/invalid_with_header_size_0.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -52,7 +52,7 @@ TEST(CIFFTest, InvalidZeroHeaderSize){
 
 TEST(CIFFTest, InvalidNegativeHeaderSize){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_header_size_-1.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/invalid_with_header_size_-1.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -63,7 +63,7 @@ TEST(CIFFTest, InvalidNegativeHeaderSize){
 
 TEST(CIFFTest, ValidWithoutPixels){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/valid_without_pixels.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/valid_without_pixels.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -74,7 +74,7 @@ TEST(CIFFTest, ValidWithoutPixels){
 
 TEST(CIFFTest, InvalidWidthAndHeight){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_width_and_height.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/invalid_width_and_height.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -85,7 +85,8 @@ TEST(CIFFTest, InvalidWidthAndHeight){
 
 TEST(CIFFTest, InvalidNegativeContentSize){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_negative_content_size.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk(
+            "../../Tests/test_files/CIFF/invalid_with_negative_content_size.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -96,7 +97,8 @@ TEST(CIFFTest, InvalidNegativeContentSize){
 
 TEST(CIFFTest, InvalidNonZeroImageHeight){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_non-zero_image_width.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk(
+            "../../Tests/test_files/CIFF/invalid_with_non-zero_image_width.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -107,7 +109,8 @@ TEST(CIFFTest, InvalidNonZeroImageHeight){
 
 TEST(CIFFTest, InvalidNegativeImageHeight){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_negative_image_height.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk(
+            "../../Tests/test_files/CIFF/invalid_with_negative_image_height.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -118,7 +121,7 @@ TEST(CIFFTest, InvalidNegativeImageHeight){
 
 TEST(CIFFTest, ValidWithoutCaption){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/valid_without_caption.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/valid_without_caption.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -129,7 +132,8 @@ TEST(CIFFTest, ValidWithoutCaption){
 
 TEST(CIFFTest, InvalidWithTagsContainingNewLine){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_tags_containing_new_line.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk(
+            "../../Tests/test_files/CIFF/invalid_with_tags_containing_new_line.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -140,7 +144,8 @@ TEST(CIFFTest, InvalidWithTagsContainingNewLine){
 
 TEST(CIFFTest, InvalidWithMisssingClosingCharacterAfterLastTag){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_missing_closing_character_after_last_tag.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk(
+            "../../Tests/test_files/CIFF/invalid_with_missing_closing_character_after_last_tag.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -151,7 +156,7 @@ TEST(CIFFTest, InvalidWithMisssingClosingCharacterAfterLastTag){
 
 TEST(CIFFTest, ValidWithoutTags){
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/valid_without_tags.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/valid_without_tags.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -162,7 +167,8 @@ TEST(CIFFTest, ValidWithoutTags){
 
 TEST(CIFFTest, InvalidWithZeroHeightAndWidth) {
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/invalid_with_zero_height_and_width.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk(
+            "../../Tests/test_files/CIFF/invalid_with_zero_height_and_width.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
@@ -173,7 +179,7 @@ TEST(CIFFTest, InvalidWithZeroHeightAndWidth) {
 
 TEST(CIFFTest, ValidGraycsale) {
     //given
-    std::vector<uint8_t> ciffBytes = read_vector_from_disk("../../Tests/test_files/CIFF/valid_grayscale.ciff");
+    std::vector<uint8_t> ciffBytes = readVectorFromDisk("../../Tests/test_files/CIFF/valid_grayscale.ciff");
 
     //when
     CIFF ciff = CIFF::parseCIFF(ciffBytes);
