@@ -15,11 +15,14 @@ std::vector<uint8_t> read_vector_from_disk(const std::string& file_path)
 }
 
 int main(int argc, char *argv[]) {
-    std::cout << "Hello world!" << std::endl;
 
-    for (int i = 1; i < argc; ++i) {
-        CAFF caff = CAFF::parseCAFF(read_vector_from_disk(argv[i]));
-        std::cout << argv[i] << '\t' << (caff.isValid() ? "VALID" : "INVALID") << std::endl;
+    if (argc < 1)
+        std::cout << "Give one or more file as argument" << std::endl;
+    else {
+        for (int i = 1; i < argc; ++i) {
+            CAFF caff = CAFF::parseCAFF(read_vector_from_disk(argv[i]));
+            std::cout << argv[i] << '\t' << (caff.isValid() ? "VALID" : "INVALID") << std::endl;
+        }
     }
 
     return 0;

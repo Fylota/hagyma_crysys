@@ -8,26 +8,27 @@
 
 #include <string>
 #include <vector>
+#include "library.h"
 
 class CIFF {
 public:
-    static CIFF parseCIFF(std::vector<uint8_t> bytes);
+    CAFF_PARSER_LIBRARY_EXPORT static CIFF parseCIFF(std::vector<uint8_t> bytes);
 
-    int64_t getHeaderSize() const;
+    CAFF_PARSER_LIBRARY_EXPORT int64_t getHeaderSize() const;
 
-    int64_t getContentSize() const;
+    CAFF_PARSER_LIBRARY_EXPORT int64_t getContentSize() const;
 
-    int64_t getImageWidth() const;
+    CAFF_PARSER_LIBRARY_EXPORT int64_t getImageWidth() const;
 
-    int64_t getImageHeight() const;
+    CAFF_PARSER_LIBRARY_EXPORT int64_t getImageHeight() const;
 
-    const std::string &getCaption() const;
+    CAFF_PARSER_LIBRARY_EXPORT const std::string &getCaption() const;
 
-    const std::vector<std::string> &getTags() const;
+    CAFF_PARSER_LIBRARY_EXPORT const std::vector<std::string> &getTags() const;
 
-    const std::vector<uint8_t> &getPixels() const;
+    CAFF_PARSER_LIBRARY_EXPORT const std::vector<uint8_t> &getPixels() const;
 
-    bool isValid() const;
+    CAFF_PARSER_LIBRARY_EXPORT bool isValid() const;
 
 private:
     static uint64_t parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes);

@@ -5,24 +5,24 @@
 #ifndef CAFFPARSER_CAFF_H
 #define CAFFPARSER_CAFF_H
 
-
 #include <string>
 #include "ciff.h"
 #include "date.h"
+#include "library.h"
 
 class CAFF {
 public:
-    static CAFF parseCAFF(std::vector<uint8_t> bytes);
+    CAFF_PARSER_LIBRARY_EXPORT static CAFF parseCAFF(std::vector<uint8_t> bytes);
 
-    uint64_t getNumberOfAnimations() const;
+    CAFF_PARSER_LIBRARY_EXPORT uint64_t getNumberOfAnimations() const;
 
-    const Date &getCreationDate() const;
+    CAFF_PARSER_LIBRARY_EXPORT const Date &getCreationDate() const;
 
-    const std::string &getCreator() const;
+    CAFF_PARSER_LIBRARY_EXPORT const std::string &getCreator() const;
 
-    const std::vector<std::pair<int64_t, CIFF>> &getCiffsWithDuration() const;
+    CAFF_PARSER_LIBRARY_EXPORT const std::vector<std::pair<int64_t, CIFF>> &getCiffsWithDuration() const;
 
-    bool isValid() const;
+    CAFF_PARSER_LIBRARY_EXPORT bool isValid() const;
 
 private:
     static uint64_t parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes);
