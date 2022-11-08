@@ -43,6 +43,7 @@ private:
     std::string creator;
     std::vector<std::pair<int64_t, CIFF>> ciffsWithDuration;
     bool valid;
+    Endianess endianess;
 };
 
 

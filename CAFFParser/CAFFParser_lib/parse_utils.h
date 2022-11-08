@@ -9,12 +9,17 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include "endianess.h"
 
 class ParseUtils {
 public:
     static std::string parseString(std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t bytesCount);
-    static int64_t parse8ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex);
-    static int16_t parse2ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex);
+    static int64_t parse8ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex, Endianess endianess);
+    static int16_t parse2ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex, Endianess endianess);
+private:
+    ParseUtils();
+
+    static const Endianess systemEndianess;
 };
 
 

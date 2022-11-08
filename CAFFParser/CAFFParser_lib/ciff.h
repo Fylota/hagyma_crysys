@@ -9,10 +9,11 @@
 #include <string>
 #include <vector>
 #include "library.h"
+#include "endianess.h"
 
 class CIFF {
 public:
-    CAFF_PARSER_LIBRARY_EXPORT static CIFF parseCIFF(std::vector<uint8_t> bytes);
+    CAFF_PARSER_LIBRARY_EXPORT static CIFF parseCIFF(std::vector<uint8_t> bytes, Endianess endianess = Endianess::LITTLE_ENDIAN);
 
     CAFF_PARSER_LIBRARY_EXPORT int64_t getHeaderSize() const;
 
@@ -35,7 +36,7 @@ private:
     static uint64_t parseCaption(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize);
     static uint64_t parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize);
 
-    CIFF();
+    CIFF(Endianess endianess);
 
     static const std::string magicChars;
     int64_t headerSize;
@@ -46,6 +47,7 @@ private:
     std::vector<std::string> tags;
     std::vector<uint8_t> pixels;
     bool valid;
+    Endianess endianess;
 };
 
 

@@ -16,7 +16,7 @@ set(CAFF_PARSER_LIBRARY_SOURCES
         date_validator.h
         date.h
         library.h
-)
+        endianess.h)
 
 if (CAFF_PARSER_LIBRARY_STATIC)
     add_library(CAFFParser_lib STATIC ${CAFF_PARSER_LIBRARY_SOURCES})

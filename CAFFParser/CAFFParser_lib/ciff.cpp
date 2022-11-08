@@ -9,17 +9,18 @@
 
 const std::string CIFF::magicChars = "CIFF";
 
-CIFF::CIFF() {
+CIFF::CIFF(Endianess endianess) {
     headerSize = 0;
     contentSize = 0;
     imageHeight = 0;
     imageWidth = 0;
     caption = "";
     valid = true;
+    this->endianess = endianess;
 }
 
-CIFF CIFF::parseCIFF(std::vector<uint8_t> bytes) {
-    CIFF ciff;
+CIFF CIFF::parseCIFF(std::vector<uint8_t> bytes, Endianess endianess) {
+    CIFF ciff(endianess);
 
     uint64_t dataSize = bytes.size();
 
@@ -100,7 +101,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    ciff.headerSize = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    ciff.headerSize = ParseUtils::parse8ByteNumber(bytes, bytesRead, ciff.endianess);
     bytesRead += 8;
 
     if (ciff.headerSize < (int64_t)minimumHeaderSize) {
@@ -109,7 +110,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    ciff.contentSize = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    ciff.contentSize = ParseUtils::parse8ByteNumber(bytes, bytesRead, ciff.endianess);
     bytesRead += 8;
 
     if (ciff.contentSize < 0) {
@@ -124,9 +125,9 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
         return bytesRead;
     }
 
-    ciff.imageWidth = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    ciff.imageWidth = ParseUtils::parse8ByteNumber(bytes, bytesRead, ciff.endianess);
     bytesRead += 8;
-    ciff.imageHeight = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    ciff.imageHeight = ParseUtils::parse8ByteNumber(bytes, bytesRead, ciff.endianess);
     bytesRead += 8;
 
     if (ciff.imageHeight < 0 || ciff.imageWidth < 0

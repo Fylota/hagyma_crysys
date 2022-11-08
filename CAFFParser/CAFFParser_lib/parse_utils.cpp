@@ -16,18 +16,52 @@ std::string ParseUtils::parseString(std::vector<uint8_t> &bytes, uint64_t startI
     return stringStream.str();
 }
 
-int64_t ParseUtils::parse8ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex) {
+int64_t ParseUtils::parse8ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex, Endianess endianess) {
     int64_t result = 0;
 
-    std::memcpy(&result, bytes.data() + startIndex, sizeof(int64_t));
+    if (endianess == LITTLE_ENDIAN) {
+        int i = 0;
+        startIndex = startIndex + 7;
+        while (i < 8) {
+            result = (result << 8) | bytes[startIndex];
+            startIndex--;
+            i++;
+        }
+    } else if (endianess == BIG_ENDIAN) {
+        int i = 0;
+        while (i < 8) {
+            result = (result << 8) | bytes[startIndex];
+            startIndex++;
+            i++;
+        }
+    } else {
+        throw std::runtime_error("Invalid endianess specified");
+    }
 
     return result;
 }
 
-int16_t ParseUtils::parse2ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex) {
+int16_t ParseUtils::parse2ByteNumber(std::vector<uint8_t> &bytes, uint64_t startIndex, Endianess endianess) {
     int16_t result = 0;
 
-    std::memcpy(&result, bytes.data() + startIndex, sizeof(int16_t));
+    if (endianess == LITTLE_ENDIAN) {
+        int i = 0;
+        startIndex = startIndex + 1;
+        while (i < 2) {
+            result = (result << 8) | bytes[startIndex];
+            startIndex--;
+            i++;
+        }
+    } else if (endianess == BIG_ENDIAN) {
+        int i = 0;
+        while (i < 2) {
+            result = (result << 8) | bytes[startIndex];
+            startIndex++;
+            i++;
+        }
+    } else {
+        throw std::runtime_error("Invalid endianess specified");
+    }
 
     return result;
 }

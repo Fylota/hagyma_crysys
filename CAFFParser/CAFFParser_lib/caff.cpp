@@ -93,10 +93,15 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     }
 
     // Read length
-    int64_t length = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    int64_t lengthLittleEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, LITTLE_ENDIAN);
+    int64_t lengthBigEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, BIG_ENDIAN);
     bytesRead += 8;
 
-    if (length != headerSize) {
+    if (lengthLittleEndian == headerSize)
+        caff.endianess = LITTLE_ENDIAN;
+    else if (lengthBigEndian == headerSize)
+        caff.endianess = BIG_ENDIAN;
+    else {
         std::cout << "Invalid CAFF header block size" << std::endl;
         caff.valid = false;
         return bytesRead;
@@ -113,7 +118,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     }
 
     // Read header size
-    int64_t givenHeaderSize = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    int64_t givenHeaderSize = ParseUtils::parse8ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 8;
 
     if (givenHeaderSize != headerSize) {
@@ -123,7 +128,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     }
 
     // Read number of animations
-    int64_t numberOfAnimations = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    int64_t numberOfAnimations = ParseUtils::parse8ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 8;
 
     if (numberOfAnimations < 0) {
@@ -160,7 +165,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     }
 
     // Read length
-    int64_t length = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    int64_t length = ParseUtils::parse8ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 8;
 
     if (length < creditsMinimumSize) {
@@ -170,7 +175,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     }
 
     // Read creation date and time
-    caff.creationDate.year = ParseUtils::parse2ByteNumber(bytes, bytesRead);
+    caff.creationDate.year = ParseUtils::parse2ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 2;
     caff.creationDate.month = bytes[bytesRead++];
     caff.creationDate.day = bytes[bytesRead++];
@@ -184,7 +189,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     }
 
     // Read creator length
-    int64_t creatorLen = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    int64_t creatorLen = ParseUtils::parse8ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 8;
 
     if (creatorLen < 0 || dataSize < bytesRead + creatorLen || length != creditsMinimumSize + creatorLen) {
@@ -223,7 +228,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     }
 
     // Read length
-    int64_t length = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    int64_t length = ParseUtils::parse8ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 8;
 
     if (dataSize < bytesRead + length || length < animationMinimumSize) {
@@ -233,7 +238,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     }
 
     // Read duration
-    int64_t duration = ParseUtils::parse8ByteNumber(bytes, bytesRead);
+    int64_t duration = ParseUtils::parse8ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 8;
 
     if (duration < 0) {
@@ -245,7 +250,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     // Read CIFF
     uint64_t ciffSize = length - 8; // length - 8 bytes (duration)
     std::vector<uint8_t> ciffBytes(bytes.begin() + bytesRead, bytes.begin() + bytesRead + ciffSize);
-    CIFF ciff = CIFF::parseCIFF(ciffBytes);
+    CIFF ciff = CIFF::parseCIFF(ciffBytes, caff.endianess);
     bytesRead += ciffSize;
 
     if (!ciff.isValid()) {
