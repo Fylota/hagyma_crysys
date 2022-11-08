@@ -182,7 +182,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     caff.creationDate.hour = bytes[bytesRead++];
     caff.creationDate.minute = bytes[bytesRead++];
 
-    if (!DateValidator::isValidDate(caff.creationDate)) {
+    if (!DateValidator::isValidDateTime(caff.creationDate)) {
         std::cout << "Invalid creation date" << std::endl;
         caff.valid = false;
         return bytesRead - startIndex;
@@ -268,7 +268,7 @@ uint64_t CAFF::getNumberOfAnimations() const {
     return numberOfAnimations;
 }
 
-const Date &CAFF::getCreationDate() const {
+const DateTime &CAFF::getCreationDate() const {
     return creationDate;
 }
 
