@@ -5,8 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include "ciff.h"
-#include "caff.h"
+#include "CAFFParser_lib/ciff.h"
+#include "CAFFParser_lib/caff.h"
 
 std::vector<uint8_t> readVectorFromDisk(const std::string& filePath)
 {
