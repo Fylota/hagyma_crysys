@@ -93,14 +93,14 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     }
 
     // Read length
-    int64_t lengthLittleEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, LITTLE_ENDIAN);
-    int64_t lengthBigEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, BIG_ENDIAN);
+    int64_t lengthLittleEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, LITTLE_ENDIAN_MODE);
+    int64_t lengthBigEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, BIG_ENDIAN_MODE);
     bytesRead += 8;
 
     if (lengthLittleEndian == headerSize)
-        caff.endianess = LITTLE_ENDIAN;
+        caff.endianess = LITTLE_ENDIAN_MODE;
     else if (lengthBigEndian == headerSize)
-        caff.endianess = BIG_ENDIAN;
+        caff.endianess = BIG_ENDIAN_MODE;
     else {
         std::cout << "Invalid CAFF header block size" << std::endl;
         caff.valid = false;

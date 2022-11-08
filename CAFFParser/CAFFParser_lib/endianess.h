@@ -6,8 +6,8 @@
 #define CAFFPARSER_ENDIANESS_H
 
 enum Endianess {
-    BIG_ENDIAN = 0,
-    LITTLE_ENDIAN = 1
+    BIG_ENDIAN_MODE = 0,
+    LITTLE_ENDIAN_MODE = 1
 };
 
 #endif //CAFFPARSER_ENDIANESS_H

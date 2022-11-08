@@ -13,7 +13,7 @@
 
 class CIFF {
 public:
-    CAFF_PARSER_LIBRARY_EXPORT static CIFF parseCIFF(std::vector<uint8_t> bytes, Endianess endianess = Endianess::LITTLE_ENDIAN);
+    CAFF_PARSER_LIBRARY_EXPORT static CIFF parseCIFF(std::vector<uint8_t> bytes, Endianess endianess);
 
     CAFF_PARSER_LIBRARY_EXPORT int64_t getHeaderSize() const;
 
