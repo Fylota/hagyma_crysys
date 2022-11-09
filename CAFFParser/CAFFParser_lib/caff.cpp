@@ -37,12 +37,10 @@ CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
         switch (bytes[bytesRead]) {
             case CAFF::headerId:
                 caff.handleError("Multiple header block found");
-                caff.valid = false;
                 break;
             case CAFF::creditsId:
                 if (isCreditsRead) {
                     caff.handleError("Multiple credits block found");
-                    caff.valid = false;
                     break;
                 }
                 bytesRead += parseCreditsBlock(caff, bytes, bytesRead);
@@ -65,7 +63,6 @@ CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
 
     if (caff.valid && caff.numberOfAnimations != animationBlocksRead) {
         caff.handleError("Animation blocks are missing");
-        caff.valid = false;
     }
 
     return caff;
@@ -79,7 +76,6 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
 
     if (bytesRead >= dataSize || dataSize < headerBlockSize) {
         caff.handleError("Can't read file header");
-        caff.valid = false;
         return bytesRead;
     }
 
@@ -89,7 +85,6 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
 
     if (id != CAFF::headerId) { // The first block of all CAFF files is the CAFF header.
         caff.handleError("File not starting with header block");
-        caff.valid = false;
         return bytesRead;
     }
 
@@ -104,7 +99,6 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
         caff.endianess = BIG_ENDIAN_MODE;
     else {
         caff.handleError("Invalid CAFF header block size");
-        caff.valid = false;
         return bytesRead;
     }
 
@@ -114,7 +108,6 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
 
     if (magic != CAFF::magicChars) {
         caff.handleError("Invalid CAFF magic chars");
-        caff.valid = false;
         return bytesRead;
     }
 
@@ -124,7 +117,6 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
 
     if (givenHeaderSize != headerSize) {
         caff.handleError("Invalid CAFF header size");
-        caff.valid = false;
         return bytesRead;
     }
 
@@ -134,7 +126,6 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
 
     if (numberOfAnimations < 0) {
         caff.handleError("Invalid number of animations");
-        caff.valid = false;
         return bytesRead;
     }
 
@@ -151,7 +142,6 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
 
     if (bytesRead >= dataSize || dataSize < bytesRead + creditsBlockMinimumSize) {
         caff.handleError("Can't read credits block");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -161,7 +151,6 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
 
     if (id != CAFF::creditsId) {
         caff.handleError("Given block is not a credits block");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -171,7 +160,6 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
 
     if (length < creditsMinimumSize) {
         caff.handleError("Invalid credits block size");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -185,7 +173,6 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
 
     if (!DateValidator::isValidDateTime(caff.creationDate)) {
         caff.handleError("Invalid creation date");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -195,7 +182,6 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
 
     if (creatorLen < 0 || dataSize < bytesRead + creatorLen || length != creditsMinimumSize + creatorLen) {
         caff.handleError("Can't read creator");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -214,7 +200,6 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
 
     if (bytesRead >= dataSize || dataSize < bytesRead + animationBlockMinimumSize) {
         caff.handleError("Can't read animations block");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -224,7 +209,6 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
 
     if (id != CAFF::animationId) {
         caff.handleError("Given block is not an animation block");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -232,9 +216,8 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     int64_t length = ParseUtils::parse8ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 8;
 
-    if (dataSize < bytesRead + length || length < animationMinimumSize) {
+    if (dataSize < bytesRead + length || length < (int64_t)animationMinimumSize) {
         caff.handleError("Can't read animation block");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
@@ -244,7 +227,6 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
 
     if (duration < 0) {
         caff.handleError("Invalid animation duration");
-        caff.valid = false;
         return bytesRead - startIndex;
     }
 
