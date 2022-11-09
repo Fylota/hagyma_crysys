@@ -22,7 +22,7 @@ std::vector<uint8_t> readVectorFromDisk(const std::string& filePath)
     return data;
 }
 
-void writeVectorFromDisk(const std::string& filePath, const std::vector<uint8_t> &data)
+void writeVectorToDisk(const std::string& filePath, const std::vector<uint8_t> &data)
 {
     std::ofstream outStream(filePath, std::ios::out | std::ios::binary);
 
@@ -38,14 +38,27 @@ void writeVectorFromDisk(const std::string& filePath, const std::vector<uint8_t>
     outStream.close();
 }
 
+void writeStringToFile(const std::string& filePath, const std::string &data) {
+    std::ofstream outStream(filePath, std::ios::out | std::ios::binary);
+
+    if (!outStream.is_open()) {
+        std::cerr << "Can't create output file: " << filePath << std::endl;
+        exit(-3);
+    }
+
+    outStream << data;
+
+    outStream.close();
+}
+
 void printHelp() {
-    std::cerr << "Usage: ./CAFFParser_run <caff file> -o <ppm file to generate>" << std::endl;
+    std::cerr << "Usage: ./CAFFParser_run <caff file> -o <ppm file to generate> <json file to generate>" << std::endl;
     exit(-1);
 }
 
 int main(int argc, char *argv[]) {
 
-    if (argc != 4) {
+    if (argc != 5) {
         printHelp();
     }
 
@@ -59,7 +72,9 @@ int main(int argc, char *argv[]) {
     if (!caff.isValid())
         return -2;
 
-    writeVectorFromDisk(argv[3], caff.generatePpmPreview());
+    writeVectorToDisk(argv[3], caff.generatePpmPreview());
+
+    writeStringToFile(argv[4], caff.generateMetaDataJson());
 
     return 0;
 }

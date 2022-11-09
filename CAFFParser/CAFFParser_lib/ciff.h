@@ -35,6 +35,7 @@ private:
     static uint64_t parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes);
     static uint64_t parseCaption(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize);
     static uint64_t parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize);
+    void handleError(const std::string &message);
 
     CIFF(Endianess endianess);
 
@@ -48,6 +49,9 @@ private:
     std::vector<uint8_t> pixels;
     bool valid;
     Endianess endianess;
+    std::vector<std::string> parseFails;
+public:
+    const std::vector<std::string> &getParseFails() const;
 };
 
 

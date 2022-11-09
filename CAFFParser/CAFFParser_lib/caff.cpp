@@ -17,6 +17,7 @@ CAFF::CAFF() {
     creator = "";
     numberOfAnimations = 0;
     valid = true;
+    endianess = LITTLE_ENDIAN_MODE;
 }
 
 CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
@@ -35,12 +36,12 @@ CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
     while (bytesRead < dataSize) {
         switch (bytes[bytesRead]) {
             case CAFF::headerId:
-                std::cout << "Multiple header block found" << std::endl;
+                caff.handleError("Multiple header block found");
                 caff.valid = false;
                 break;
             case CAFF::creditsId:
                 if (isCreditsRead) {
-                    std::cout << "Multiple credits block found" << std::endl;
+                    caff.handleError("Multiple credits block found");
                     caff.valid = false;
                     break;
                 }
@@ -51,7 +52,7 @@ CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
                 bytesRead += parseAnimationBlock(caff, bytes, bytesRead);
                 animationBlocksRead++;
                 if (animationBlocksRead > caff.numberOfAnimations) {
-                    std::cout << "Too many animation block found" << std::endl;
+                    caff.handleError("Too many animation block found");
                 }
                 break;
             default:
@@ -62,8 +63,8 @@ CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
             break;
     }
 
-    if (caff.numberOfAnimations != animationBlocksRead) {
-        std::cout << "Animation blocks are missing" << std::endl;
+    if (caff.valid && caff.numberOfAnimations != animationBlocksRead) {
+        caff.handleError("Animation blocks are missing");
         caff.valid = false;
     }
 
@@ -77,7 +78,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     const uint64_t headerBlockSize = headerSize + 9;
 
     if (bytesRead >= dataSize || dataSize < headerBlockSize) {
-        std::cout << "Can't read CAFF file header" << std::endl;
+        caff.handleError("Can't read file header");
         caff.valid = false;
         return bytesRead;
     }
@@ -87,7 +88,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     bytesRead++;
 
     if (id != CAFF::headerId) { // The first block of all CAFF files is the CAFF header.
-        std::cout << "CAFF file not starting with header block" << std::endl;
+        caff.handleError("File not starting with header block");
         caff.valid = false;
         return bytesRead;
     }
@@ -102,7 +103,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     else if (lengthBigEndian == headerSize)
         caff.endianess = BIG_ENDIAN_MODE;
     else {
-        std::cout << "Invalid CAFF header block size" << std::endl;
+        caff.handleError("Invalid CAFF header block size");
         caff.valid = false;
         return bytesRead;
     }
@@ -112,7 +113,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     bytesRead += 4;
 
     if (magic != CAFF::magicChars) {
-        std::cout << "Invalid CAFF magic chars" << std::endl;
+        caff.handleError("Invalid CAFF magic chars");
         caff.valid = false;
         return bytesRead;
     }
@@ -122,7 +123,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     bytesRead += 8;
 
     if (givenHeaderSize != headerSize) {
-        std::cout << "Invalid CAFF header size" << std::endl;
+        caff.handleError("Invalid CAFF header size");
         caff.valid = false;
         return bytesRead;
     }
@@ -132,7 +133,7 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     bytesRead += 8;
 
     if (numberOfAnimations < 0) {
-        std::cout << "Invalid number of animations" << std::endl;
+        caff.handleError("Invalid number of animations");
         caff.valid = false;
         return bytesRead;
     }
@@ -149,7 +150,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     uint64_t bytesRead = startIndex;
 
     if (bytesRead >= dataSize || dataSize < bytesRead + creditsBlockMinimumSize) {
-        std::cout << "Can't read credits block" << std::endl;
+        caff.handleError("Can't read credits block");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -159,7 +160,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     bytesRead++;
 
     if (id != CAFF::creditsId) {
-        std::cout << "Given block is not a credits block" << std::endl;
+        caff.handleError("Given block is not a credits block");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -169,7 +170,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     bytesRead += 8;
 
     if (length < creditsMinimumSize) {
-        std::cout << "Invalid credits block size" << std::endl;
+        caff.handleError("Invalid credits block size");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -183,7 +184,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     caff.creationDate.minute = bytes[bytesRead++];
 
     if (!DateValidator::isValidDateTime(caff.creationDate)) {
-        std::cout << "Invalid creation date" << std::endl;
+        caff.handleError("Invalid creation date");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -193,7 +194,7 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     bytesRead += 8;
 
     if (creatorLen < 0 || dataSize < bytesRead + creatorLen || length != creditsMinimumSize + creatorLen) {
-        std::cout << "Can't read creator" << std::endl;
+        caff.handleError("Can't read creator");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -212,7 +213,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     uint64_t bytesRead = startIndex;
 
     if (bytesRead >= dataSize || dataSize < bytesRead + animationBlockMinimumSize) {
-        std::cout << "Can't read animations block" << std::endl;
+        caff.handleError("Can't read animations block");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -222,7 +223,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     bytesRead++;
 
     if (id != CAFF::animationId) {
-        std::cout << "Given block is not an animation block" << std::endl;
+        caff.handleError("Given block is not an animation block");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -232,7 +233,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     bytesRead += 8;
 
     if (dataSize < bytesRead + length || length < animationMinimumSize) {
-        std::cout << "Can't read animation block" << std::endl;
+        caff.handleError("Can't read animation block");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -242,7 +243,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     bytesRead += 8;
 
     if (duration < 0) {
-        std::cout << "Invalid animation duration" << std::endl;
+        caff.handleError("Invalid animation duration");
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -254,7 +255,7 @@ uint64_t CAFF::parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint
     bytesRead += ciffSize;
 
     if (!ciff.isValid()) {
-        std::cout << "Invalid ciff" << std::endl;
+        caff.parseFails.insert(caff.parseFails.end(), ciff.getParseFails().begin(), ciff.getParseFails().end());
         caff.valid = false;
         return bytesRead - startIndex;
     }
@@ -289,6 +290,9 @@ bool CAFF::isValid() const {
  * @return ppm file in bytes
  */
 std::vector<uint8_t> CAFF::generatePpmPreview() {
+    if (!valid)
+        throw std::runtime_error("Can't generate preview from invalid CAFF");
+
     CIFF ciffToConvert = ciffsWithDuration[0].second;
 
     std::ostringstream ppm;
@@ -300,4 +304,67 @@ std::vector<uint8_t> CAFF::generatePpmPreview() {
 
     std::string result = ppm.str();
     return {result.begin(), result.end()};
+}
+
+/**
+ * Generates a JSON object from CAFF and CIFF informations
+ * @return
+ */
+std::string CAFF::generateMetaDataJson() {
+    std::ostringstream json;
+
+    json << "{"
+        << "\"valid\":" << valid << ","
+        << "\"errors\":[";
+            for (int i = 0; i < parseFails.size(); ++i) {
+                if (i != 0)
+                    json << ",";
+                json << "\"" << parseFails[i];
+            }
+        json << "]";
+
+        if (valid) {
+            json << ",\"caff\":{";
+                json << "\"creator\":" << "\"" << creator << "\","
+                << "\"creationDate\":{" << "\"year\":" << creationDate.year << ","
+                << "\"month\":" << (int)creationDate.month << ","
+                << "\"day\":" << (int)creationDate.day << ","
+                << "\"hour\":" << (int)creationDate.hour << ","
+                << "\"minute\":" << (int)creationDate.minute << "},"
+                << "\"ciffs\":[";
+                    for (int i = 0; i < ciffsWithDuration.size(); ++i) {
+                        if (i != 0)
+                            json << ",";
+
+                        json << "{" << "\"duration\":" << ciffsWithDuration[i].first << ","
+                             << "\"width\":" << ciffsWithDuration[i].second.getImageWidth() << ","
+                             << "\"height\":" << ciffsWithDuration[i].second.getImageHeight() << ","
+                             << "\"caption\":" << "\"" << ciffsWithDuration[i].second.getCaption() << "\","
+                             << "\"tags\":[";
+                                    const std::vector<std::string> &tags = ciffsWithDuration[i].second.getTags();
+                                    for (int j = 0; j < tags.size(); ++j) {
+                                        if (j != 0)
+                                            json << ",";
+
+                                        json << "\"" << tags[j] << "\"";
+                                    }
+                            json << "]";
+                        json << "}";
+                    }
+                json << "]";
+            json << "}";
+        }
+    json << "}";
+
+    return json.str();
+}
+
+const std::vector<std::string> &CAFF::getParseFails() const {
+    return parseFails;
+}
+
+void CAFF::handleError(const std::string &message) {
+    std::cout << "CAFF: " << message << std::endl;
+    parseFails.push_back(message);
+    valid = false;
 }

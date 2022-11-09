@@ -85,10 +85,8 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
 
     uint64_t minimumHeaderSize = 36;
 
-
     if (dataSize < minimumHeaderSize) {
-        std::cout << "Can't parse header" << std::endl;
-        ciff.valid = false;
+        ciff.handleError("Can't parse header, file too small");
         return bytesRead;
     }
 
@@ -96,8 +94,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
     bytesRead += 4;
 
     if (magic != CIFF::magicChars) {
-        std::cout << "Magic chars are invalid" << std::endl;
-        ciff.valid = false;
+        ciff.handleError("Magic chars are invalid");
         return bytesRead;
     }
 
@@ -105,23 +102,15 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
     bytesRead += 8;
 
     if (ciff.headerSize < (int64_t)minimumHeaderSize) {
-        std::cout << "Invalid header size" << std::endl;
-        ciff.valid= false;
+        ciff.handleError("Invalid header size");
         return bytesRead;
     }
 
     ciff.contentSize = ParseUtils::parse8ByteNumber(bytes, bytesRead, ciff.endianess);
     bytesRead += 8;
 
-    if (ciff.contentSize < 0) {
-        std::cout << "Invalid content size" << std::endl;
-        ciff.valid= false;
-        return bytesRead;
-    }
-
-    if (ciff.contentSize + ciff.headerSize != dataSize) {
-        std::cout << "CIFF file size invalid" << std::endl;
-        ciff.valid= false;
+    if (ciff.contentSize < 0 || ciff.contentSize + ciff.headerSize != dataSize) {
+        ciff.handleError("Invalid content size");
         return bytesRead;
     }
 
@@ -133,8 +122,7 @@ uint64_t CIFF::parseHeader(CIFF &ciff, std::vector<uint8_t> &bytes) {
     if (ciff.imageHeight < 0 || ciff.imageWidth < 0
     || ciff.contentSize == 0 && (ciff.imageHeight != 0 || ciff.imageWidth != 0)
     || ciff.contentSize != ciff.imageWidth * ciff.imageHeight * 3) {
-        std::cout << "Width and height are invalid" << std::endl;
-        ciff.valid= false;
+        ciff.handleError("Width and height are invalid");
         return bytesRead;
     }
 
@@ -176,8 +164,7 @@ uint64_t CIFF::parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t start
 
     for (uint64_t i = startIndex; i < headerSize; ++i) {
         if (bytes[i] == '\n') {
-            std::cout << "Tags can't contain new line character" << std::endl;
-            ciff.valid = false;
+            ciff.handleError("Tags can't contain new line character");
             stringStream.str("");
             stringStream.clear();
             break;
@@ -193,11 +180,22 @@ uint64_t CIFF::parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t start
     }
 
     if (!stringStream.str().empty()) {
-        std::cout << "Last '\\0' is missing after the last tag: " << stringStream.str() << std::endl;
-        ciff.valid = false;
+        ciff.handleError("'\\0' is missing after the last tag: " + stringStream.str());
+        return bytesRead;
     }
 
     ciff.tags = tags;
 
     return bytesRead;
 }
+
+const std::vector<std::string> &CIFF::getParseFails() const {
+    return parseFails;
+}
+
+void CIFF::handleError(const std::string &message) {
+    std::cout << "CIFF: " << message << std::endl;
+    parseFails.push_back(message);
+    valid = false;
+}
+

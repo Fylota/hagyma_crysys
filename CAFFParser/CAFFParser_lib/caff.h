@@ -26,10 +26,14 @@ public:
 
     CAFF_PARSER_LIBRARY_EXPORT std::vector<uint8_t> generatePpmPreview();
 
+    CAFF_PARSER_LIBRARY_EXPORT std::string generateMetaDataJson();
+
+    CAFF_PARSER_LIBRARY_EXPORT const std::vector<std::string> &getParseFails() const;
 private:
     static uint64_t parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes);
     static uint64_t parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64_t startIndex);
     static uint64_t parseAnimationBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64_t startIndex);
+    void handleError(const std::string &message);
 
     CAFF();
 
@@ -44,6 +48,7 @@ private:
     std::vector<std::pair<int64_t, CIFF>> ciffsWithDuration;
     bool valid;
     Endianess endianess;
+    std::vector<std::string> parseFails;
 };
 
 
