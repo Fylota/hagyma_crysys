@@ -37,20 +37,30 @@ TEST(DateValidatorTest, ValidDateTime) {
     ASSERT_TRUE(actual);
 }
 
-TEST(DateValidatorTest, InvalidYear) {
+TEST(DateValidatorTest, YearValidation) {
     //given
-    DateTime date;
-    date.year = 0;
-    date.month = 2;
-    date.day = 28;
-    date.hour = 23;
-    date.minute = 56;
+    DateTime invalidDate;
+    invalidDate.year = 1979;
+    invalidDate.month = 2;
+    invalidDate.day = 28;
+    invalidDate.hour = 23;
+    invalidDate.minute = 56;
+
+    DateTime validDate;
+    validDate.year = 1980;
+    validDate.month = 2;
+    validDate.day = 28;
+    validDate.hour = 23;
+    validDate.minute = 56;
+
 
     //when
-    bool actual = DateValidator::isValidDateTime(date);
+    bool actualInvalid = DateValidator::isValidDateTime(invalidDate);
+    bool actualValid = DateValidator::isValidDateTime(validDate);
 
     //then
-    ASSERT_FALSE(actual);
+    ASSERT_FALSE(actualInvalid);
+    ASSERT_TRUE(actualValid);
 }
 
 TEST(DateValidatorTest, InvalidFutureDate) {
