@@ -3,6 +3,7 @@ package com.example.hagyma.ui.gallery
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,7 +76,7 @@ class GalleryFragment : Fragment() {
                         }
                     }
                 } catch (e: Exception){
-
+                    e.message?.let { it1 -> Log.e(tag, it1) }
                 }
 
             }
