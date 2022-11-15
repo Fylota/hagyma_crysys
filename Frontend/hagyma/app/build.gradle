@@ -14,6 +14,7 @@ openApiGenerate {
     generatorName = "kotlin"
     inputSpec = "$rootDir\\app\\swagger.json".toString()
     outputDir = "$rootDir\\app".toString()
+    ignoreFileOverride = "$rootDir\\app\\.openapi.ignore".toString()
     apiPackage = "com.example.hagyma.database"
     invokerPackage = "org.openapi.example.invoker"
     modelPackage = "com.example.hagyma.database.model"
@@ -24,8 +25,9 @@ openApiGenerate {
     configOptions = [
             sourceFolder: "src\\main\\java",
             useCoroutines: "true",
-            useRxJava3: true,
-            omitGradleWrapper: true
+            useRxJava3: "true",
+            omitGradleWrapper: "true",
+            library: "jvm-okhttp4"
     ]
     globalProperties = [
             modelDocs: "false",
