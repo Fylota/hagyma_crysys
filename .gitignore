@@ -13,3 +13,7 @@ cmake-build-*/
 
 //CLion
 .idea/
+
+Backend/Backend/bin
+Backend/Backend/obj
+tempkey.jwk
