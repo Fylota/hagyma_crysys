@@ -35,7 +35,7 @@ public class AuthenticationController : ControllerBase
     [Route("login")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthUser))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [AllowAnonymous]
     public async Task<ActionResult<string>> Login([FromBody] LoginRequest loginRequest)
