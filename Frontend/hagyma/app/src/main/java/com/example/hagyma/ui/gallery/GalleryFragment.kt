@@ -14,9 +14,13 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.R
 import com.example.hagyma.api.AuthenticationApi
+import com.example.hagyma.api.CaffApi
+import com.example.hagyma.api.UserApi
 import com.example.hagyma.api.model.LoginRequest
 import com.example.hagyma.databinding.FragmentGalleryBinding
+import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.http.CustomClientFactory
+import com.example.hagyma.infrastructure.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -31,6 +35,7 @@ class GalleryFragment : Fragment() {
     private lateinit var galleryAdapter: GalleryAdapter
 
     private lateinit var authenticationApi: AuthenticationApi
+    private lateinit var userApi : UserApi
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +45,8 @@ class GalleryFragment : Fragment() {
         val galleryViewModel =
             ViewModelProvider(this).get(GalleryViewModel::class.java)
 
-        authenticationApi = AuthenticationApi("https://10.0.2.2:7226",CustomClientFactory().createNewNetworkModuleClient());
+        authenticationApi = ApiHelper.getAuthenticationApi()
+        userApi = ApiHelper.getUserApi()
 
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -52,10 +58,26 @@ class GalleryFragment : Fragment() {
         binding.searchButton.setOnClickListener {
             val handler = Handler(Looper.getMainLooper()!!)
             lifecycleScope.launch(Dispatchers.IO) {
-                var result = authenticationApi.authLoginPost(LoginRequest("admin@admin.com","Admin1!"))
-                handler.post {
-                    Toast.makeText(context,result,Toast.LENGTH_LONG).show()
+                try {
+                    var result = authenticationApi.authLoginPost(LoginRequest("admin@admin.com","Admin1!"))
+                    handler.post {
+                        Toast.makeText(context,result,Toast.LENGTH_LONG).show()
+                    }
+                    ApiClient.accessToken = result;
+                    try {
+                        var userinfowithAccessToken = userApi.apiUserGetUserGet();
+                        handler.post{
+                            Toast.makeText(context,"Try with accesstoken: ${userinfowithAccessToken.email}",Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception){
+                        handler.post{
+                            Toast.makeText(context,"Try with accesstoken: ${e.message}",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } catch (e: Exception){
+
                 }
+
             }
 
         }
