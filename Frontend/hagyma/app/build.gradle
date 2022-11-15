@@ -13,19 +13,18 @@ plugins {
 openApiGenerate {
     generatorName = "kotlin"
     inputSpec = "$rootDir\\app\\swagger.json".toString()
-    outputDir = "$rootDir\\app".toString()
+    outputDir = "$rootDir".toString()
     ignoreFileOverride = "$rootDir\\app\\.openapi.ignore".toString()
-    apiPackage = "com.example.hagyma.database"
-    invokerPackage = "org.openapi.example.invoker"
-    modelPackage = "com.example.hagyma.database.model"
+    apiPackage = "com.example.hagyma.api"
+    packageName = "com.example.hagyma"
+    modelPackage = "com.example.hagyma.api.model"
     generateModelDocumentation = false
     generateModelTests = false
     generateApiDocumentation = false
     generateApiTests = false
     configOptions = [
-            sourceFolder: "src\\main\\java",
+            sourceFolder: "app\\src\\main\\java",
             useCoroutines: "true",
-            useRxJava3: "true",
             omitGradleWrapper: "true",
             library: "jvm-okhttp4"
     ]
@@ -77,6 +76,11 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'com.google.guava:failureaccess:1.0.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.12.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'

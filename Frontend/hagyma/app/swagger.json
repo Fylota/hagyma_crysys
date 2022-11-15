@@ -25,7 +25,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthUser"
+                  "type": "string"
                 }
               }
             }
@@ -755,26 +755,6 @@
   },
   "components": {
     "schemas": {
-      "AuthRoles": {
-        "enum": [
-          "User",
-          "Admin"
-        ],
-        "type": "string"
-      },
-      "AuthUser": {
-        "type": "object",
-        "properties": {
-          "role": {
-            "$ref": "#/components/schemas/AuthRoles"
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CaffDetails": {
         "required": [
           "id",

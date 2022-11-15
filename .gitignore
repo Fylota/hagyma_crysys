@@ -17,3 +17,5 @@ cmake-build-*/
 Backend/Backend/bin
 Backend/Backend/obj
 tempkey.jwk
+Frontend/hagyma/.openapi-generator/FILES
+Frontend/hagyma/.openapi-generator/VERSION
