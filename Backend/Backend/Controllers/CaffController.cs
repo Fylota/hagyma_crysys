@@ -1,6 +1,7 @@
 ﻿using System.Net.Mime;
 using Backend.Extensions;
 using Backend.Models;
+using Backend.Models.Auth;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -75,7 +76,11 @@ public class CaffController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteImage([FromQuery] string imageId)
     {
-        return await Task.FromResult(Ok());
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
+        var image = await CaffService.DeleteImageAsync(imageId, userId, User.IsInRole(AuthRoles.Admin.ToString()));
+        if (image == null) return NotFound();
+        return Ok();
     }
 
     [HttpPost]

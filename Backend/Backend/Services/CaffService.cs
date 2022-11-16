@@ -46,10 +46,12 @@ public class CaffService : ICaffService
         return user.PurchasedImages.Any(pi => pi.Id == imageId) ? image.ToDetails() : null;
     }
 
-    public async Task<CaffDetails?> DeleteImageAsync(string imageId)
+    public async Task<CaffDetails?> DeleteImageAsync(string imageId ,string userId, bool isAdmin)
     {
+
         var image = await Context.Images.SingleOrDefaultAsync(i => i.Id == imageId);
         if (image == null) return null;
+        if (!isAdmin && image.OwnerId != userId) return null;
         image.IsDeleted = true;
         await Context.SaveChangesAsync();
         return image.ToDetails();
