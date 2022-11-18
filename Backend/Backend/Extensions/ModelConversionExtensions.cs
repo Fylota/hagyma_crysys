@@ -13,7 +13,7 @@ public static class ModelConversionExtensions
             Title = image.Title,
             Preview = image.Preview,
             Description = image.Description,
-            Comments = image.Comments.Select(c => c.ToModel()).ToList()
+            Comments = image.Comments?.Select(c => c.ToModel()).ToList() ?? new List<Comment>()
         };
     }
 
@@ -53,6 +53,15 @@ public static class ModelConversionExtensions
         {
             CreatedDate = DateTime.Now,
             Text = comment.Content
+        };
+    }
+
+    public static DbImage ToEntity(this CaffUploadRequest request)
+    {
+        return new DbImage()
+        {
+            Title = request.Title,
+            Description = request.Description,
         };
     }
 }

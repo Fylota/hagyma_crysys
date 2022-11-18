@@ -20,7 +20,7 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<DbUserInfo>().HasMany(u => u.PurchasedImages);
+        builder.Entity<DbUserInfo>().HasMany(u => u.PurchasedImages).WithMany(i => i.Buyers);
         builder.Entity<DbImage>().Property(i => i.IsDeleted).HasDefaultValue(false);
         builder.Entity<DbImage>().HasQueryFilter(p => !p.IsDeleted);
         SeedData(builder);
@@ -56,10 +56,10 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
         };
         using (var memStream = new MemoryStream())
         {
-            using (var dstream = new DeflateStream(memStream, CompressionLevel.Optimal))
+            using (var dStream = new DeflateStream(memStream, CompressionLevel.Optimal))
             {
                 var bytes = File.ReadAllBytes(caffFile);
-                dstream.WriteAsync(bytes, 0, bytes.Length).Wait();
+                dStream.WriteAsync(bytes, 0, bytes.Length).Wait();
             }
 
             image.CaffFile = memStream.ToArray();

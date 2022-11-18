@@ -178,11 +178,23 @@ public class CaffController : ControllerBase
     [Route("uploadImage")]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes("multipart/form-data")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CaffDetails))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UploadImage([FromBody] CaffUploadRequest uploadRequest)
+    public async Task<ActionResult<CaffDetails>> UploadImage([FromForm] CaffUploadRequest uploadRequest)
     {
-        return await Task.FromResult(Ok());
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
+        var file = Request.Form.Files.First();
+        try
+        {
+            var result = await CaffService.UploadImage(userId, uploadRequest);
+            return Created($"/api/caff/getImage?imageId={result.Id}", result);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("{}",e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
