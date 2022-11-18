@@ -3,19 +3,23 @@ using Backend.Dal.Entities;
 using Backend.Exceptions;
 using Backend.Extensions;
 using Backend.Models;
+using Backend.Models.Auth;
 using Backend.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
 public class UserService : IUserService
 {
-    public UserService(AppDbContext context)
+    public UserService(AppDbContext context, UserManager<DbUserInfo> userManager)
     {
         Context = context;
+        UserManager = userManager;
     }
 
     private AppDbContext Context { get; }
+    private UserManager<DbUserInfo> UserManager { get; }
 
     public async Task<List<User>> GetUsersAsync()
     {
@@ -26,6 +30,8 @@ public class UserService : IUserService
     {
         var user = await Context.Users.SingleOrDefaultAsync(u => u.Id == userId);
         if (user == null) throw new UserNotFoundException();
+        await UserManager.SetLockoutEnabledAsync(user, true);
+        await UserManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
         //TODO Figure out deleting;
         return user.ToModel();
     }
@@ -44,12 +50,13 @@ public class UserService : IUserService
         return user.ToModel();
     }
 
-    public async Task<User> UpdateUserAsync(string userId, User user)
+    public async Task<User> UpdateUserAsync(string userId, UserChangeRequest user)
     {
         var resultUser = await Context.Users.SingleOrDefaultAsync(u => u.Id == userId);
         if (resultUser == null) throw new UserNotFoundException();
-        //TODO Change Data
-        await Context.SaveChangesAsync();
+        var changeResult = await UserManager.ChangePasswordAsync(resultUser, user.CurrentPassword, user.NewPassword);
+        if (!changeResult.Succeeded)
+            throw new PasswordChangeException(changeResult.Errors.FirstOrDefault()!.Description);
         return resultUser.ToModel();
     }
 }

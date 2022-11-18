@@ -106,7 +106,7 @@ public class AuthenticationController : ControllerBase
     public async Task<ActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
         var registerResult =
-            await UserManager.CreateAsync(new DbUserInfo { Email = registerRequest.Email }, registerRequest.Password);
+            await UserManager.CreateAsync(new DbUserInfo { Email = registerRequest.Email, UserName = registerRequest.Username}, registerRequest.Password);
         if (registerResult.Succeeded) return Ok();
         return BadRequest(registerResult.Errors);
     }

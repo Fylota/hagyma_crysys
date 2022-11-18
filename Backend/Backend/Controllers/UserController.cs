@@ -1,9 +1,12 @@
 ﻿using System.Net.Mime;
+using Backend.Dal.Entities;
 using Backend.Exceptions;
 using Backend.Extensions;
 using Backend.Models;
+using Backend.Models.Auth;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -89,8 +92,23 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateUser(User user)
+    public async Task<ActionResult<User>> UpdateUser(UserChangeRequest user)
     {
-        return await Task.FromResult(Ok());
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
+        try
+        {
+            var result = await UserService.UpdateUserAsync(userId, user);
+            return Ok(result);
+        }
+        catch (UserNotFoundException)
+        {
+            return Unauthorized();
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("{}",e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
