@@ -24,6 +24,9 @@
     <string name="caff_desc_hint_text">Short description of the file...</string>
     <string name="attach_caff_btn">Attach CAFF file</string>
     <string name="save_btn">Save</string>
+    <string name="emailTitle">Email:</string>
+    <string name="dateTitle">Registration date:</string>
+    <string name="passwordTitle">New password:</string>
     <string name="cancel_btn">Cancel</string>
     <string name="upload_caff_btn">Upload CAFF</string>
     <string name="download_picture_button">Download CAFF</string>

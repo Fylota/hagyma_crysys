@@ -17,6 +17,7 @@ package com.example.hagyma.api.model
 
 
 import com.squareup.moshi.Json
+import java.util.*
 
 /**
  * 
@@ -27,16 +28,16 @@ import com.squareup.moshi.Json
  */
 
 
-data class User (
+data class User(
 
     @Json(name = "email")
-    val email: kotlin.String,
+    val email: String,
 
     @Json(name = "id")
-    val id: kotlin.String,
+    val id: UUID,
 
     @Json(name = "name")
-    val name: kotlin.String
+    val name: String
 
 )
 
