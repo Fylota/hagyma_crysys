@@ -1,12 +1,9 @@
-﻿using Backend.Dal.Entities;
+﻿using System.IO.Compression;
+using Backend.Dal.Entities;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.IO.Compression;
-using System.IO;
-using Microsoft.Extensions.Hosting;
-using System.Reflection.Emit;
 
 namespace Backend.Dal;
 
@@ -17,8 +14,9 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
     {
     }
 
-    public DbSet<DbImage> Images { get; set; }
     public DbSet<DbComment> Comments { get; set; }
+
+    public DbSet<DbImage> Images { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -42,19 +40,19 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
 
         var directory = Directory.GetCurrentDirectory();
 
-        var caffFile = Directory.GetFiles(directory,"*.caff").FirstOrDefault()!;
+        var caffFile = Directory.GetFiles(directory, "*.caff").FirstOrDefault()!;
         var previewFile = Directory.GetFiles(directory, "*.jpg").FirstOrDefault()!;
 
 
-        FileInfo caff = new FileInfo(caffFile);
-        var image = new DbImage()
+        var caff = new FileInfo(caffFile);
+        var image = new DbImage
         {
             Id = "IMAGEID",
             Description = "Descr",
             Title = "Title",
             UploadTime = DateTime.Now,
             OwnerId = dummyUser.Id,
-            CaffFileName = caff.Name,
+            CaffFileName = caff.Name
         };
         using (var memStream = new MemoryStream())
         {
@@ -71,7 +69,7 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
 
         builder.Entity<DbImage>().HasData(image);
 
-        var comment = new DbComment()
+        var comment = new DbComment
         {
             Id = "CommentID",
             UserId = dummyUser.Id,
@@ -81,7 +79,5 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
         };
 
         builder.Entity<DbComment>().HasData(comment);
-
-
     }
 }

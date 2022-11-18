@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Backend.Models.Auth;
+﻿using Backend.Models.Auth;
 using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Dal.Entities;

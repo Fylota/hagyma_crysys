@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Backend.Dal.Entities;
 
 namespace Backend.Models;
 
-public class Comment
+public class CommentRequest
 {
-    public DateTime? CreationTime { get; set; }
-
     [Required] public string Content { get; set; } = null!;
-    [Required] public string Id { get; set; } = null!;
-
 
 }

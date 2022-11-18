@@ -43,6 +43,8 @@ builder.Services.Configure<IdentityOptions>(
 builder.Services.AddHostedService<UserInit>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICaffService, CaffService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
@@ -71,7 +73,7 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        { jwtSecurityScheme, Array.Empty<string>() }
+        {jwtSecurityScheme, Array.Empty<string>()}
     });
 });
 builder.Services.AddSwaggerGenNewtonsoftSupport();
