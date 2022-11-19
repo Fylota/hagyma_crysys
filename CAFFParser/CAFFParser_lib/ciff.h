@@ -5,9 +5,11 @@
 #ifndef CAFFPARSER_CIFF_H
 #define CAFFPARSER_CIFF_H
 
+#ifndef SWIG
+    #include <string>
+    #include <vector>
+#endif
 
-#include <string>
-#include <vector>
 #include "library.h"
 #include "endianess.h"
 
