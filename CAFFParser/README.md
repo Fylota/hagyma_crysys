@@ -35,8 +35,8 @@ $> cmake . -D=CAFF_PARSER_LIBRARY_STATIC=OFF && make
 1. Download SWIG and set the necessary enviroment variables according to the `Building a SWIG library` section.
 2. Open the `CAFFParser` folder in Visual Studio
 3. Then you can set the previously mentioned options:
-![Open cmake config](doc/open_cmake_config.png)
-![Cmake config](doc/cmake_config.png)
+    ![Open cmake config](doc/open_cmake_config.png)
+    ![Cmake config](doc/cmake_config.png)
 4. After choosing the needed config you can build the solution
 
 ## Running
