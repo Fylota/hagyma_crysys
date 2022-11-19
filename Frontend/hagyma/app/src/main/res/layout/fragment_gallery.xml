@@ -15,7 +15,7 @@
         android:paddingBottom="18dp"
         android:text="@string/upload_picture_button"
         app:icon="@drawable/ic_upload"
-        android:backgroundTint="@color/teal_700"
+        android:backgroundTint="@color/dark_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

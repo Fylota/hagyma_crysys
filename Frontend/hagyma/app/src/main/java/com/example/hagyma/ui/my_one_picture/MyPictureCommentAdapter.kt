@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
@@ -12,6 +13,8 @@ import java.util.*
 
 class MyPictureCommentAdapter(private val context: Context?) :
     RecyclerView.Adapter<MyPictureCommentAdapter.SearchedPictureItemViewHolder>() {
+
+    private val isAdmin = true
 
     private val testListComments: List<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         listOf(
@@ -35,6 +38,7 @@ class MyPictureCommentAdapter(private val context: Context?) :
     }
 
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
+        holder.binding.btnDeleteComment.isVisible = isAdmin
         val currListItem = testListComments[position]
         holder.binding.tvCommentTime.text = currListItem.creationTime
         holder.binding.tvCommentText.text = currListItem.message

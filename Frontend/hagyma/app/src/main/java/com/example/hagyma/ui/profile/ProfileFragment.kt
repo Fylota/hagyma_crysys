@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.hagyma.R
 import com.example.hagyma.databinding.FragmentProfileBinding
+import java.util.*
 
 class ProfileFragment : Fragment() {
 
@@ -27,7 +28,10 @@ class ProfileFragment : Fragment() {
         val slideshowViewModel =
             ViewModelProvider(this).get(ProfileViewModel::class.java)
 
-        val userID = this.arguments?.getString("userID");
+        var userID = this.arguments?.getString("userID");
+        if(userID == null){ // Akkor nem admin van belepve es egy felhasznalo oldalara akar menni, hanem az adott user a sajat oldalara
+            userID = UUID.randomUUID().toString() // TODO: ez majd a bejelentkezett felhasznalo uuid-ja kell legyen
+        }
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
