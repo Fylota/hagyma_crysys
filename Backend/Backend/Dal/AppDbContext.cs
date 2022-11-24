@@ -23,6 +23,7 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
         builder.Entity<DbUserInfo>().HasMany(u => u.PurchasedImages).WithMany(i => i.Buyers);
         builder.Entity<DbImage>().Property(i => i.IsDeleted).HasDefaultValue(false);
         builder.Entity<DbImage>().HasQueryFilter(p => !p.IsDeleted);
+        builder.Entity<DbImage>().Property(i => i.SmallPreview).HasDefaultValue("");
         SeedData(builder);
 
         base.OnModelCreating(builder);

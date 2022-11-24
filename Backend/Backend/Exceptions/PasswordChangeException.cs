@@ -2,13 +2,11 @@
 
 public class PasswordChangeException : Exception
 {
-    public PasswordChangeException() : base()
+    public PasswordChangeException()
     {
-        
     }
 
     public PasswordChangeException(string message) : base(message)
     {
-        
     }
 }

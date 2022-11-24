@@ -40,32 +40,53 @@ public class CaffController : ControllerBase
         return result;
     }
 
-    [HttpGet]
-    [Route("downloadImage")]
-    [Produces("image/caff")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPost]
+    [Route("uploadImage")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CaffDetails))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<CaffDetails>> UploadImage([FromForm] CaffUploadRequest uploadRequest)
+    {
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
+        var file = Request.Form.Files.First();
+        try
+        {
+            var result = await CaffService.UploadImage(userId, uploadRequest);
+            if (result == null) return BadRequest();
+            return Created($"/api/caff/getImage?imageId={result.Id}", result);
+        }
+        catch (InvalidCaffException)
+        {
+            return BadRequest("Caff file is not valid");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("{}", e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPost]
+    [Route("addComment")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Comment))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DownloadImage([FromQuery] string imageId)
+    public async Task<ActionResult<Comment>> AddComment([FromQuery] string imageId, [FromBody] CommentRequest comment)
     {
         var userId = User.GetUserId();
         if (userId == null) return Unauthorized();
         try
         {
-            var result = await CaffService.DownloadImageAsync(imageId, userId);
-            return File(result.Item1, "image/caff", result.Item2);
+            var result = await CommentService.AddCommentAsync(imageId, userId, comment);
+            return Ok(result);
         }
         catch (ImageNotFoundException)
         {
             return NotFound("Image not found");
-        }
-        catch (UserNotFoundException)
-        {
-            return Unauthorized();
-        }
-        catch (NotAllowedException)
-        {
-            return Unauthorized();
         }
         catch (Exception e)
         {
@@ -108,33 +129,6 @@ public class CaffController : ControllerBase
         return await CaffService.GetUploadedImagesAsync(userId);
     }
 
-    [HttpPost]
-    [Route("addComment")]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Comment))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Comment>> AddComment([FromQuery] string imageId, [FromBody] CommentRequest comment)
-    {
-        var userId = User.GetUserId();
-        if (userId == null) return Unauthorized();
-        try
-        {
-            var result = await CommentService.AddCommentAsync(imageId, userId, comment);
-            return Ok(result);
-        }
-        catch (ImageNotFoundException)
-        {
-            return NotFound("Image not found");
-        }
-        catch (Exception e)
-        {
-            Logger.LogError("{}", e.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-
-    }
-
     [HttpDelete]
     [Route("deleteComment")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -174,26 +168,36 @@ public class CaffController : ControllerBase
         return Ok();
     }
 
-    [HttpPost]
-    [Route("uploadImage")]
-    [Produces(MediaTypeNames.Application.Json)]
-    [Consumes("multipart/form-data")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CaffDetails))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [HttpGet]
+    [Route("downloadImage")]
+    [Produces("image/caff")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<CaffDetails>> UploadImage([FromForm] CaffUploadRequest uploadRequest)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DownloadImage([FromQuery] string imageId)
     {
         var userId = User.GetUserId();
         if (userId == null) return Unauthorized();
-        var file = Request.Form.Files.First();
         try
         {
-            var result = await CaffService.UploadImage(userId, uploadRequest);
-            return Created($"/api/caff/getImage?imageId={result.Id}", result);
+            var result = await CaffService.DownloadImageAsync(imageId, userId);
+            return File(result.Item1, "image/caff", result.Item2);
+        }
+        catch (ImageNotFoundException)
+        {
+            return NotFound("Image not found");
+        }
+        catch (UserNotFoundException)
+        {
+            return Unauthorized();
+        }
+        catch (NotAllowedException)
+        {
+            return Unauthorized();
         }
         catch (Exception e)
         {
-            Logger.LogError("{}",e.Message);
+            Logger.LogError("{}", e.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

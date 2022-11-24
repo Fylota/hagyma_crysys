@@ -1,12 +1,10 @@
 ﻿using System.Net.Mime;
-using Backend.Dal.Entities;
 using Backend.Exceptions;
 using Backend.Extensions;
 using Backend.Models;
 using Backend.Models.Auth;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -22,8 +20,9 @@ public class UserController : ControllerBase
         Logger = logger;
     }
 
-    private IUserService UserService { get; }
     private ILogger<UserController> Logger { get; }
+
+    private IUserService UserService { get; }
 
     [HttpGet]
     [Route("getUsers")]
@@ -56,32 +55,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            Logger.LogError("{}",e.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-
-    }
-
-    [HttpDelete]
-    [Route("deleteUser")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [Authorize(Roles = "Admin")]
-    public async Task<ActionResult> DeleteUser([FromQuery] string userId)
-    {
-        try
-        {
-            await UserService.DeleteUserAsync(userId);
-            return Ok();
-        }
-        catch (UserNotFoundException)
-        {
-            return NotFound("User not found");
-        }
-        catch (Exception e)
-        {
-            Logger.LogError("{}",e.Message);
+            Logger.LogError("{}", e.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -107,7 +81,31 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            Logger.LogError("{}",e.Message);
+            Logger.LogError("{}", e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpDelete]
+    [Route("deleteUser")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> DeleteUser([FromQuery] string userId)
+    {
+        try
+        {
+            await UserService.DeleteUserAsync(userId);
+            return Ok();
+        }
+        catch (UserNotFoundException)
+        {
+            return NotFound("User not found");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("{}", e.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

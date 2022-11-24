@@ -23,7 +23,7 @@ public static class ModelConversionExtensions
         {
             Id = image.Id,
             Title = image.Title,
-            Preview = image.Preview
+            Preview = image.SmallPreview
         };
     }
 
@@ -37,19 +37,9 @@ public static class ModelConversionExtensions
         };
     }
 
-    public static User ToModel(this DbUserInfo dbUser)
-    {
-        return new User
-        {
-            Email = dbUser.Email,
-            Id = dbUser.Id,
-            Name = dbUser.UserName
-        };
-    }
-
     public static DbComment ToEntity(this CommentRequest comment)
     {
-        return new DbComment()
+        return new DbComment
         {
             CreatedDate = DateTime.Now,
             Text = comment.Content
@@ -58,10 +48,20 @@ public static class ModelConversionExtensions
 
     public static DbImage ToEntity(this CaffUploadRequest request)
     {
-        return new DbImage()
+        return new DbImage
         {
             Title = request.Title,
-            Description = request.Description,
+            Description = request.Description
+        };
+    }
+
+    public static User ToModel(this DbUserInfo dbUser)
+    {
+        return new User
+        {
+            Email = dbUser.Email,
+            Id = dbUser.Id,
+            Name = dbUser.UserName
         };
     }
 }

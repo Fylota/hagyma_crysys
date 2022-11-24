@@ -21,6 +21,13 @@ public class UserService : IUserService
     private AppDbContext Context { get; }
     private UserManager<DbUserInfo> UserManager { get; }
 
+    public async Task<DbUserInfo> GetUserByEmailAsync(string email)
+    {
+        var user = await Context.Users.SingleOrDefaultAsync(u => u.Email == email);
+        if (user == null) throw new UserNotFoundException();
+        return user;
+    }
+
     public async Task<List<User>> GetUsersAsync()
     {
         return await Context.Users.Select(u => u.ToModel()).ToListAsync();
@@ -34,13 +41,6 @@ public class UserService : IUserService
         await UserManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
         //TODO Figure out deleting;
         return user.ToModel();
-    }
-
-    public async Task<DbUserInfo> GetUserByEmailAsync(string email)
-    {
-        var user = await Context.Users.SingleOrDefaultAsync(u => u.Email == email);
-        if (user == null) throw new UserNotFoundException();
-        return user;
     }
 
     public async Task<User> GetUserByIdAsync(string userId)

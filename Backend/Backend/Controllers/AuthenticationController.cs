@@ -3,7 +3,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
-using Backend.Dal;
 using Backend.Dal.Entities;
 using Backend.Exceptions;
 using Backend.Helpers;
@@ -12,7 +11,6 @@ using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Controllers;
@@ -21,7 +19,8 @@ namespace Backend.Controllers;
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
-    public AuthenticationController(IConfiguration config, SignInManager<DbUserInfo> signInManager, UserManager<DbUserInfo> userManager, IUserService userService, ILogger<AuthenticationController> logger)
+    public AuthenticationController(IConfiguration config, SignInManager<DbUserInfo> signInManager,
+        UserManager<DbUserInfo> userManager, IUserService userService, ILogger<AuthenticationController> logger)
     {
         Config = config;
         SignInManager = signInManager;
@@ -29,11 +28,12 @@ public class AuthenticationController : ControllerBase
         UserService = userService;
         Logger = logger;
     }
+
     private IConfiguration Config { get; }
+    private ILogger<AuthenticationController> Logger { get; }
+    private IUserService UserService { get; }
     private SignInManager<DbUserInfo> SignInManager { get; }
     private UserManager<DbUserInfo> UserManager { get; }
-    private IUserService UserService { get; }
-    private ILogger<AuthenticationController> Logger { get; }
 
 
     [HttpPost]
@@ -78,10 +78,9 @@ public class AuthenticationController : ControllerBase
         }
         catch (Exception e)
         {
-            Logger.LogError("{}",e.Message);
+            Logger.LogError("{}", e.Message);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
-
     }
 
     [HttpGet]
@@ -106,7 +105,9 @@ public class AuthenticationController : ControllerBase
     public async Task<ActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
         var registerResult =
-            await UserManager.CreateAsync(new DbUserInfo { Email = registerRequest.Email, UserName = registerRequest.Username}, registerRequest.Password);
+            await UserManager.CreateAsync(
+                new DbUserInfo {Email = registerRequest.Email, UserName = registerRequest.Username},
+                registerRequest.Password);
         if (registerResult.Succeeded) return Ok();
         return BadRequest(registerResult.Errors);
     }
