@@ -5,7 +5,9 @@
 #ifndef CAFFPARSER_DATE_TIME_H
 #define CAFFPARSER_DATE_TIME_H
 
-#include <cstdint>
+#ifndef SWIG
+    #include <cstdint>
+#endif
 
 struct DateTime {
     uint16_t year = 0;

@@ -5,7 +5,6 @@
 #ifndef CAFFPARSER_CAFF_H
 #define CAFFPARSER_CAFF_H
 
-#include <string>
 #include "ciff.h"
 #include "date_time.h"
 #include "library.h"
