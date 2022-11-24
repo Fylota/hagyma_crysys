@@ -43,6 +43,38 @@
         }
       }
     },
+    "/auth/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/register": {
       "post": {
         "tags": [
@@ -74,14 +106,173 @@
         }
       }
     },
-    "/auth/logout": {
+    "/api/Caff/getImage": {
       "get": {
         "tags": [
-          "Authentication"
+          "Caff"
+        ],
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaffDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Caff/uploadImage": {
+      "post": {
+        "tags": [
+          "Caff"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "CaffFile",
+                  "Description",
+                  "Title"
+                ],
+                "type": "object",
+                "properties": {
+                  "CaffFile": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "Title": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "CaffFile": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Title": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaffDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Caff/addComment": {
+      "post": {
+        "tags": [
+          "Caff"
+        ],
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -97,6 +288,58 @@
                 }
               },
               "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Caff/listImages": {
+      "get": {
+        "tags": [
+          "Caff"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CaffItem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -161,276 +404,6 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Caff/listImages": {
-      "get": {
-        "tags": [
-          "Caff"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaffItem"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Caff/getImage": {
-      "get": {
-        "tags": [
-          "Caff"
-        ],
-        "parameters": [
-          {
-            "name": "imageId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CaffDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Caff/deleteImage": {
-      "delete": {
-        "tags": [
-          "Caff"
-        ],
-        "parameters": [
-          {
-            "name": "imageId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Caff/uploadImage": {
-      "post": {
-        "tags": [
-          "Caff"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/CaffUploadRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Caff/downloadImage": {
-      "get": {
-        "tags": [
-          "Caff"
-        ],
-        "parameters": [
-          {
-            "name": "imageId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "image/caff": {
-                "schema": {
-                  "$ref": "#/components/schemas/FileInfo"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "image/caff": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Caff/addComment": {
-      "post": {
-        "tags": [
-          "Caff"
-        ],
-        "parameters": [
-          {
-            "name": "imageId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Comment"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
@@ -521,6 +494,108 @@
         }
       }
     },
+    "/api/Caff/deleteImage": {
+      "delete": {
+        "tags": [
+          "Caff"
+        ],
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Caff/downloadImage": {
+      "get": {
+        "tags": [
+          "Caff"
+        ],
+        "parameters": [
+          {
+            "name": "imageId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "image/caff": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "image/caff": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Payment/purchase": {
       "post": {
         "tags": [
@@ -569,35 +644,6 @@
         }
       }
     },
-    "/api/User/getUser": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/User/getUsers": {
       "get": {
         "tags": [
@@ -630,6 +676,35 @@
         }
       }
     },
+    "/api/User/getUser": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/User/updateUser": {
       "put": {
         "tags": [
@@ -639,7 +714,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserChangeRequest"
               }
             }
           }
@@ -812,10 +887,6 @@
         },
         "additionalProperties": false
       },
-      "CaffUploadRequest": {
-        "type": "object",
-        "additionalProperties": false
-      },
       "Comment": {
         "required": [
           "content",
@@ -839,159 +910,15 @@
         },
         "additionalProperties": false
       },
-      "DirectoryInfo": {
-        "type": "object",
-        "properties": {
-          "parent": {
-            "$ref": "#/components/schemas/DirectoryInfo"
-          },
-          "root": {
-            "$ref": "#/components/schemas/DirectoryInfo"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "extension": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "exists": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "creationTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "creationTimeUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastAccessTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastAccessTimeUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastWriteTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastWriteTimeUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "linkTarget": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "attributes": {
-            "$ref": "#/components/schemas/FileAttributes"
-          }
-        },
-        "additionalProperties": false
-      },
-      "FileAttributes": {
-        "enum": [
-          "ReadOnly",
-          "Hidden",
-          "System",
-          "Directory",
-          "Archive",
-          "Device",
-          "Normal",
-          "Temporary",
-          "SparseFile",
-          "ReparsePoint",
-          "Compressed",
-          "Offline",
-          "NotContentIndexed",
-          "Encrypted",
-          "IntegrityStream",
-          "NoScrubData"
+      "CommentRequest": {
+        "required": [
+          "content"
         ],
-        "type": "string"
-      },
-      "FileInfo": {
         "type": "object",
         "properties": {
-          "length": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "directoryName": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "directory": {
-            "$ref": "#/components/schemas/DirectoryInfo"
-          },
-          "isReadOnly": {
-            "type": "boolean"
-          },
-          "fullName": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "extension": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "exists": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "creationTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "creationTimeUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastAccessTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastAccessTimeUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastWriteTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastWriteTimeUtc": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "linkTarget": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "attributes": {
-            "$ref": "#/components/schemas/FileAttributes"
+          "content": {
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1045,7 +972,8 @@
       "RegisterRequest": {
         "required": [
           "email",
-          "password"
+          "password",
+          "username"
         ],
         "type": "object",
         "properties": {
@@ -1055,6 +983,10 @@
             "format": "email"
           },
           "password": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "username": {
             "minLength": 1,
             "type": "string"
           }
@@ -1078,6 +1010,24 @@
             "type": "string"
           },
           "name": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserChangeRequest": {
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "newPassword": {
             "minLength": 1,
             "type": "string"
           }

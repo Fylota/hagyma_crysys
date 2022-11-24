@@ -21,6 +21,7 @@ import okhttp3.HttpUrl
 
 import com.example.hagyma.api.model.ProblemDetails
 import com.example.hagyma.api.model.User
+import com.example.hagyma.api.model.UserChangeRequest
 
 import com.squareup.moshi.Json
 
@@ -258,7 +259,7 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * 
      * 
-     * @param user  (optional)
+     * @param userChangeRequest  (optional)
      * @return void
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
@@ -267,8 +268,8 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * @throws ServerException If the API returns a server error response
      */
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun apiUserUpdateUserPut(user: User? = null) : Unit = withContext(Dispatchers.IO) {
-        val localVarResponse = apiUserUpdateUserPutWithHttpInfo(user = user)
+    suspend fun apiUserUpdateUserPut(userChangeRequest: UserChangeRequest? = null) : Unit = withContext(Dispatchers.IO) {
+        val localVarResponse = apiUserUpdateUserPutWithHttpInfo(userChangeRequest = userChangeRequest)
 
         return@withContext when (localVarResponse.responseType) {
             ResponseType.Success -> Unit
@@ -288,16 +289,16 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * 
      * 
-     * @param user  (optional)
+     * @param userChangeRequest  (optional)
      * @return ApiResponse<Unit?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun apiUserUpdateUserPutWithHttpInfo(user: User?) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
-        val localVariableConfig = apiUserUpdateUserPutRequestConfig(user = user)
+    suspend fun apiUserUpdateUserPutWithHttpInfo(userChangeRequest: UserChangeRequest?) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiUserUpdateUserPutRequestConfig(userChangeRequest = userChangeRequest)
 
-        return@withContext request<User, Unit>(
+        return@withContext request<UserChangeRequest, Unit>(
             localVariableConfig
         )
     }
@@ -305,11 +306,11 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * To obtain the request config of the operation apiUserUpdateUserPut
      *
-     * @param user  (optional)
+     * @param userChangeRequest  (optional)
      * @return RequestConfig
      */
-    fun apiUserUpdateUserPutRequestConfig(user: User?) : RequestConfig<User> {
-        val localVariableBody = user
+    fun apiUserUpdateUserPutRequestConfig(userChangeRequest: UserChangeRequest?) : RequestConfig<UserChangeRequest> {
+        val localVariableBody = userChangeRequest
         val localVariableQuery: MultiValueMap = mutableMapOf()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"

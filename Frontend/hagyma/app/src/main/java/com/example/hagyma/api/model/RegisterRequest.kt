@@ -23,6 +23,7 @@ import com.squareup.moshi.Json
  *
  * @param email 
  * @param password 
+ * @param username 
  */
 
 
@@ -32,7 +33,10 @@ data class RegisterRequest (
     val email: kotlin.String,
 
     @Json(name = "password")
-    val password: kotlin.String
+    val password: kotlin.String,
+
+    @Json(name = "username")
+    val username: kotlin.String
 
 )
 

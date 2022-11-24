@@ -21,22 +21,14 @@ import com.squareup.moshi.Json
 /**
  * 
  *
- * @param email 
- * @param id 
- * @param name 
+ * @param content 
  */
 
 
-data class User (
+data class CommentRequest (
 
-    @Json(name = "email")
-    val email: kotlin.String,
-
-    @Json(name = "id")
-    val id: kotlin.String,
-
-    @Json(name = "name")
-    val name: kotlin.String
+    @Json(name = "content")
+    val content: kotlin.String
 
 )
 

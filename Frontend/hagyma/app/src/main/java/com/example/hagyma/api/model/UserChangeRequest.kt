@@ -21,22 +21,18 @@ import com.squareup.moshi.Json
 /**
  * 
  *
- * @param email 
- * @param id 
- * @param name 
+ * @param currentPassword 
+ * @param newPassword 
  */
 
 
-data class User (
+data class UserChangeRequest (
 
-    @Json(name = "email")
-    val email: kotlin.String,
+    @Json(name = "currentPassword")
+    val currentPassword: kotlin.String,
 
-    @Json(name = "id")
-    val id: kotlin.String,
-
-    @Json(name = "name")
-    val name: kotlin.String
+    @Json(name = "newPassword")
+    val newPassword: kotlin.String
 
 )
 
