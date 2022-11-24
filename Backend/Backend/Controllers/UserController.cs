@@ -1,6 +1,8 @@
 ﻿using System.Net.Mime;
+using Backend.Exceptions;
 using Backend.Extensions;
 using Backend.Models;
+using Backend.Models.Auth;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,26 +14,15 @@ namespace Backend.Controllers;
 [Authorize]
 public class UserController : ControllerBase
 {
-    private IUserService UserService { get; }
-
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, ILogger<UserController> logger)
     {
         UserService = userService;
+        Logger = logger;
     }
 
-    [HttpGet]
-    [Route("getUser")]
-    [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<User>> GetUser()
-    {
-        var userId = User.GetUserId();
-        if (userId == null) return Unauthorized("Couldn't authenticate user");
-        var user = await UserService.GetUserByIdAsync(userId);
-        if (user == null) return Unauthorized("Couldn't authenticate user");
-        return Ok(user);
-    }
+    private ILogger<UserController> Logger { get; }
+
+    private IUserService UserService { get; }
 
     [HttpGet]
     [Route("getUsers")]
@@ -44,15 +35,55 @@ public class UserController : ControllerBase
         return await UserService.GetUsersAsync();
     }
 
+    [HttpGet]
+    [Route("getUser")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<User>> GetUser()
+    {
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized("Couldn't authenticate user");
+        try
+        {
+            var user = await UserService.GetUserByIdAsync(userId);
+            return Ok(user);
+        }
+        catch (UserNotFoundException)
+        {
+            return Unauthorized("Couldn't authenticate user");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("{}", e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
     [HttpPut]
     [Route("updateUser")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateUser(User user)
+    public async Task<ActionResult<User>> UpdateUser(UserChangeRequest user)
     {
-        return await Task.FromResult(Ok());
+        var userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
+        try
+        {
+            var result = await UserService.UpdateUserAsync(userId, user);
+            return Ok(result);
+        }
+        catch (UserNotFoundException)
+        {
+            return Unauthorized();
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("{}", e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpDelete]
@@ -63,6 +94,19 @@ public class UserController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteUser([FromQuery] string userId)
     {
-        return await Task.FromResult(Ok());
+        try
+        {
+            await UserService.DeleteUserAsync(userId);
+            return Ok();
+        }
+        catch (UserNotFoundException)
+        {
+            return NotFound("User not found");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("{}", e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
