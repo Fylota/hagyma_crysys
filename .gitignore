@@ -19,3 +19,9 @@ Backend/Backend/obj
 tempkey.jwk
 Frontend/hagyma/.openapi-generator/FILES
 Frontend/hagyma/.openapi-generator/VERSION
+/Backend/Backend/CAFFParser
+/CAFFParser/out/build/x64-Debug
+/CAFFParser/CMakeSettings.json
+/Backend/Backend/CAFFParser_lib.dll
+/Backend/Backend/CAFFParser_lib.ilk
+/Backend/Backend/CAFFParser_lib.pdb
