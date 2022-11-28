@@ -3,27 +3,31 @@ package com.example.hagyma
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.lifecycle.lifecycleScope
+
+import com.example.hagyma.api.AuthenticationApi
+import com.example.hagyma.api.UserApi
+import com.example.hagyma.api.model.LoginRequest
+import com.example.hagyma.api.model.RegisterRequest
 import com.example.hagyma.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationView
-import hu.bme.aut.android.onlab.BaseActivity
+import com.example.hagyma.helper.ApiHelper
+import com.example.hagyma.infrastructure.ApiClient
 import hu.bme.aut.android.onlab.extensions.validateNonEmpty
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : BaseActivity() {
 
 //    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var authenticationApi: AuthenticationApi
+    private lateinit var userApi : UserApi
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +37,8 @@ class MainActivity : BaseActivity() {
 //        )
 //        setTheme(currentTheme)
         super.onCreate(savedInstanceState)
+        authenticationApi = ApiHelper.getAuthenticationApi()
+        userApi = ApiHelper.getUserApi()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -53,18 +59,67 @@ class MainActivity : BaseActivity() {
 //        }
     }
 
-    // If someone wants to registrate then the application calls this function
+    // If someone wants to register then the application calls this function
     private fun registerClick() {
 
         val v = LayoutInflater.from(this).inflate(R.layout.registration, null)
 
         val email = v.findViewById<EditText>(R.id.etregEmail)
+        val username = v.findViewById<EditText>(R.id.etregUsername)
         val pass1 = v.findViewById<EditText>(R.id.etregPassword)
         val pass2 = v.findViewById<EditText>(R.id.etregPassword2)
         val add_dialog = AlertDialog.Builder(this)
         add_dialog.setView(v)
 
         add_dialog.setPositiveButton("Ok") { dialog, _ ->  // TODO: After validation we save the new user data to the DB
+            val handler = Handler(Looper.getMainLooper()!!)
+            if (!validateRegisterForm(email, username, pass1, pass2)) {
+                Toast.makeText(this, "Invalid form", Toast.LENGTH_SHORT).show()
+            } else {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val result = authenticationApi.authRegisterPost(
+                            RegisterRequest(
+                                email.text.toString(),
+                                pass1.text.toString(),
+                                username.text.toString()
+                            )
+                        )
+                        handler.post {
+                            Toast.makeText(
+                                baseContext,
+                                "Registration successful!, ${result.toString()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        try {
+                            val userInfo = userApi.apiUserGetUserGet()
+                        } catch (e: Exception) {
+                            handler.post {
+                                Toast.makeText(
+                                    baseContext,
+                                    "Registration failed!, ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                onLoginFailed()
+                            }
+                        }
+                        handler.post {
+                            onLoginSuccess()
+                        }
+                    } catch (e: Exception) {
+                        e.message?.let { it1 -> Log.e("", it1) }
+                        handler.post {
+                            Toast.makeText(
+                                baseContext,
+                                "Registration failed!, ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            onLoginFailed()
+                        }
+                    }
+                }
+            }
 //            if (email.validateNonEmpty() && pass1.validateNonEmpty() && pass2.validateNonEmpty() && pass1.text.toString() == pass2.text.toString()) {
 //                firebaseAuth
 //                    .createUserWithEmailAndPassword(email.text.toString(), pass1.text.toString())
@@ -120,10 +175,41 @@ class MainActivity : BaseActivity() {
     }
 
     private fun loginClick() { // TODO: The real login with check the given username/email and password
-        startActivity(Intent(this@MainActivity, SecondActivity::class.java))
-//        if (!validateForm()) {
-//            return
-//        }
+
+        if (!validateForm()) {
+            onLoginFailed()
+            return
+        }
+        binding.btnLogin.isEnabled = false
+        val email = findViewById<EditText>(R.id.etEmail).text.toString()
+        val password = findViewById<EditText>(R.id.etPassword).text.toString()
+        showProgressDialog()
+
+
+        val handler = Handler(Looper.getMainLooper()!!)
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val result = authenticationApi.authLoginPost(LoginRequest(email,password))
+                ApiClient.accessToken = result
+                try {
+                    val userInfo = userApi.apiUserGetUserGet()
+                } catch (e: Exception){
+                    handler.post{
+                        onLoginFailed()
+                    }
+                }
+                handler.post{
+                    onLoginSuccess()
+                }
+            } catch (e: Exception){
+                e.message?.let { it1 -> Log.e("", it1) }
+                handler.post{
+                    onLoginFailed()
+                }
+            }
+        }
+    }
+
 //
 //        showProgressDialog()
 
@@ -139,7 +225,6 @@ class MainActivity : BaseActivity() {
 //
 //                toast(exception.localizedMessage)
 //            }
-    }
 
 
     private fun validateForm(): Boolean = binding.etEmail.validateNonEmpty()
@@ -183,4 +268,26 @@ class MainActivity : BaseActivity() {
 //        val navController = findNavController(R.id.nav_host_fragment_content_main)
 //        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
 //    }
+
+    private fun validateRegisterForm(email: EditText, username: EditText, pass1: EditText, pass2: EditText): Boolean =
+        email.validateNonEmpty() &&
+        username.validateNonEmpty() &&
+        pass1.validateNonEmpty() &&
+        pass1.text.toString() == pass2.text.toString()
+
+    private fun onLoginSuccess() {
+        hideProgressDialog()
+        binding.btnLogin.isEnabled = true
+        Toast.makeText(baseContext, "Login Success", Toast.LENGTH_LONG).show()
+        startActivity(Intent(baseContext, SecondActivity::class.java))
+    }
+
+    private fun onLoginFailed() {
+        hideProgressDialog()
+        Toast.makeText(baseContext, "Login failed", Toast.LENGTH_LONG).show()
+        binding.btnLogin.isEnabled = true
+    }
+
+    private fun onRegisterSuccess() {}
+    private fun onRegisterFailed() {}
 }

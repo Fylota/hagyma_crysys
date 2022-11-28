@@ -1,4 +1,4 @@
-package hu.bme.aut.android.onlab
+package com.example.hagyma
 
 import android.app.ProgressDialog
 import android.widget.Toast
