@@ -54,18 +54,16 @@ class SecondActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         navView.setNavigationItemSelectedListener(this)
 
         // Hide and disable users menu group when the logged in profile is not admin.
-        // TODO get isAdmin from logged in user.
 
-        var isAdmin: Boolean
-        try {
-            val token = ApiClient.accessToken ?: ""
-            val jwt = JWT(token)
-            val role = jwt.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role").asString()
+        val isAdmin: Boolean = try {
+            val jwt = ApiClient.accessToken?.let { JWT(it) }
+            val role = jwt?.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+                ?.asString()
 
-            isAdmin = role == "Admin"
+            role == "Admin"
         } catch (e: Exception) {
             e.message?.let { it1 -> Log.e("", it1) }
-            isAdmin = false
+            false
         }
 
         navView.menu.setGroupVisible(R.id.group_admin, isAdmin)

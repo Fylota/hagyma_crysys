@@ -25,26 +25,38 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val slideshowViewModel =
+        val viewModel =
             ViewModelProvider(this).get(ProfileViewModel::class.java)
 
-        var userID = this.arguments?.getString("userID");
-        if(userID == null){ // Akkor nem admin van belepve es egy felhasznalo oldalara akar menni, hanem az adott user a sajat oldalara
-            userID = UUID.randomUUID().toString() // TODO: ez majd a bejelentkezett felhasznalo uuid-ja kell legyen
+        var userID = this.arguments?.getString("userID")
+        if(userID == null) { // Akkor nem admin van belepve es egy felhasznalo oldalara akar menni, hanem az adott user a sajat oldalara
+            userID = UUID.randomUUID().toString()
+            viewModel.userId.observe(viewLifecycleOwner) {
+                userID = it
+            }
         }
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textProfile
-//        slideshowViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
-        binding.tvUsername.text = userID;
+        val textViewUsername: TextView = binding.tvUsername
+        viewModel.userName.observe(viewLifecycleOwner) {
+            textViewUsername.text = it
+        }
+
+        val textViewEmail: TextView = binding.tvEmail
+        viewModel.email.observe(viewLifecycleOwner) {
+            textViewEmail.text = it
+        }
+
+        val textViewDate: TextView = binding.tvRegistrationDate
+        viewModel.regDate.observe(viewLifecycleOwner) {
+            textViewDate.text = it
+        }
 
         binding.editButton.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString("editing_userid", userID);
+            bundle.putString("editing_userid", userID)
             root.findNavController().navigate(R.id.action_nav_profile_to_nav_edit_profile, bundle)
         }
 
