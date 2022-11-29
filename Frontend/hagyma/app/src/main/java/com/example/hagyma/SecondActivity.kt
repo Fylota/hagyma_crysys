@@ -2,7 +2,7 @@ package com.example.hagyma
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -12,21 +12,30 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.auth0.android.jwt.JWT
+import com.example.hagyma.api.AuthenticationApi
+import com.example.hagyma.api.UserApi
 import com.example.hagyma.databinding.ActivitySecondBinding
+import com.example.hagyma.helper.ApiHelper
+import com.example.hagyma.infrastructure.ApiClient
 import com.google.android.material.navigation.NavigationView
+
 
 class SecondActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivitySecondBinding
+    private lateinit var authenticationApi: AuthenticationApi
+    private lateinit var userApi : UserApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        authenticationApi = ApiHelper.getAuthenticationApi()
+        userApi = ApiHelper.getUserApi()
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //val isAdmin = false;
         setSupportActionBar(binding.appBarMain.toolbar)
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -46,14 +55,22 @@ class SecondActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         // Hide and disable users menu group when the logged in profile is not admin.
         // TODO get isAdmin from logged in user.
-        val isAdmin = true;
+
+        var isAdmin: Boolean
+        try {
+            val token = ApiClient.accessToken ?: ""
+            val jwt = JWT(token)
+            val role = jwt.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role").asString()
+
+            isAdmin = role == "Admin"
+        } catch (e: Exception) {
+            e.message?.let { it1 -> Log.e("", it1) }
+            isAdmin = false
+        }
+
         navView.menu.setGroupVisible(R.id.group_admin, isAdmin)
         navView.menu.setGroupEnabled(R.id.group_admin, isAdmin)
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        return true
-//    }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -79,7 +96,7 @@ class SecondActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.action_global_nav_admin_users)
             }
             R.id.nav_logout -> {
-                // TODO Logout!!
+                ApiClient.accessToken = null
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
