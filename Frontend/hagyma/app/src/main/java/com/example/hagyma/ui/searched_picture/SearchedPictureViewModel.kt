@@ -17,6 +17,7 @@ import java.time.Instant.now
 import java.util.*
 import androidx.lifecycle.lifecycleScope
 import com.example.hagyma.api.model.CommentRequest
+import kotlinx.coroutines.withContext
 import java.time.OffsetDateTime
 
 class SearchedPictureViewModel : ViewModel()  {
@@ -31,8 +32,9 @@ class SearchedPictureViewModel : ViewModel()  {
 
         val caffApi = ApiHelper.getCaffApi()
         try {
-            _caff.value = caffApi.apiCaffGetImageGet(uuid)
-
+            withContext(Dispatchers.Main){
+                _caff.value = caffApi.apiCaffGetImageGet(uuid)
+            }
             // TODO: kep berakasa
         }catch (e:Exception){
             System.out.println("SearchedPicture getCaff " + e)
