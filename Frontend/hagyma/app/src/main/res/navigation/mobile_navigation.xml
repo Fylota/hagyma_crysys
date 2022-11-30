@@ -58,6 +58,18 @@
         <action
             android:id="@+id/action_nav_profile_to_nav_edit_profile"
             app:destination="@id/nav_edit_profile" />
+        <argument
+            android:name="userName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="email"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="regDate"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -152,5 +164,20 @@
             app:destination="@id/nav_profile"
             app:popUpTo="@id/nav_profile"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_nav_edit_profile_to_nav_admin_users"
+            app:destination="@id/nav_admin_users" />
+        <argument
+            android:name="editing_userName"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="editing_email"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="editing_regDate"
+            app:argType="string"
+            app:nullable="true" />
     </fragment><action android:id="@+id/action_global_nav_profile" app:destination="@id/nav_profile"/><action android:id="@+id/action_global_nav_gallery" app:destination="@id/nav_gallery"/><action android:id="@+id/action_global_nav_my_pictures" app:destination="@id/nav_my_pictures"/><action android:id="@+id/action_global_nav_purchased_pictures" app:destination="@id/nav_purchased_pictures"/><action android:id="@+id/action_global_nav_admin_users" app:destination="@id/nav_admin_users"/>
 </navigation>
