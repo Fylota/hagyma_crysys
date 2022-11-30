@@ -836,6 +836,10 @@
             "type": "string",
             "nullable": true
           },
+          "uploadTime": {
+            "type": "string",
+            "format": "date-time"
+          },
           "id": {
             "minLength": 1,
             "type": "string"
@@ -984,7 +988,8 @@
         "required": [
           "email",
           "id",
-          "name"
+          "name",
+          "registrationDate"
         ],
         "type": "object",
         "properties": {
@@ -999,6 +1004,10 @@
           "name": {
             "minLength": 1,
             "type": "string"
+          },
+          "registrationDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

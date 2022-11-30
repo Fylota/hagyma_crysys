@@ -24,6 +24,7 @@ import com.squareup.moshi.Json
  * @param email 
  * @param id 
  * @param name 
+ * @param registrationDate 
  */
 
 
@@ -36,7 +37,10 @@ data class User (
     val id: kotlin.String,
 
     @Json(name = "name")
-    val name: kotlin.String
+    val name: kotlin.String,
+
+    @Json(name = "registrationDate")
+    val registrationDate: java.time.OffsetDateTime
 
 )
 
