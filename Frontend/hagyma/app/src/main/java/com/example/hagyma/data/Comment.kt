@@ -6,6 +6,7 @@ import java.util.*
 data class Comment (
     val uuid: String,
     val creatorID: String,
+    val creator: String,
     val creationTime: OffsetDateTime?,
     val caffFileID: String,
     val content: String,
