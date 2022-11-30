@@ -103,12 +103,19 @@ class GalleryFragment : Fragment() {
 
     fun searchRefreshList(keyString: String){
         if (keyString != ""){
-            if(galleryAdapter.itemCount > 0){
-                galleryAdapter.clearList()
-            }
+//            if(galleryAdapter.itemCount > 0){
+//                galleryAdapter.clearList()
+//            }
+            val actualItems = galleryAdapter.getActualPictures()
             galleryAdapter.getOriginalPictures().forEach { originalPicture ->
                 if (originalPicture.name.contains(keyString)) {
-                    galleryAdapter.addFile(originalPicture)
+                    if(!actualItems.contains(originalPicture)){
+                        galleryAdapter.addFile(originalPicture)
+                    }
+                } else {
+                    if(actualItems.contains(originalPicture)){
+                        galleryAdapter.deleteFile(originalPicture)
+                    }
                 }
             }
         }

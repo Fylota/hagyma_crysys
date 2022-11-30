@@ -50,9 +50,9 @@ class GalleryAdapter(private val context: Context?) :
         return listItems.size
     }
 
-    fun getOriginalCount(): Int {
-        return originalPictures.size
-    }
+//    fun getOriginalCount(): Int {
+//        return originalPictures.size
+//    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun addInitFile(newItem: ListItem){
@@ -67,9 +67,9 @@ class GalleryAdapter(private val context: Context?) :
         notifyDataSetChanged()
     }
 
-    fun clearList() {
-        listItems = mutableListOf()
-    }
+//    fun clearList() {
+//        listItems = mutableListOf()
+//    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun deleteFile(file: ListItem){
@@ -79,6 +79,10 @@ class GalleryAdapter(private val context: Context?) :
 
     fun getOriginalPictures(): MutableList<ListItem>{
         return originalPictures
+    }
+
+    fun getActualPictures(): MutableList<ListItem>{
+        return listItems
     }
 
 //    @SuppressLint("NotifyDataSetChanged")
