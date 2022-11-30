@@ -16,15 +16,7 @@ class GalleryAdapter(private val context: Context?) :
     RecyclerView.Adapter<GalleryAdapter.GalleryItemViewHolder>() {
 
     private val originalPictures: MutableList<ListItem> = mutableListOf()
-    private var listItems: MutableList<ListItem> = mutableListOf()/*listOf(
-        ListItem("test 1", UUID.randomUUID(), UUID.randomUUID(), "picture1"),
-        ListItem("test 2", UUID.randomUUID(), UUID.randomUUID(), "picture2"),
-        ListItem("test 3", UUID.randomUUID(), UUID.randomUUID(), "picture3"),
-        ListItem("test 4", UUID.randomUUID(), UUID.randomUUID(), "picture4"),
-        ListItem("test 5", UUID.randomUUID(), UUID.randomUUID(), "picture5"),
-        ListItem("test 6", UUID.randomUUID(), UUID.randomUUID(), "picture6"),
-        ListItem("test 7", UUID.randomUUID(), UUID.randomUUID(), "picture7"),
-    );*/
+    private var listItems: MutableList<ListItem> = mutableListOf()
 
     class GalleryItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root){}
 
@@ -35,7 +27,7 @@ class GalleryAdapter(private val context: Context?) :
     }
 
     override fun onBindViewHolder(holder: GalleryItemViewHolder, position: Int) {
-        var currListItem = listItems[position]
+        val currListItem = listItems[position]
         holder.binding.let { binding ->
             binding.tvPictureName.text = currListItem.name
         }
@@ -50,10 +42,6 @@ class GalleryAdapter(private val context: Context?) :
         return listItems.size
     }
 
-//    fun getOriginalCount(): Int {
-//        return originalPictures.size
-//    }
-
     @SuppressLint("NotifyDataSetChanged")
     fun addInitFile(newItem: ListItem){
         listItems.add(newItem)
@@ -66,10 +54,6 @@ class GalleryAdapter(private val context: Context?) :
         listItems.add(newItem)
         notifyDataSetChanged()
     }
-
-//    fun clearList() {
-//        listItems = mutableListOf()
-//    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun deleteFile(file: ListItem){
@@ -84,15 +68,4 @@ class GalleryAdapter(private val context: Context?) :
     fun getActualPictures(): MutableList<ListItem>{
         return listItems
     }
-
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun searchRefreshList(keyString: String){
-//        listItems = allPictures
-//        listItems.forEach { item ->
-//            if (!item.name.contains(keyString)) {
-//                listItems.remove(item)
-//                notifyDataSetChanged()
-//            }
-//        }
-//    }
 }

@@ -25,6 +25,7 @@ import com.example.hagyma.infrastructure.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 class GalleryFragment : Fragment() {
 
@@ -103,12 +104,9 @@ class GalleryFragment : Fragment() {
 
     fun searchRefreshList(keyString: String){
         if (keyString != ""){
-//            if(galleryAdapter.itemCount > 0){
-//                galleryAdapter.clearList()
-//            }
             val actualItems = galleryAdapter.getActualPictures()
             galleryAdapter.getOriginalPictures().forEach { originalPicture ->
-                if (originalPicture.name.contains(keyString)) {
+                if (originalPicture.name.lowercase(Locale.ROOT).contains(keyString.lowercase(Locale.ROOT))) {
                     if(!actualItems.contains(originalPicture)){
                         galleryAdapter.addFile(originalPicture)
                     }

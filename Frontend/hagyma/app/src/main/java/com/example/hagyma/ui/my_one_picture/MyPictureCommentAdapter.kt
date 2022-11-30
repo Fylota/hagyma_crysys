@@ -16,15 +16,16 @@ class MyPictureCommentAdapter(private val context: Context?) :
 
     private val isAdmin = true
 
-    private val testListComments: List<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        listOf(
+    private val testListComments: MutableList<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    mutableListOf()
+    /*listOf(
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment1"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment2"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment3"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment4"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment5"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment6"),
-        )
+        )*/
     } else {
         TODO("VERSION.SDK_INT < O")
     };
@@ -40,8 +41,8 @@ class MyPictureCommentAdapter(private val context: Context?) :
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
         holder.binding.btnDeleteComment.isVisible = isAdmin
         val currListItem = testListComments[position]
-        holder.binding.tvCommentTime.text = currListItem.creationTime
-        holder.binding.tvCommentText.text = currListItem.message
+        holder.binding.tvCommentTime.text = currListItem.creationTime.toString()
+        holder.binding.tvCommentText.text = currListItem.content
     }
 
     override fun getItemCount(): Int {

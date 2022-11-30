@@ -1,5 +1,6 @@
 package com.example.hagyma.ui.searched_picture
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
@@ -7,22 +8,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
-import com.example.hagyma.databinding.FragmentSearchedPictureBinding
 import java.time.LocalDate
 import java.util.*
 
 class CommentAdapter(private val context: Context?) :
     RecyclerView.Adapter<CommentAdapter.SearchedPictureItemViewHolder>() {
 
-    private val testListComments: List<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        listOf(
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment1\nline2\nline3"),
+    private val commentsList: MutableList<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        mutableListOf()
+    /*listOf(
+            Comment(UUID.randomUUID().toString(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment1\nline2\nline3"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment2"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment3"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment4"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment5"),
             Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment6"),
-        )
+        )*/
     } else {
         TODO("VERSION.SDK_INT < O")
     };
@@ -36,12 +37,18 @@ class CommentAdapter(private val context: Context?) :
     }
 
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
-        val currListItem = testListComments[position]
-        holder.binding.tvCommentTime.text = currListItem.creationTime
-        holder.binding.tvCommentText.text = currListItem.message
+        val currListItem = commentsList[position]
+        holder.binding.tvCommentTime.text = currListItem.creationTime.toString()
+        holder.binding.tvCommentText.text = currListItem.content
     }
 
     override fun getItemCount(): Int {
-        return testListComments.size;
+        return commentsList.size;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addComment(newComment: Comment){
+        commentsList.add(newComment)
+        notifyDataSetChanged()
     }
 }
