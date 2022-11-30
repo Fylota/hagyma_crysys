@@ -13,7 +13,8 @@ public static class ModelConversionExtensions
             Title = image.Title,
             Preview = image.Preview,
             Description = image.Description,
-            Comments = image.Comments?.Select(c => c.ToModel()).ToList() ?? new List<Comment>()
+            Comments = image.Comments?.Select(c => c.ToModel()).ToList() ?? new List<Comment>(),
+            UploadTime = image.UploadTime
         };
     }
 
@@ -61,7 +62,8 @@ public static class ModelConversionExtensions
         {
             Email = dbUser.Email,
             Id = dbUser.Id,
-            Name = dbUser.UserName
+            Name = dbUser.UserName,
+            RegistrationDate = dbUser.RegistrationDate,
         };
     }
 }

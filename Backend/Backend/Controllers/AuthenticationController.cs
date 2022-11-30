@@ -58,6 +58,7 @@ public class AuthenticationController : ControllerBase
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToEpochTime().ToString()),
                 new Claim(Constants.UserId, user.Id),
+                new Claim(Constants.RegistrationDate, user.RegistrationDate.ToEpochTime().ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
@@ -107,7 +108,7 @@ public class AuthenticationController : ControllerBase
     {
         var registerResult =
             await UserManager.CreateAsync(
-                new DbUserInfo {Email = registerRequest.Email, UserName = registerRequest.Username},
+                new DbUserInfo {Email = registerRequest.Email, UserName = registerRequest.Username, RegistrationDate = DateTime.Now},
                 registerRequest.Password);
         if (registerResult.Succeeded) return Ok();
         return BadRequest(registerResult.Errors);

@@ -63,7 +63,8 @@ public class UserController : ControllerBase
     [HttpPut]
     [Route("updateUser")]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<User>> UpdateUser(UserChangeRequest user)
@@ -91,9 +92,10 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public async Task<ActionResult> DeleteUser([FromQuery] string userId)
     {
+        if (!User.IsInRole(AuthRoles.Admin.ToString()) && User.GetUserId() != userId) return Unauthorized();
         try
         {
             await UserService.DeleteUserAsync(userId);
