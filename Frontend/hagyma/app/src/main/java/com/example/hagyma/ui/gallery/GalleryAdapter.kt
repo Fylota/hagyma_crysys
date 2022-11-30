@@ -3,7 +3,6 @@ package com.example.hagyma.ui.gallery
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Base64
 import android.view.LayoutInflater
@@ -13,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hagyma.R
 import com.example.hagyma.data.ListItem
 import com.example.hagyma.databinding.PictureItemBinding
-import java.io.ByteArrayInputStream
-import java.util.*
 
 class GalleryAdapter(private val context: Context?) :
     RecyclerView.Adapter<GalleryAdapter.GalleryItemViewHolder>() {
@@ -35,18 +32,10 @@ class GalleryAdapter(private val context: Context?) :
         holder.binding.let { binding ->
             binding.tvPictureName.text = currListItem.name
 
+            val encodedString = Base64.decode(currListItem.picture,Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(encodedString,0,encodedString.size)
+            binding.ivPicture.setImageBitmap(bitmap)
 
-            val decodedString = Base64.decode(currListItem.picture, Base64.DEFAULT)
-            val decodedByte = BitmapFactory.decodeByteArray(decodedString,0,decodedString.size)
-
-            binding.ivPicture.setImageBitmap(decodedByte)
-
-//            binding.ivPicture.setImageDrawable(
-//                BitmapDrawable(
-//                    context?.resources,
-//                    ByteArrayInputStream(Base64.decode(currListItem.picture.toByteArray(), Base64.DEFAULT))
-//                )
-//            )
         }
         holder.binding.ivCheckPictureBtn.setOnClickListener { view ->
             val bundle = Bundle()
