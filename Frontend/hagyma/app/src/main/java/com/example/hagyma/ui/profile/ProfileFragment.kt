@@ -104,14 +104,10 @@ class ProfileFragment : Fragment() {
         binding.deleteProfileButton.setOnClickListener {
             val toast = Toast.makeText(context, "Deleting user...", Toast.LENGTH_SHORT)
             toast.show()
-            val handler = Handler(Looper.getMainLooper()!!)
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     val result = userApi.apiUserDeleteUserDelete(userID)
-                    ApiClient.accessToken = null
-                    handler.post {
-                        root.findNavController().navigate(R.id.action_nav_edit_profile_to_nav_admin_users)
-                    }
+                    root.findNavController().navigate(R.id.action_nav_profile_to_nav_admin_users)
                 } catch (e: Exception){
                     e.message?.let { it1 -> Log.e(tag, it1) }
                 }
