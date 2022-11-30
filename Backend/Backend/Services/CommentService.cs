@@ -26,7 +26,7 @@ public class CommentService : ICommentService
 
     public async Task<Comment> AddCommentAsync(string imageId, string userId, CommentRequest comment)
     {
-        var image = await Context.Images.SingleOrDefaultAsync(i => i.Id == imageId);
+        var image = await Context.Images.Include(i => i.Comments).SingleOrDefaultAsync(i => i.Id == imageId);
         if (image == null) throw new ImageNotFoundException();
         var dbComment = comment.ToEntity();
         dbComment.UserId = userId;
