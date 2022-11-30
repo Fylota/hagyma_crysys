@@ -61,7 +61,8 @@ public static class ModelConversionExtensions
         {
             Email = dbUser.Email,
             Id = dbUser.Id,
-            Name = dbUser.UserName
+            Name = dbUser.UserName,
+            RegistrationDate = dbUser.RegistrationDate,
         };
     }
 }
