@@ -33,6 +33,11 @@ class SearchedPictureFragment: Fragment() {
 
     private val binding get() = _binding!!
 
+    private var _viewModel: SearchedPictureViewModel?=null
+
+    private val viewModel
+        get() = _viewModel!!
+
     private lateinit var commentAdapter: CommentAdapter
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -41,12 +46,28 @@ class SearchedPictureFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val searchedPictureViewModel =
-            ViewModelProvider(this).get(SearchedPictureViewModel::class.java)
 
         val searchedPictureUUID = this.arguments?.getString("searched_picture_uuid")  // TODO hasznalni
 
         _binding = FragmentSearchedPictureBinding.inflate(inflater, container, false)
+        _viewModel = ViewModelProvider(requireActivity()).get(SearchedPictureViewModel::class.java)
+
+        viewModel.caff.observe(viewLifecycleOwner){
+            binding.textPictureName.text = it.title
+
+            commentAdapter.clear()
+            it.comments?.forEach { comment ->
+                commentAdapter.addComment(
+                    Comment(comment.id, viewModel.userId.toString(),
+                        viewModel.userName.toString(), comment.creationTime, it.id, comment.content)
+                )
+            }
+            val decodedString = Base64.decode(it.preview.toByteArray(), Base64.DEFAULT)
+            val decodedByte = BitmapFactory.decodeByteArray(decodedString,0,decodedString.size)
+
+            binding.ivPicture.setImageBitmap(decodedByte)
+        }
+
         val root: View = binding.root
 
 //        binding.textPictureName.text = searchedPictureUUID  // TODO majd nev db-bol
@@ -55,16 +76,18 @@ class SearchedPictureFragment: Fragment() {
         binding.rvComments.adapter = commentAdapter
         binding.rvComments.layoutManager = LinearLayoutManager(this.context)
 
+
+
         lifecycleScope.launch(Dispatchers.IO) {
             // Get CAFF File
-            initCAFFFile(searchedPictureUUID!!, searchedPictureViewModel)
+            viewModel.getCAFF(searchedPictureUUID!!)
         }
+
 
         binding.addCommentButton.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 if(searchedPictureUUID != null){
-                    saveComment(searchedPictureUUID, binding.editTextNewComment.text.toString(),
-                        searchedPictureViewModel)
+                    saveComment(searchedPictureUUID, binding.editTextNewComment.text.toString())
                 }
             }
         }
@@ -72,33 +95,9 @@ class SearchedPictureFragment: Fragment() {
         return root
     }
 
-    suspend fun initCAFFFile(uuid: String, viewModel: SearchedPictureViewModel) {
-        val caffApi = ApiHelper.getCaffApi()
-        try {
-            val picture = caffApi.apiCaffGetImageGet(uuid)
-            // Set name
-            binding.textPictureName.text = picture.title
-
-            // Save comments
-            picture.comments?.forEach { comment ->
-                commentAdapter.addComment(Comment(comment.id, viewModel.userId.toString(),
-                    viewModel.userName.toString(), comment.creationTime, picture.id, comment.content))
-            }
-
-            binding.ivPicture.setBackgroundDrawable(
-                BitmapDrawable(
-                    requireActivity().resources,
-                    ByteArrayInputStream(Base64.decode(picture.preview.toByteArray(),Base64.DEFAULT))
-                )
-            )
-            // TODO: kep berakasa
-        }catch (e:Exception){
-            System.out.println(e)
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun saveComment(uuid: String, newCommentText: String, viewModel: SearchedPictureViewModel){
+    suspend fun saveComment(uuid: String, newCommentText: String){
         // TODO: Uj komment feltoltese db-be
         val newComment = Comment(
             UUID.randomUUID().toString(),
@@ -109,10 +108,11 @@ class SearchedPictureFragment: Fragment() {
             newCommentText
         )
         try {
-            val caffApi = ApiHelper.getCaffApi()
-            caffApi.apiCaffAddCommentPost(uuid, CommentRequest(newCommentText))
+            viewModel.saveComment(uuid, newCommentText)
             commentAdapter.addComment(newComment)
-            binding.editTextNewComment.text.clear()
+            requireActivity().runOnUiThread {
+                binding.editTextNewComment.text.clear()
+            }
         }catch (e:Exception){
             System.out.println(e)
         }

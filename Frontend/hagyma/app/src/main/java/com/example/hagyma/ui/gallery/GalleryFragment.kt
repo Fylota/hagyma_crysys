@@ -124,7 +124,9 @@ class GalleryFragment : Fragment() {
         val caffApi = ApiHelper.getCaffApi()
         try {
             val pictures = caffApi.apiCaffListImagesGet()
-            pictures.forEach { item ->galleryAdapter.addInitFile(ListItem(item.title, item.id))
+            pictures.forEach { item -> activity?.runOnUiThread {
+                galleryAdapter.addInitFile(ListItem(item.title, item.id,item.preview))
+            }
             }
         }catch (e:Exception){
             System.out.println(e)

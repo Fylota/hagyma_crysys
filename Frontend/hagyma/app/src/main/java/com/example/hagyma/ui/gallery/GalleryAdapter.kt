@@ -2,7 +2,10 @@ package com.example.hagyma.ui.gallery
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -10,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hagyma.R
 import com.example.hagyma.data.ListItem
 import com.example.hagyma.databinding.PictureItemBinding
+import java.io.ByteArrayInputStream
 import java.util.*
 
 class GalleryAdapter(private val context: Context?) :
@@ -30,10 +34,23 @@ class GalleryAdapter(private val context: Context?) :
         val currListItem = listItems[position]
         holder.binding.let { binding ->
             binding.tvPictureName.text = currListItem.name
+
+
+//            val decodedString = Base64.decode(currListItem.picture.toByteArray(), Base64.DEFAULT)
+//            val decodedByte = BitmapFactory.decodeByteArray(decodedString,0,decodedString.size)
+
+            //binding.ivPicture.setImageBitmap(decodedByte)
+
+            binding.ivPicture.setImageDrawable(
+                BitmapDrawable(
+                    context?.resources,
+                    ByteArrayInputStream(Base64.decode(currListItem.picture.toByteArray(), Base64.DEFAULT))
+                )
+            )
         }
         holder.binding.ivCheckPictureBtn.setOnClickListener { view ->
             val bundle = Bundle()
-            bundle.putString("searched_picture_uuid", currListItem.name)
+            bundle.putString("searched_picture_uuid", currListItem.uuid)
             view.findNavController().navigate(R.id.action_nav_gallery_to_nav_searched_picture, bundle)
         }
     }

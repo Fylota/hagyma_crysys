@@ -52,4 +52,7 @@ class CommentAdapter(private val context: Context?) :
         commentsList.add(newComment)
         notifyDataSetChanged()
     }
+    fun clear(){
+        commentsList.clear()
+    }
 }

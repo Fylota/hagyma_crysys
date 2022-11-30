@@ -6,5 +6,5 @@ data class ListItem(
     val name: String,
 //    val creator: UUID,
     val uuid: String,
-//    val picture: String, // TODO
+    val picture: String,
 )

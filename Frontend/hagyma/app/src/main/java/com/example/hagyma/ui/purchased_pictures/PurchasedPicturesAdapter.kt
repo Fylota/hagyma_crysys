@@ -14,7 +14,7 @@ import java.util.*
 class PurchasedPicturesAdapter(private val context: Context?) :
     RecyclerView.Adapter<PurchasedPicturesAdapter.PurchasedPictureItemViewHolder>() {
 
-    private val testListItems: List<ListItem> = listOf(
+    private val testListItems: List<ListItem> = emptyList()/*listOf(
         ListItem("test 1", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture1"*/),
         ListItem("test 2", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture2"*/),
         ListItem("test 3", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture3"*/),
@@ -22,7 +22,7 @@ class PurchasedPicturesAdapter(private val context: Context?) :
         ListItem("test 5", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture5"*/),
         ListItem("test 6", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture6"*/),
         ListItem("test 7", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture7"*/),
-    );
+    );*/
 
     class PurchasedPictureItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root){}
 
