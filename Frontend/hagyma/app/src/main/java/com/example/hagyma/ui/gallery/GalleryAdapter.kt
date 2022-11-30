@@ -36,17 +36,17 @@ class GalleryAdapter(private val context: Context?) :
             binding.tvPictureName.text = currListItem.name
 
 
-//            val decodedString = Base64.decode(currListItem.picture.toByteArray(), Base64.DEFAULT)
-//            val decodedByte = BitmapFactory.decodeByteArray(decodedString,0,decodedString.size)
+            val decodedString = Base64.decode(a, Base64.DEFAULT)
+            val decodedByte = BitmapFactory.decodeByteArray(decodedString,0,decodedString.size)
 
-            //binding.ivPicture.setImageBitmap(decodedByte)
+            binding.ivPicture.setImageBitmap(decodedByte)
 
-            binding.ivPicture.setImageDrawable(
-                BitmapDrawable(
-                    context?.resources,
-                    ByteArrayInputStream(Base64.decode(currListItem.picture.toByteArray(), Base64.DEFAULT))
-                )
-            )
+//            binding.ivPicture.setImageDrawable(
+//                BitmapDrawable(
+//                    context?.resources,
+//                    ByteArrayInputStream(Base64.decode(currListItem.picture.toByteArray(), Base64.DEFAULT))
+//                )
+//            )
         }
         holder.binding.ivCheckPictureBtn.setOnClickListener { view ->
             val bundle = Bundle()
