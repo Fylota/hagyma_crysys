@@ -38,6 +38,7 @@ class CommentAdapter(private val context: Context?) :
 
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
         val currListItem = commentsList[position]
+        holder.binding.tvCommentOwner.text = currListItem.creatorID
         holder.binding.tvCommentTime.text = currListItem.creationTime.toString()
         holder.binding.tvCommentText.text = currListItem.content
     }

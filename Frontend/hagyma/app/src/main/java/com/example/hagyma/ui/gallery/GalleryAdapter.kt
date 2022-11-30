@@ -33,7 +33,7 @@ class GalleryAdapter(private val context: Context?) :
         }
         holder.binding.ivCheckPictureBtn.setOnClickListener { view ->
             val bundle = Bundle()
-            bundle.putString("searched_picture_uuid", currListItem.uuid)
+            bundle.putString("searched_picture_uuid", currListItem.name)
             view.findNavController().navigate(R.id.action_nav_gallery_to_nav_searched_picture, bundle)
         }
     }
