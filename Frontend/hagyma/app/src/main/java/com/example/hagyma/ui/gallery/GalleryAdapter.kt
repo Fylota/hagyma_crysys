@@ -36,7 +36,7 @@ class GalleryAdapter(private val context: Context?) :
             binding.tvPictureName.text = currListItem.name
 
 
-            val decodedString = Base64.decode(currListItem.picture, Base64.URL_SAFE)
+            val decodedString = Base64.decode(currListItem.picture, Base64.DEFAULT)
             val decodedByte = BitmapFactory.decodeByteArray(decodedString,0,decodedString.size)
 
             binding.ivPicture.setImageBitmap(decodedByte)
