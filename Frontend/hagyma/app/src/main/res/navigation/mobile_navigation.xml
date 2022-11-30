@@ -45,13 +45,30 @@
         android:id="@+id/nav_profile"
         android:name="com.example.hagyma.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <argument
+            android:name="userID"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_nav_profile_to_nav_admin_users"
+            app:destination="@id/nav_admin_users"
+            app:popUpTo="@id/nav_admin_users"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_nav_profile_to_nav_edit_profile"
+            app:destination="@id/nav_edit_profile" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_admin_users"
         android:name="com.example.hagyma.ui.admin_users.AdminUsersFragment"
         android:label="@string/menu_admin_users"
-        tools:layout="@layout/fragment_admin_users" />
+        tools:layout="@layout/fragment_admin_users" >
+        <action
+            android:id="@+id/action_nav_admin_users_to_nav_profile"
+            app:destination="@id/nav_profile" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_searched_picture"
@@ -121,4 +138,19 @@
             android:name="one_purchased_picture_uuid"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_edit_profile"
+        android:name="com.example.hagyma.ui.edit_profile.EditProfileFragment"
+        android:label="Edit user profile"
+        tools:layout="@layout/fragment_edit_profile">
+        <argument
+            android:name="editing_userid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_nav_edit_profile_to_nav_profile"
+            app:destination="@id/nav_profile"
+            app:popUpTo="@id/nav_profile"
+            app:popUpToInclusive="true" />
+    </fragment><action android:id="@+id/action_global_nav_profile" app:destination="@id/nav_profile"/><action android:id="@+id/action_global_nav_gallery" app:destination="@id/nav_gallery"/><action android:id="@+id/action_global_nav_my_pictures" app:destination="@id/nav_my_pictures"/><action android:id="@+id/action_global_nav_purchased_pictures" app:destination="@id/nav_purchased_pictures"/><action android:id="@+id/action_global_nav_admin_users" app:destination="@id/nav_admin_users"/>
 </navigation>

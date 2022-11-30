@@ -18,11 +18,12 @@ import com.example.hagyma.api.AuthenticationApi
 import com.example.hagyma.api.CaffApi
 import com.example.hagyma.api.UserApi
 import com.example.hagyma.api.model.LoginRequest
+import com.example.hagyma.data.ListItem
 import com.example.hagyma.databinding.FragmentGalleryBinding
 import com.example.hagyma.helper.ApiHelper
-import com.example.hagyma.http.CustomClientFactory
 import com.example.hagyma.infrastructure.ApiClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class GalleryFragment : Fragment() {
@@ -51,11 +52,7 @@ class GalleryFragment : Fragment() {
 
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
-//
-//        val textView: TextView = binding.textGallery
-//        galleryViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
+
         binding.searchButton.setOnClickListener {
             val handler = Handler(Looper.getMainLooper()!!)
             lifecycleScope.launch(Dispatchers.IO) {
@@ -92,7 +89,41 @@ class GalleryFragment : Fragment() {
         binding.rvPictures.adapter = galleryAdapter
         binding.rvPictures.layoutManager = LinearLayoutManager(this.context)
 
+        binding.searchButton.setOnClickListener {
+            searchRefreshList(binding.etSearchingText.text.toString())
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            // Get CAFF Files
+            initCAFFFiles()
+        }
+
         return root
+    }
+
+    fun searchRefreshList(keyString: String){
+        if (keyString != ""){
+            if(galleryAdapter.itemCount > 0){
+                galleryAdapter.clearList()
+            }
+            galleryAdapter.getOriginalPictures().forEach { originalPicture ->
+                if (originalPicture.name.contains(keyString)) {
+                    galleryAdapter.addFile(originalPicture)
+                }
+            }
+        }
+        binding.etSearchingText.text.clear()
+    }
+
+    suspend fun initCAFFFiles(){
+        val caffApi = ApiHelper.getCaffApi()
+        try {
+            val pictures = caffApi.apiCaffListImagesGet()
+            pictures.forEach { item ->galleryAdapter.addInitFile(ListItem(item.title, item.id))
+            }
+        }catch (e:Exception){
+            System.out.println(e)
+        }
     }
 
     override fun onDestroyView() {

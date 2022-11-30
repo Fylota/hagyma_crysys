@@ -23,10 +23,17 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_profile"
             android:title="@string/menu_profile" />
-
+    </group>
+    <group android:id="@+id/group_admin">
         <item
             android:id="@+id/nav_admin_users"
             android:icon="@drawable/ic_menu_admin_users"
             android:title="@string/menu_admin_users" />
+    </group>
+    <group android:id="@+id/group_logout">
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/menu_logout" />
     </group>
 </menu>

@@ -15,13 +15,13 @@ class PurchasedPicturesAdapter(private val context: Context?) :
     RecyclerView.Adapter<PurchasedPicturesAdapter.PurchasedPictureItemViewHolder>() {
 
     private val testListItems: List<ListItem> = listOf(
-        ListItem("test 1", UUID.randomUUID(), UUID.randomUUID(), "picture1"),
-        ListItem("test 2", UUID.randomUUID(), UUID.randomUUID(), "picture2"),
-        ListItem("test 3", UUID.randomUUID(), UUID.randomUUID(), "picture3"),
-        ListItem("test 4", UUID.randomUUID(), UUID.randomUUID(), "picture4"),
-        ListItem("test 5", UUID.randomUUID(), UUID.randomUUID(), "picture5"),
-        ListItem("test 6", UUID.randomUUID(), UUID.randomUUID(), "picture6"),
-        ListItem("test 7", UUID.randomUUID(), UUID.randomUUID(), "picture7"),
+        ListItem("test 1", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture1"*/),
+        ListItem("test 2", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture2"*/),
+        ListItem("test 3", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture3"*/),
+        ListItem("test 4", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture4"*/),
+        ListItem("test 5", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture5"*/),
+        ListItem("test 6", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture6"*/),
+        ListItem("test 7", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture7"*/),
     );
 
     class PurchasedPictureItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root){}
@@ -29,7 +29,7 @@ class PurchasedPicturesAdapter(private val context: Context?) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchasedPictureItemViewHolder {
         return PurchasedPictureItemViewHolder(
             PictureItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        );
+        )
     }
 
     override fun onBindViewHolder(holder: PurchasedPictureItemViewHolder, position: Int) {

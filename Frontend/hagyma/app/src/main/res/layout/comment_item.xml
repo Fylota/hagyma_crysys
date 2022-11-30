@@ -34,6 +34,7 @@
                     android:layout_height="wrap_content"
                     android:text="Test User"
                     android:paddingHorizontal="20dp"
+                    android:layout_gravity="center"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
 
@@ -43,8 +44,37 @@
                     android:paddingHorizontal="20dp"
                     android:textColor="@color/black"
                     android:textSize="16sp"
+                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_delete_comment"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    app:cornerRadius="50dp"
+                    app:icon="@drawable/ic_delete"
+                    app:backgroundTint="#AA0B0B"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="35dp" />
+
+<!--                <Button-->
+<!--                    android:id="@+id/button_delete_comment"-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginHorizontal="0dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text=""-->
+<!--                    app:backgroundTint="#AA0B0B"-->
+<!--                    app:icon="@drawable/ic_delete"-->
+<!--                    app:iconPadding="1dp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent" />-->
 
             </LinearLayout>
 

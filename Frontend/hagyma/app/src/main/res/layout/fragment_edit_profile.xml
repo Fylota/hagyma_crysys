@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.edit_my_picture.EditMyPictureFragment">
+    tools:context=".ui.edit_profile.EditProfileFragment">
 
     <TextView
         android:id="@+id/tv_username"
@@ -33,62 +33,85 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_username" />
 
-    <TextView
-        android:id="@+id/tv_email"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/et_email"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginVertical="6dp"
+        android:ems="10"
+        android:hint="email"
         android:inputType="textEmailAddress"
-        android:padding="10dp"
-        android:text="test@mail.com"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_email_label" />
 
     <TextView
-        android:id="@+id/tv_date_label"
+        android:id="@+id/tv_password_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginVertical="6dp"
-        android:layout_marginTop="256dp"
         android:padding="6dp"
-        android:text="@string/dateTitle"
+        android:text="@string/passwordTitle"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_registrationDate"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_email" />
+        app:layout_constraintTop_toBottomOf="@+id/et_email" />
 
-    <TextView
-        android:id="@+id/tv_registrationDate"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/et_caff_description"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginVertical="6dp"
-        android:inputType="date"
-        android:padding="10dp"
-        android:text="2022.02.02"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:ems="10"
+        android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_date_label" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_password_label" />
 
 
     <Button
-        android:id="@+id/edit_button"
+        android:id="@+id/save_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="8dp"
+        android:layout_marginBottom="627dp"
+        android:backgroundTint="#009688"
+        android:text="@string/save_btn"
+        app:layout_constraintBottom_toTopOf="@+id/delete_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="8dp"
+        android:backgroundTint="#009688"
+        android:text="@string/cancel_btn"
+        app:layout_constraintBottom_toTopOf="@+id/delete_button"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="12dp"
         android:backgroundTint="#016057"
-        android:text="@string/edit_btn"
+        android:text="@string/delete_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="197dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

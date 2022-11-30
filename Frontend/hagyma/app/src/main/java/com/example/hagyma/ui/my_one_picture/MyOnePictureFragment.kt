@@ -25,8 +25,8 @@ class MyOnePictureFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val myOnePictureViewModel =
-            ViewModelProvider(this).get(MyOnePictureViewModel::class.java)
+//        val myOnePictureViewModel =
+//            ViewModelProvider(this).get(MyOnePictureViewModel::class.java)
 
         val mySearchedPictureUUID = this.arguments?.getString("my_searched_picture_uuid")  // TODO hasznalni
 

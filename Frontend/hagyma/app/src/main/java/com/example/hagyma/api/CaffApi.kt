@@ -22,7 +22,7 @@ import okhttp3.HttpUrl
 import com.example.hagyma.api.model.CaffDetails
 import com.example.hagyma.api.model.CaffItem
 import com.example.hagyma.api.model.Comment
-import com.example.hagyma.api.model.FileInfo
+import com.example.hagyma.api.model.CommentRequest
 import com.example.hagyma.api.model.ProblemDetails
 
 import com.squareup.moshi.Json
@@ -55,20 +55,21 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param imageId  (optional)
-     * @param comment  (optional)
-     * @return void
+     * @param commentRequest  (optional)
+     * @return Comment
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
      * @throws ClientException If the API returns a client error response
      * @throws ServerException If the API returns a server error response
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun apiCaffAddCommentPost(imageId: kotlin.String? = null, comment: Comment? = null) : Unit = withContext(Dispatchers.IO) {
-        val localVarResponse = apiCaffAddCommentPostWithHttpInfo(imageId = imageId, comment = comment)
+    suspend fun apiCaffAddCommentPost(imageId: kotlin.String? = null, commentRequest: CommentRequest? = null) : Comment = withContext(Dispatchers.IO) {
+        val localVarResponse = apiCaffAddCommentPostWithHttpInfo(imageId = imageId, commentRequest = commentRequest)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> Unit
+            ResponseType.Success -> (localVarResponse as Success<*>).data as Comment
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -86,16 +87,17 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param imageId  (optional)
-     * @param comment  (optional)
-     * @return ApiResponse<Unit?>
+     * @param commentRequest  (optional)
+     * @return ApiResponse<Comment?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun apiCaffAddCommentPostWithHttpInfo(imageId: kotlin.String?, comment: Comment?) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
-        val localVariableConfig = apiCaffAddCommentPostRequestConfig(imageId = imageId, comment = comment)
+    suspend fun apiCaffAddCommentPostWithHttpInfo(imageId: kotlin.String?, commentRequest: CommentRequest?) : ApiResponse<Comment?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiCaffAddCommentPostRequestConfig(imageId = imageId, commentRequest = commentRequest)
 
-        return@withContext request<Comment, Unit>(
+        return@withContext request<CommentRequest, Comment>(
             localVariableConfig
         )
     }
@@ -104,11 +106,11 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * To obtain the request config of the operation apiCaffAddCommentPost
      *
      * @param imageId  (optional)
-     * @param comment  (optional)
+     * @param commentRequest  (optional)
      * @return RequestConfig
      */
-    fun apiCaffAddCommentPostRequestConfig(imageId: kotlin.String?, comment: Comment?) : RequestConfig<Comment> {
-        val localVariableBody = comment
+    fun apiCaffAddCommentPostRequestConfig(imageId: kotlin.String?, commentRequest: CommentRequest?) : RequestConfig<CommentRequest> {
+        val localVariableBody = commentRequest
         val localVariableQuery: MultiValueMap = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
             .apply {
                 if (imageId != null) {
@@ -278,20 +280,19 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param imageId  (optional)
-     * @return FileInfo
+     * @return void
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
      * @throws ClientException If the API returns a client error response
      * @throws ServerException If the API returns a server error response
      */
-    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun apiCaffDownloadImageGet(imageId: kotlin.String? = null) : FileInfo = withContext(Dispatchers.IO) {
+    suspend fun apiCaffDownloadImageGet(imageId: kotlin.String? = null) : Unit = withContext(Dispatchers.IO) {
         val localVarResponse = apiCaffDownloadImageGetWithHttpInfo(imageId = imageId)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> (localVarResponse as Success<*>).data as FileInfo
+            ResponseType.Success -> Unit
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -309,16 +310,15 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param imageId  (optional)
-     * @return ApiResponse<FileInfo?>
+     * @return ApiResponse<Unit?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
-    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun apiCaffDownloadImageGetWithHttpInfo(imageId: kotlin.String?) : ApiResponse<FileInfo?> = withContext(Dispatchers.IO) {
+    suspend fun apiCaffDownloadImageGetWithHttpInfo(imageId: kotlin.String?) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
         val localVariableConfig = apiCaffDownloadImageGetRequestConfig(imageId = imageId)
 
-        return@withContext request<Unit, FileInfo>(
+        return@withContext request<Unit, Unit>(
             localVariableConfig
         )
     }
@@ -560,19 +560,23 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * 
      * 
-     * @return void
+     * @param caffFile 
+     * @param description 
+     * @param title 
+     * @return CaffDetails
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
      * @throws ClientException If the API returns a client error response
      * @throws ServerException If the API returns a server error response
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun apiCaffUploadImagePost() : Unit = withContext(Dispatchers.IO) {
-        val localVarResponse = apiCaffUploadImagePostWithHttpInfo()
+    suspend fun apiCaffUploadImagePost(caffFile: java.io.File, description: kotlin.String, title: kotlin.String) : CaffDetails = withContext(Dispatchers.IO) {
+        val localVarResponse = apiCaffUploadImagePostWithHttpInfo(caffFile = caffFile, description = description, title = title)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> Unit
+            ResponseType.Success -> (localVarResponse as Success<*>).data as CaffDetails
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -589,15 +593,19 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * 
      * 
-     * @return ApiResponse<Unit?>
+     * @param caffFile 
+     * @param description 
+     * @param title 
+     * @return ApiResponse<CaffDetails?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun apiCaffUploadImagePostWithHttpInfo() : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
-        val localVariableConfig = apiCaffUploadImagePostRequestConfig()
+    suspend fun apiCaffUploadImagePostWithHttpInfo(caffFile: java.io.File, description: kotlin.String, title: kotlin.String) : ApiResponse<CaffDetails?> = withContext(Dispatchers.IO) {
+        val localVariableConfig = apiCaffUploadImagePostRequestConfig(caffFile = caffFile, description = description, title = title)
 
-        return@withContext request<Unit, Unit>(
+        return@withContext request<Map<String, PartConfig<*>>, CaffDetails>(
             localVariableConfig
         )
     }
@@ -605,13 +613,18 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
     /**
      * To obtain the request config of the operation apiCaffUploadImagePost
      *
+     * @param caffFile 
+     * @param description 
+     * @param title 
      * @return RequestConfig
      */
-    fun apiCaffUploadImagePostRequestConfig() : RequestConfig<Unit> {
-        val localVariableBody = null
+    fun apiCaffUploadImagePostRequestConfig(caffFile: java.io.File, description: kotlin.String, title: kotlin.String) : RequestConfig<Map<String, PartConfig<*>>> {
+        val localVariableBody = mapOf(
+            "CaffFile" to PartConfig(body = caffFile, headers = mutableMapOf()),
+            "Description" to PartConfig(body = description, headers = mutableMapOf()),
+            "Title" to PartConfig(body = title, headers = mutableMapOf()),)
         val localVariableQuery: MultiValueMap = mutableMapOf()
-        val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
-        localVariableHeaders["Content-Type"] = "multipart/form-data"
+        val localVariableHeaders: MutableMap<String, String> = mutableMapOf("Content-Type" to "multipart/form-data")
         localVariableHeaders["Accept"] = "application/json"
 
         return RequestConfig(

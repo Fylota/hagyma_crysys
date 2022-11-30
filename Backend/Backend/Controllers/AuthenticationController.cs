@@ -8,6 +8,7 @@ using Backend.Exceptions;
 using Backend.Helpers;
 using Backend.Models.Auth;
 using Backend.Services.Interfaces;
+using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -55,7 +56,7 @@ public class AuthenticationController : ControllerBase
             {
                 new Claim(JwtRegisteredClaimNames.Sub, Config["Jwt:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToEpochTime().ToString()),
                 new Claim(Constants.UserId, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
