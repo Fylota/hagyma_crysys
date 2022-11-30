@@ -21,6 +21,7 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<DbUserInfo>().HasMany(u => u.PurchasedImages).WithMany(i => i.Buyers);
+        builder.Entity<DbUserInfo>().Property(u => u.RegistrationDate).HasDefaultValue(DateTime.Now);
         builder.Entity<DbImage>().Property(i => i.IsDeleted).HasDefaultValue(false);
         builder.Entity<DbImage>().HasQueryFilter(p => !p.IsDeleted);
         builder.Entity<DbImage>().Property(i => i.SmallPreview).HasDefaultValue("");
