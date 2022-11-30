@@ -29,7 +29,7 @@ class PurchasedPicturesAdapter(private val context: Context?) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchasedPictureItemViewHolder {
         return PurchasedPictureItemViewHolder(
             PictureItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        );
+        )
     }
 
     override fun onBindViewHolder(holder: PurchasedPictureItemViewHolder, position: Int) {

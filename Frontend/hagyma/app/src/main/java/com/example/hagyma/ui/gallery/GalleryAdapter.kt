@@ -15,7 +15,8 @@ import java.util.*
 class GalleryAdapter(private val context: Context?) :
     RecyclerView.Adapter<GalleryAdapter.GalleryItemViewHolder>() {
 
-    private val listItems: List<ListItem> = emptyList()/*listOf(
+    private val originalPictures: MutableList<ListItem> = mutableListOf()
+    private var listItems: MutableList<ListItem> = mutableListOf()/*listOf(
         ListItem("test 1", UUID.randomUUID(), UUID.randomUUID(), "picture1"),
         ListItem("test 2", UUID.randomUUID(), UUID.randomUUID(), "picture2"),
         ListItem("test 3", UUID.randomUUID(), UUID.randomUUID(), "picture3"),
@@ -46,12 +47,48 @@ class GalleryAdapter(private val context: Context?) :
     }
 
     override fun getItemCount(): Int {
-        return listItems.size;
+        return listItems.size
+    }
+
+    fun getOriginalCount(): Int {
+        return originalPictures.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addInitFile(newItem: ListItem){
+        listItems.add(newItem)
+        originalPictures.add(newItem)
+        notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     fun addFile(newItem: ListItem){
-        listItems.plus(newItem)
+        listItems.add(newItem)
         notifyDataSetChanged()
     }
+
+    fun clearList() {
+        listItems = mutableListOf()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun deleteFile(file: ListItem){
+        listItems.remove(file)
+        notifyDataSetChanged()
+    }
+
+    fun getOriginalPictures(): MutableList<ListItem>{
+        return originalPictures
+    }
+
+//    @SuppressLint("NotifyDataSetChanged")
+//    fun searchRefreshList(keyString: String){
+//        listItems = allPictures
+//        listItems.forEach { item ->
+//            if (!item.name.contains(keyString)) {
+//                listItems.remove(item)
+//                notifyDataSetChanged()
+//            }
+//        }
+//    }
 }

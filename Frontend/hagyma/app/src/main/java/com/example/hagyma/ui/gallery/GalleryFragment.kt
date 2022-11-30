@@ -89,8 +89,11 @@ class GalleryFragment : Fragment() {
         binding.rvPictures.adapter = galleryAdapter
         binding.rvPictures.layoutManager = LinearLayoutManager(this.context)
 
+        binding.searchButton.setOnClickListener {
+            searchRefreshList(binding.etSearchingText.text.toString())
+        }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             // Get CAFF Files
             initCAFFFiles()
         }
@@ -98,17 +101,29 @@ class GalleryFragment : Fragment() {
         return root
     }
 
+    fun searchRefreshList(keyString: String){
+        if (keyString != ""){
+            if(galleryAdapter.itemCount > 0){
+                galleryAdapter.clearList()
+            }
+            galleryAdapter.getOriginalPictures().forEach { originalPicture ->
+                if (originalPicture.name.contains(keyString)) {
+                    galleryAdapter.addFile(originalPicture)
+                }
+            }
+        }
+        binding.etSearchingText.text.clear()
+    }
+
     suspend fun initCAFFFiles(){
         val caffApi = ApiHelper.getCaffApi()
         try {
-            caffApi.apiCaffListImagesGet().forEach { item ->
-                println("picture name: " + item.title)
-                galleryAdapter.addFile(ListItem(item.title, item.id))
+            val pictures = caffApi.apiCaffListImagesGet()
+            pictures.forEach { item ->galleryAdapter.addInitFile(ListItem(item.title, item.id))
             }
         }catch (e:Exception){
             System.out.println(e)
         }
-
     }
 
     override fun onDestroyView() {
