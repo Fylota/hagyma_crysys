@@ -13,7 +13,8 @@ public static class ModelConversionExtensions
             Title = image.Title,
             Preview = image.Preview,
             Description = image.Description,
-            Comments = image.Comments?.Select(c => c.ToModel()).ToList() ?? new List<Comment>()
+            Comments = image.Comments?.Select(c => c.ToModel()).ToList() ?? new List<Comment>(),
+            UploadTime = image.UploadTime
         };
     }
 
