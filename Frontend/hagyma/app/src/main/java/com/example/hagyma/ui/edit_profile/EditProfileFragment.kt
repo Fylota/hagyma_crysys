@@ -1,5 +1,6 @@
 package com.example.hagyma.ui.edit_profile
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -77,7 +78,7 @@ class EditProfileFragment : Fragment() {
                 val handler = Handler(Looper.getMainLooper()!!)
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        val result = userApi.apiUserUpdateUserPut(
+                        userApi.apiUserUpdateUserPut(
                             UserChangeRequest(currentPassword, newPassword))
                         handler.post {
                             Toast.makeText(context, "Saving...", Toast.LENGTH_SHORT).show()
@@ -90,32 +91,44 @@ class EditProfileFragment : Fragment() {
                     }
                 }
             }
+        }
 
+        val builder  = AlertDialog.Builder(context)
+        builder.setTitle("Deleting user")
+        builder.setMessage("Dou you want to delete your profile?")
+        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
+            userID?.let { deleteUser(it) }
+        }
+        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+            Toast.makeText(context,"Canceled", Toast.LENGTH_SHORT).show()
         }
 
         binding.deleteButton.setOnClickListener {
-            // todo warning popup
-            val toast = Toast.makeText(context, "Deleting user...", Toast.LENGTH_SHORT)
-            toast.show()
-            val handler = Handler(Looper.getMainLooper()!!)
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val result = userApi.apiUserDeleteUserDelete(userID)
-                    ApiClient.accessToken = null
-                    handler.post {
-                        Toast.makeText(context, "User deleted", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(activity, MainActivity::class.java)
-                        startActivity(intent)
-                        activity?.finish()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show()
-                    e.message?.let { it1 -> Log.e(tag, it1) }
-                }
-            }
+            builder.show()
         }
 
         return root
+    }
+
+    private fun deleteUser(id: String) {
+        val toast = Toast.makeText(context, "Deleting user...", Toast.LENGTH_SHORT)
+        toast.show()
+        val handler = Handler(Looper.getMainLooper()!!)
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                userApi.apiUserDeleteUserDelete(id)
+                ApiClient.accessToken = null
+                handler.post {
+                    Toast.makeText(context, "User deleted", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(activity, MainActivity::class.java)
+                    startActivity(intent)
+                    activity?.finish()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show()
+                e.message?.let { it1 -> Log.e(tag, it1) }
+            }
+        }
     }
 
     private fun validateNewPassword(pass1: EditText, pass2: EditText): Boolean =

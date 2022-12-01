@@ -1,8 +1,7 @@
 package com.example.hagyma.ui.profile
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import com.example.hagyma.R
 import com.example.hagyma.api.UserApi
 import com.example.hagyma.databinding.FragmentProfileBinding
 import com.example.hagyma.helper.ApiHelper
-import com.example.hagyma.infrastructure.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -101,19 +99,31 @@ class ProfileFragment : Fragment() {
             root.findNavController().navigate(R.id.action_nav_profile_to_nav_edit_profile, bundle)
         }
 
+        val builder  = AlertDialog.Builder(context)
+        builder.setTitle("Deleting user")
+        builder.setMessage("Dou you want to delete this user?")
+        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
+            userID?.let { deleteUser(it, root) }
+        }
+        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+            Toast.makeText(context,"Canceled", Toast.LENGTH_SHORT).show()
+        }
+
         binding.deleteProfileButton.setOnClickListener {
-            val toast = Toast.makeText(context, "Deleting user...", Toast.LENGTH_SHORT)
-            toast.show()
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val result = userApi.apiUserDeleteUserDelete(userID)
-                    root.findNavController().navigate(R.id.action_nav_profile_to_nav_admin_users)
-                } catch (e: Exception){
-                    e.message?.let { it1 -> Log.e(tag, it1) }
-                }
-            }
+            builder.show()
         }
         return root
+    }
+
+    private fun deleteUser(userId: String, root: View) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                userApi.apiUserDeleteUserDelete(userId)
+                root.findNavController().navigate(R.id.action_nav_profile_to_nav_admin_users)
+            } catch (e: Exception){
+                e.message?.let { it1 -> Log.e(tag, it1) }
+            }
+        }
     }
 
     override fun onDestroyView() {
