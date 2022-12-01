@@ -13,16 +13,4 @@ class MyPicturesViewModel : ViewModel() {
         value = "This is my pictures Fragment"
     }
     val text: LiveData<String> = _text
-
-    private val _jwt = MutableLiveData<JWT>().apply {
-        value = ApiClient.accessToken?.let { JWT(it) }
-    }
-
-    val userId: LiveData<String> = _jwt.map { data -> data.getClaim("UserId")
-        .asString()
-        .toString()}
-
-//    val userName: LiveData<String> = _jwt.map { data ->  data.getClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")
-//        .asString()
-//        .toString()}
 }

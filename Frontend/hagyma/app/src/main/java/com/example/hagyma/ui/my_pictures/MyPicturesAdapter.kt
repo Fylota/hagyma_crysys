@@ -16,15 +16,7 @@ import com.example.hagyma.databinding.PictureItemBinding
 class MyPicturesAdapter(private val context: Context?) :
     RecyclerView.Adapter<MyPicturesAdapter.MyPicturesItemViewHolder>() {
 
-    private val listItems: MutableList<ListItem> = mutableListOf()/*listOf(
-        ListItem("test 1", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture1"*/),
-        ListItem("test 2", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture2"*/),
-        ListItem("test 3", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture3"*/),
-        ListItem("test 4", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture4"*/),
-        ListItem("test 5", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture5"*/),
-        ListItem("test 6", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture6"*/),
-        ListItem("test 7", UUID.randomUUID().toString()/*, UUID.randomUUID(), "picture7"*/),
-    );*/
+    private val listItems: MutableList<ListItem> = mutableListOf()
 
     class MyPicturesItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root){}
 
@@ -60,9 +52,9 @@ class MyPicturesAdapter(private val context: Context?) :
         notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun deleteFile(file: ListItem){
-        listItems.remove(file)
-        notifyDataSetChanged()
-    }
+//    @SuppressLint("NotifyDataSetChanged")
+//    fun deleteFile(file: ListItem){
+//        listItems.remove(file)
+//        notifyDataSetChanged()
+//    }
 }
