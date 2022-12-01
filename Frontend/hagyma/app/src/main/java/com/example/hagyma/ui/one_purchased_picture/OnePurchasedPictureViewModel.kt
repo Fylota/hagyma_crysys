@@ -19,6 +19,7 @@ class OnePurchasedPictureViewModel : ViewModel() {
     }
     val caff: LiveData<CaffDetails> = _caff
     private val caffApi = ApiHelper.getCaffApi()
+    private val userApi = ApiHelper.getUserApi()
 
     suspend fun getCAFF(uuid:String){
         try {
@@ -28,6 +29,10 @@ class OnePurchasedPictureViewModel : ViewModel() {
         }catch (e:Exception){
             System.out.println("SearchedPicture getCaff " + e)
         }
+    }
+
+    suspend fun getUserName(): String {
+        return userApi.apiUserGetUserGet().name
     }
 
     suspend fun saveComment(uuid: String, newCommentText: String){

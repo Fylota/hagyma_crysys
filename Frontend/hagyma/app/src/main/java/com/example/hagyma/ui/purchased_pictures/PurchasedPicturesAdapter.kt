@@ -2,7 +2,9 @@ package com.example.hagyma.ui.purchased_pictures
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -28,6 +30,10 @@ class PurchasedPicturesAdapter(private val context: Context?) :
         val currListItem = listItems[position]
         holder.binding.let { binding ->
             binding.tvPictureName.text = currListItem.name
+
+            val encodedString = Base64.decode(currListItem.picture,Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(encodedString,0,encodedString.size)
+            binding.ivPicture.setImageBitmap(bitmap)
         }
         holder.binding.ivCheckPictureBtn.setOnClickListener { view ->
             val bundle = Bundle()

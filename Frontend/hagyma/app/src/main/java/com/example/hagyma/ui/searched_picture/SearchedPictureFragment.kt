@@ -125,18 +125,18 @@ class SearchedPictureFragment: Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun saveComment(uuid: String, newCommentText: String){
-        // TODO: Uj komment feltoltese db-be
         val newComment = Comment(
             UUID.randomUUID().toString(),
-            viewModel.userName.toString(),
+            viewModel.getUserName(),
+//            viewModel.userName.value.toString(),
             OffsetDateTime.now(),
             uuid,
             newCommentText
         )
         try {
             viewModel.saveComment(uuid, newCommentText)
-            commentAdapter.addComment(newComment)
             requireActivity().runOnUiThread {
+                commentAdapter.addComment(newComment)
                 binding.editTextNewComment.text.clear()
             }
         }catch (e:Exception){

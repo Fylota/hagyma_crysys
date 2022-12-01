@@ -7,16 +7,13 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.FragmentOnePurchasedPictureBinding
-import com.example.hagyma.ui.searched_picture.SearchedPictureViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -63,7 +60,7 @@ class OnePurchasedPictureFragment : Fragment() {
 
         val root: View = binding.root
 
-        onePurchasedPictureCommentAdapter = OnePurchasedPictureCommentAdapter(this.context)
+        onePurchasedPictureCommentAdapter = OnePurchasedPictureCommentAdapter(this.context, _viewModel)
         binding.rvComments.adapter = onePurchasedPictureCommentAdapter
         binding.rvComments.layoutManager = LinearLayoutManager(this.context)
 
@@ -91,21 +88,20 @@ class OnePurchasedPictureFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun saveComment(uuid: String, newCommentText: String){
-        // TODO: Uj komment feltoltese db-be
         val newComment = Comment(
             UUID.randomUUID().toString(),
-            viewModel.userName.toString(),
+//            viewModel.userName.value.toString(),
+            viewModel.getUserName(),
             OffsetDateTime.now(),
             uuid,
             newCommentText
         )
         try {
             viewModel.saveComment(uuid, newCommentText)
-            onePurchasedPictureCommentAdapter.addComment(newComment)
             requireActivity().runOnUiThread {
+                onePurchasedPictureCommentAdapter.addComment(newComment)
                 binding.editTextNewComment.text.clear()
             }
-            binding.editTextNewComment.text.clear()
         }catch (e:Exception){
             System.out.println(e)
         }
