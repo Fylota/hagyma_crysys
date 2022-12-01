@@ -3,7 +3,10 @@ package com.example.hagyma.ui.my_one_picture
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,12 +86,18 @@ class MyOnePictureFragment : Fragment() {
             bundle.putString("my_editing_picture_uuid", mySearchedPictureUUID)
             view.findNavController().navigate(R.id.action_nav_my_one_picture_to_nav_edit_my_picture, bundle)
         }
-
+        val handler = Handler(Looper.getMainLooper()!!)
         binding.deleteButton.setOnClickListener { view ->
             lifecycleScope.launch(Dispatchers.IO) {
                 if(mySearchedPictureUUID != null){
-                    viewModel.deletePicture(mySearchedPictureUUID)
-                    view.findNavController().navigate(R.id.action_nav_my_one_picture_to_nav_my_pictures)
+                    try {
+                        viewModel.deletePicture(mySearchedPictureUUID)
+                        handler.post {
+                            view.findNavController().navigate(R.id.action_nav_my_one_picture_to_nav_my_pictures)
+                        }
+                    } catch (e: Exception) {
+                        e.message?.let { it1 -> Log.e(tag, it1) }
+                    }
                 }
             }
         }
