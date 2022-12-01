@@ -58,13 +58,13 @@ class GalleryFragment : Fragment() {
             val handler = Handler(Looper.getMainLooper()!!)
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    var result = authenticationApi.authLoginPost(LoginRequest("admin@admin.com","Admin1!"))
+                    val result = authenticationApi.authLoginPost(LoginRequest("admin@admin.com","Admin1!"))
                     handler.post {
                         Toast.makeText(context,result,Toast.LENGTH_LONG).show()
                     }
                     ApiClient.accessToken = result;
                     try {
-                        var userinfowithAccessToken = userApi.apiUserGetUserGet();
+                        val userinfowithAccessToken = userApi.apiUserGetUserGet();
                         handler.post{
                             Toast.makeText(context,"Try with accesstoken: ${userinfowithAccessToken.email}",Toast.LENGTH_SHORT).show()
                         }

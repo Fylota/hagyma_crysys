@@ -35,7 +35,6 @@ class SearchedPictureViewModel : ViewModel()  {
             withContext(Dispatchers.Main){
                 _caff.value = caffApi.apiCaffGetImageGet(uuid)
             }
-            // TODO: kep berakasa
         }catch (e:Exception){
             System.out.println("SearchedPicture getCaff " + e)
         }

@@ -6,10 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.R
+import com.example.hagyma.data.ListItem
 import com.example.hagyma.databinding.FragmentMyPicturesBinding
+import com.example.hagyma.helper.ApiHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MyPicturesFragment : Fragment() {
 
@@ -45,7 +50,28 @@ class MyPicturesFragment : Fragment() {
         binding.rvPictures.adapter = myPicturesAdapter
         binding.rvPictures.layoutManager = LinearLayoutManager(this.context)
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            // Get My CAFF Files
+            initMyCAFFFiles(myPicturesViewModel)
+        }
+
         return root
+    }
+
+    suspend fun initMyCAFFFiles(viewModel: MyPicturesViewModel){
+        val caffApi = ApiHelper.getCaffApi()
+        try {
+            val pictures = caffApi.apiCaffListImagesGet()
+            pictures.forEach { item ->
+//                if(item.ownerId.toString() == viewModel.userId.toString()){
+//                    activity?.runOnUiThread {
+//                        myPicturesAdapter.addFile(ListItem(item.title, item.id,item.preview))
+//                    }
+//                }
+            }
+        }catch (e:Exception){
+            System.out.println(e)
+        }
     }
 
     override fun onDestroyView() {
