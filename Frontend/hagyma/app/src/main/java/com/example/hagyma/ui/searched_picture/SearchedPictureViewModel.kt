@@ -26,11 +26,10 @@ class SearchedPictureViewModel : ViewModel()  {
         value = CaffDetails("","","",null,null)
     }
     val caff: LiveData<CaffDetails> = _caff
-
+    private val caffApi = ApiHelper.getCaffApi()
+    private val paymentApi = ApiHelper.getPaymentApi()
 
     suspend fun getCAFF(uuid:String){
-
-        val caffApi = ApiHelper.getCaffApi()
         try {
             withContext(Dispatchers.Main){
                 _caff.value = caffApi.apiCaffGetImageGet(uuid)
@@ -41,13 +40,17 @@ class SearchedPictureViewModel : ViewModel()  {
     }
 
     suspend fun saveComment(uuid: String, newCommentText: String){
-        val caffApi = ApiHelper.getCaffApi()
         caffApi.apiCaffAddCommentPost(uuid, CommentRequest(newCommentText))
     }
 
     suspend fun deleteComment(commentId: String){
-        val caffApi = ApiHelper.getCaffApi()
         caffApi.apiCaffDeleteCommentDelete(commentId)
+    }
+
+    suspend fun purchaseCaff(imageId: String) {
+        withContext(Dispatchers.IO) {
+            paymentApi.apiPaymentPurchasePost(imageId)
+        }
     }
 
 
