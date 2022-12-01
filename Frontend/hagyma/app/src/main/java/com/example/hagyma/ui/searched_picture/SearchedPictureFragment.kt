@@ -43,7 +43,7 @@ class SearchedPictureFragment: Fragment() {
         val searchedPictureUUID = this.arguments?.getString("searched_picture_uuid")  // TODO hasznalni
 
         _binding = FragmentSearchedPictureBinding.inflate(inflater, container, false)
-        _viewModel = ViewModelProvider(requireActivity())[SearchedPictureViewModel::class.java]
+        _viewModel = SearchedPictureViewModel()
 
         viewModel.caff.observe(viewLifecycleOwner){
             binding.textPictureName.text = it.title
