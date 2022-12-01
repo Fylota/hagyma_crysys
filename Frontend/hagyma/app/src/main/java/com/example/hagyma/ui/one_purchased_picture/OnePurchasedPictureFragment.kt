@@ -63,7 +63,7 @@ class OnePurchasedPictureFragment : Fragment() {
 
         val root: View = binding.root
 
-        onePurchasedPictureCommentAdapter = OnePurchasedPictureCommentAdapter(this.context)
+        onePurchasedPictureCommentAdapter = OnePurchasedPictureCommentAdapter(this.context, _viewModel)
         binding.rvComments.adapter = onePurchasedPictureCommentAdapter
         binding.rvComments.layoutManager = LinearLayoutManager(this.context)
 
@@ -91,21 +91,20 @@ class OnePurchasedPictureFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun saveComment(uuid: String, newCommentText: String){
-        // TODO: Uj komment feltoltese db-be
         val newComment = Comment(
             UUID.randomUUID().toString(),
-            viewModel.userName.toString(),
+//            viewModel.userName.value.toString(),
+            viewModel.getUserName(),
             OffsetDateTime.now(),
             uuid,
             newCommentText
         )
         try {
             viewModel.saveComment(uuid, newCommentText)
-            onePurchasedPictureCommentAdapter.addComment(newComment)
             requireActivity().runOnUiThread {
+                onePurchasedPictureCommentAdapter.addComment(newComment)
                 binding.editTextNewComment.text.clear()
             }
-            binding.editTextNewComment.text.clear()
         }catch (e:Exception){
             System.out.println(e)
         }

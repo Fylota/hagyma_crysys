@@ -27,6 +27,7 @@ class SearchedPictureViewModel : ViewModel()  {
     }
     val caff: LiveData<CaffDetails> = _caff
     private val caffApi = ApiHelper.getCaffApi()
+    private val userApi = ApiHelper.getUserApi()
     private val paymentApi = ApiHelper.getPaymentApi()
 
     suspend fun getCAFF(uuid:String){
@@ -37,6 +38,10 @@ class SearchedPictureViewModel : ViewModel()  {
         }catch (e:Exception){
             System.out.println("SearchedPicture getCaff " + e)
         }
+    }
+
+    suspend fun getUserName(): String {
+        return userApi.apiUserGetUserGet().name
     }
 
     suspend fun saveComment(uuid: String, newCommentText: String){
@@ -59,9 +64,6 @@ class SearchedPictureViewModel : ViewModel()  {
         value = ApiClient.accessToken?.let { JWT(it) }
     }
 
-    val userId: LiveData<String> = _jwt.map { data -> data.getClaim("UserId")
-        .asString()
-        .toString()}
 
     val userName: LiveData<String> = _jwt.map { data ->  data.getClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")
         .asString()

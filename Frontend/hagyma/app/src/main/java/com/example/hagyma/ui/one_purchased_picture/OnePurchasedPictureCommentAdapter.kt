@@ -13,9 +13,12 @@ import com.auth0.android.jwt.JWT
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
 import com.example.hagyma.infrastructure.ApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
-class OnePurchasedPictureCommentAdapter(private val context: Context?) :
+class OnePurchasedPictureCommentAdapter(private val context: Context?, private val onePurchasedPictureViewModel: OnePurchasedPictureViewModel?) :
     RecyclerView.Adapter<OnePurchasedPictureCommentAdapter.SearchedPictureItemViewHolder>() {
 
     private val commentsList: MutableList<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -48,6 +51,7 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?) :
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
         val currListItem = commentsList[position]
         holder.binding.tvCommentText.text = currListItem.content
+        holder.binding.tvCommentOwner.text = currListItem.creator
 
         val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd-HH:mm")
         val formatted = currListItem.creationTime!!.format(formatter)
@@ -57,10 +61,12 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?) :
 
         holder.binding.btnDeleteComment.isEnabled = isAdmin
         holder.binding.btnDeleteComment.isVisible = isAdmin
+
         holder.binding.btnDeleteComment.setOnClickListener {
-            // TODO Comment torlese!!
-            // TODO: 1. DB-bol - valahogy meghivni a SearchedPictureViewModel.deleteComment(commentId: String) FV-t!!!
-            // TODO: 2. Innen a listabol -> deleteComment(currListItem)
+            CoroutineScope(Dispatchers.IO).launch {
+                onePurchasedPictureViewModel?.deleteComment(currListItem.uuid)
+            }
+            deleteComment(currListItem)
         }
     }
 
