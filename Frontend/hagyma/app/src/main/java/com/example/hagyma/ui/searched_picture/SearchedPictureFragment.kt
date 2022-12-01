@@ -1,15 +1,19 @@
 package com.example.hagyma.ui.searched_picture
 
+import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.data.Comment
@@ -84,7 +88,40 @@ class SearchedPictureFragment: Fragment() {
             }
         }
 
+        val builder  = AlertDialog.Builder(context)
+        builder.setTitle("Purchase")
+        builder.setMessage("Would you like to purchase this CAFF?")
+        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+            purchaseImage(searchedPictureUUID)
+        }
+        builder.setNegativeButton(android.R.string.no) { dialog, which ->
+            Toast.makeText(context,"Payment canceled", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.purchaseButton.setOnClickListener {
+            builder.show()
+        }
+
         return root
+    }
+
+    private fun purchaseImage(searchedPictureUUID: String?) {
+        val handler = Handler(Looper.getMainLooper()!!)
+        lifecycleScope.launch(Dispatchers.IO) {
+            if(searchedPictureUUID != null){
+                try {
+                    viewModel.purchaseCaff(searchedPictureUUID)
+                    handler.post {
+                        Toast.makeText(context, "CAFF purchased", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    handler.post {
+                        Toast.makeText(context, "Purchase failed", Toast.LENGTH_SHORT).show()
+                    }
+                    e.message?.let { it1 -> Log.e(tag, it1) }
+                }
+            }
+        }
     }
 
 
