@@ -33,9 +33,9 @@ class ProfileViewModel : ViewModel() {
         "dd-MM-yyyy",
         Locale.getDefault()
     )
-    // todo change claim to regDate
+
     val regDate: LiveData<String> = _jwt.map { data ->
         sdfDate.format(
-            Date(((data.getClaim("iat").asString())?.toLong() ?: 1) * 1000))
+            Date(((data.getClaim("RegistrationDate").asString())?.toLong() ?: 1) * 1000))
         }
 }

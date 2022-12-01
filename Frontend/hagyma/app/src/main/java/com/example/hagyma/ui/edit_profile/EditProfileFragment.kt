@@ -94,6 +94,7 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.deleteButton.setOnClickListener {
+            // todo warning popup
             val toast = Toast.makeText(context, "Deleting user...", Toast.LENGTH_SHORT)
             toast.show()
             val handler = Handler(Looper.getMainLooper()!!)
@@ -101,12 +102,14 @@ class EditProfileFragment : Fragment() {
                 try {
                     val result = userApi.apiUserDeleteUserDelete(userID)
                     ApiClient.accessToken = null
-                    // Todo check logout
-                    // val intent = Intent(activity, MainActivity::class.java)
-                    // startActivity(intent)
-                    // activity?.finish()
-
-                } catch (e: Exception){
+                    handler.post {
+                        Toast.makeText(context, "User deleted", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(activity, MainActivity::class.java)
+                        startActivity(intent)
+                        activity?.finish()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show()
                     e.message?.let { it1 -> Log.e(tag, it1) }
                 }
             }
