@@ -103,6 +103,11 @@
         <argument
             android:name="my_searched_picture_uuid"
             app:argType="string" />
+        <action
+            android:id="@+id/action_nav_my_one_picture_to_nav_my_pictures"
+            app:destination="@id/nav_my_pictures"
+            app:popUpTo="@id/nav_my_pictures"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
