@@ -2,8 +2,10 @@ package com.example.hagyma.ui.upload_caff
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -107,7 +109,7 @@ class UploadCaffFragment : Fragment() {
 
     private fun openFileSelectorActivityForResult() {
         verifyStoragePermissions(this.activity)
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
         }
@@ -116,29 +118,25 @@ class UploadCaffFragment : Fragment() {
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val path: String? = result.data?.data?.path
-            caffFile = getFile(path)
+            val uri: Uri? = result.data?.data
+            caffFile = getFile(requireContext().contentResolver, uri, requireContext().cacheDir)
         }
     }
 
-    private fun getFile(path: String?): File? {
-        if (path == null) {
-            Toast.makeText(context, "Attaching file failed", Toast.LENGTH_SHORT).show()
-            return null
+    private fun getFile(contentResolver: ContentResolver, uri: Uri?, directory: File): File? {
+        val file =
+            File.createTempFile("caff", ".caff", directory)
+        file.outputStream().use {
+            if (uri != null) {
+                contentResolver.openInputStream(uri)?.copyTo(it)
+            }
         }
-
-        Toast.makeText(context, "retrieved data, $path", Toast.LENGTH_SHORT).show()
-        var caff: File? = null
-        try {
-            caff = File(path)
-            tvAttachedFile.text = path.substring(path.lastIndexOf("/")+1)
-        } catch (e: Exception) {
-            e.message?.let { it1 -> Log.e(tag, it1) }
-        }
-        return caff
+        Toast.makeText(context, "retrieved data, ${file.path}", Toast.LENGTH_SHORT).show()
+        tvAttachedFile.text = file.path.substring(file.path.lastIndexOf("/")+1)
+        return file
     }
 
-    fun verifyStoragePermissions(activity: Activity?) {
+    private fun verifyStoragePermissions(activity: Activity?) {
         // Check if we have write permission
         val permission = ActivityCompat.checkSelfPermission(
             requireActivity(),
