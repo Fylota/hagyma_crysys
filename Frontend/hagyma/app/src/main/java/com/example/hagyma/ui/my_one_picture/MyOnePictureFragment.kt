@@ -84,7 +84,7 @@ class MyOnePictureFragment : Fragment() {
             view.findNavController().navigate(R.id.action_nav_my_one_picture_to_nav_edit_my_picture, bundle)
         }
 
-        binding.editButton.setOnClickListener { view ->
+        binding.deleteButton.setOnClickListener { view ->
             lifecycleScope.launch(Dispatchers.IO) {
                 if(mySearchedPictureUUID != null){
                     viewModel.deletePicture(mySearchedPictureUUID)
