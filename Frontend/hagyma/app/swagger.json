@@ -881,6 +881,7 @@
       "Comment": {
         "required": [
           "content",
+          "creatorName",
           "id"
         ],
         "type": "object",
@@ -895,6 +896,10 @@
             "type": "string"
           },
           "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "creatorName": {
             "minLength": 1,
             "type": "string"
           }

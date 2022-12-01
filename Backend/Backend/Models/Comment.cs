@@ -8,4 +8,5 @@ public class Comment
 
     [Required] public string Content { get; set; } = null!;
     [Required] public string Id { get; set; } = null!;
+    [Required] public string CreatorName { get; set; } = null!;
 }

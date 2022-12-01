@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
-import java.time.LocalDate
 import java.util.*
 
 class CommentAdapter(private val context: Context?) :
@@ -26,25 +25,25 @@ class CommentAdapter(private val context: Context?) :
         )*/
     } else {
         TODO("VERSION.SDK_INT < O")
-    };
+    }
 
-    class SearchedPictureItemViewHolder(val binding: CommentItemBinding): RecyclerView.ViewHolder(binding.root){}
+    class SearchedPictureItemViewHolder(val binding: CommentItemBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchedPictureItemViewHolder {
         return SearchedPictureItemViewHolder(
             CommentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        );
+        )
     }
 
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
         val currListItem = commentsList[position]
-        holder.binding.tvCommentOwner.text = currListItem.creatorID
+        holder.binding.tvCommentOwner.text = currListItem.creator
         holder.binding.tvCommentTime.text = currListItem.creationTime.toString()
         holder.binding.tvCommentText.text = currListItem.content
     }
 
     override fun getItemCount(): Int {
-        return commentsList.size;
+        return commentsList.size
     }
 
     @SuppressLint("NotifyDataSetChanged")

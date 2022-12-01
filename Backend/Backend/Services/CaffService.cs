@@ -36,7 +36,7 @@ public class CaffService : ICaffService
 
     public async Task<CaffDetails?> GetImageAsync(string imageId, string userId)
     {
-        var image = await Context.Images.Include(i => i.Comments).IgnoreQueryFilters()
+        var image = await Context.Images.Include(i => i.Comments).ThenInclude(c => c.User).IgnoreQueryFilters()
             .SingleOrDefaultAsync(i => i.Id == imageId);
         if (image == null) return null;
         if (!image.IsDeleted) return image.ToDetails();
