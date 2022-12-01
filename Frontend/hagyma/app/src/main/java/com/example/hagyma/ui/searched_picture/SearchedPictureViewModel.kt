@@ -45,6 +45,11 @@ class SearchedPictureViewModel : ViewModel()  {
         caffApi.apiCaffAddCommentPost(uuid, CommentRequest(newCommentText))
     }
 
+    suspend fun deleteComment(commentId: String){
+        val caffApi = ApiHelper.getCaffApi()
+        caffApi.apiCaffDeleteCommentDelete(commentId)
+    }
+
 
 
     private val _jwt = MutableLiveData<JWT>().apply {
