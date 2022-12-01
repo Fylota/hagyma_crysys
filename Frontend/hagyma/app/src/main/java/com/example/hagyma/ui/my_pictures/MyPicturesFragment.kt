@@ -35,11 +35,6 @@ class MyPicturesFragment : Fragment() {
         _binding = FragmentMyPicturesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textMyPictures
-//        myPicturesViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
-
         binding.fltBtnUploadPicture.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("original_page", "my_pictures");
@@ -52,22 +47,22 @@ class MyPicturesFragment : Fragment() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             // Get My CAFF Files
-            initMyCAFFFiles(myPicturesViewModel)
+            initMyCAFFFiles()
         }
 
         return root
     }
 
-    suspend fun initMyCAFFFiles(viewModel: MyPicturesViewModel){
+    suspend fun initMyCAFFFiles(){
         val caffApi = ApiHelper.getCaffApi()
         try {
-            val pictures = caffApi.apiCaffListImagesGet()
+            val pictures = caffApi.apiCaffUploadedImagesGet()
+            println("PICTURES SIZE: ${pictures.size}")
             pictures.forEach { item ->
-//                if(item.ownerId.toString() == viewModel.userId.toString()){
-//                    activity?.runOnUiThread {
-//                        myPicturesAdapter.addFile(ListItem(item.title, item.id,item.preview))
-//                    }
-//                }
+                println("PICTURE: $item")
+                activity?.runOnUiThread {
+                    myPicturesAdapter.addFile(ListItem(item.title, item.id,item.preview))
+                }
             }
         }catch (e:Exception){
             System.out.println(e)
