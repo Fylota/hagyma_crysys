@@ -23,14 +23,6 @@ class CommentAdapter(private val context: Context?) :
 
     private val commentsList: MutableList<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         mutableListOf()
-    /*listOf(
-            Comment(UUID.randomUUID().toString(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment1\nline2\nline3"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment2"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment3"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment4"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment5"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment6"),
-        )*/
     } else {
         TODO("VERSION.SDK_INT < O")
     }

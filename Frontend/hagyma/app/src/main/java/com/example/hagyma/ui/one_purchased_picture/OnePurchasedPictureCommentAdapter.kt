@@ -1,31 +1,40 @@
 package com.example.hagyma.ui.one_purchased_picture
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.auth0.android.jwt.JWT
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
-import java.time.LocalDate
-import java.util.*
+import com.example.hagyma.infrastructure.ApiClient
+import java.time.format.DateTimeFormatter
 
 class OnePurchasedPictureCommentAdapter(private val context: Context?) :
     RecyclerView.Adapter<OnePurchasedPictureCommentAdapter.SearchedPictureItemViewHolder>() {
 
-    private val testListComments: MutableList<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-    mutableListOf()
-    /*listOf(
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment1"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment2"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment3"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment4"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment5"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment6"),
-        )*/
+    private val commentsList: MutableList<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        mutableListOf()
     } else {
         TODO("VERSION.SDK_INT < O")
-    };
+    }
+
+    // We need this boolean to hide and disable delete button when the logged in profile is not admin.
+    val isAdmin: Boolean = try {
+        val jwt = ApiClient.accessToken?.let { JWT(it) }
+        val role = jwt?.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+            ?.asString()
+
+        role == "Admin"
+    } catch (e: Exception) {
+        e.message?.let { it1 -> Log.e("", it1) }
+        false
+    }
 
     class SearchedPictureItemViewHolder(val binding: CommentItemBinding): RecyclerView.ViewHolder(binding.root){}
 
@@ -35,13 +44,43 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?) :
         );
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
-        val currListItem = testListComments[position]
+        val currListItem = commentsList[position]
         holder.binding.tvCommentText.text = currListItem.content
-        holder.binding.tvCommentTime.text = currListItem.creationTime.toString()
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd-HH:mm")
+        val formatted = currListItem.creationTime!!.format(formatter)
+
+        holder.binding.tvCommentTime.text = formatted
+
+
+        holder.binding.btnDeleteComment.isEnabled = isAdmin
+        holder.binding.btnDeleteComment.isVisible = isAdmin
+        holder.binding.btnDeleteComment.setOnClickListener {
+            // TODO Comment torlese!!
+            // TODO: 1. DB-bol - valahogy meghivni a SearchedPictureViewModel.deleteComment(commentId: String) FV-t!!!
+            // TODO: 2. Innen a listabol -> deleteComment(currListItem)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addComment(newComment: Comment){
+        commentsList.add(newComment)
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun deleteComment(newComment: Comment){
+        commentsList.remove(newComment)
+        notifyDataSetChanged()
+    }
+
+    fun clear(){
+        commentsList.clear()
     }
 
     override fun getItemCount(): Int {
-        return testListComments.size;
+        return commentsList.size;
     }
 }
