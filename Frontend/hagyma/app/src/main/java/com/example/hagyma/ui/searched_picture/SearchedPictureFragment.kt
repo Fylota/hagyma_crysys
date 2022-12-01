@@ -66,9 +66,7 @@ class SearchedPictureFragment: Fragment() {
 
         val root: View = binding.root
 
-//        binding.textPictureName.text = searchedPictureUUID  // TODO majd nev db-bol
-
-        commentAdapter = CommentAdapter(this.context)
+        commentAdapter = CommentAdapter(this.context, _viewModel)
         binding.rvComments.adapter = commentAdapter
         binding.rvComments.layoutManager = LinearLayoutManager(this.context)
 
@@ -91,10 +89,10 @@ class SearchedPictureFragment: Fragment() {
         val builder  = AlertDialog.Builder(context)
         builder.setTitle("Purchase")
         builder.setMessage("Would you like to purchase this CAFF?")
-        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
             purchaseImage(searchedPictureUUID)
         }
-        builder.setNegativeButton(android.R.string.no) { dialog, which ->
+        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
             Toast.makeText(context,"Payment canceled", Toast.LENGTH_SHORT).show()
         }
 

@@ -6,31 +6,21 @@ import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.auth0.android.jwt.JWT
-import com.example.hagyma.R
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
 import com.example.hagyma.infrastructure.ApiClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.*
+import kotlinx.coroutines.*
+import java.time.format.DateTimeFormatter
 
-class CommentAdapter(private val context: Context?) :
+class CommentAdapter(private val context: Context?, private val searchedPictureViewModel: SearchedPictureViewModel?) :
     RecyclerView.Adapter<CommentAdapter.SearchedPictureItemViewHolder>() {
 
     private val commentsList: MutableList<Comment> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         mutableListOf()
-    /*listOf(
-            Comment(UUID.randomUUID().toString(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment1\nline2\nline3"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment2"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment3"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment4"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment5"),
-            Comment(UUID.randomUUID(), UUID.randomUUID(),  LocalDate.now().toString(), UUID.randomUUID(),"comment6"),
-        )*/
     } else {
         TODO("VERSION.SDK_INT < O")
     }
@@ -55,24 +45,25 @@ class CommentAdapter(private val context: Context?) :
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: SearchedPictureItemViewHolder, position: Int) {
         val currListItem = commentsList[position]
         holder.binding.tvCommentOwner.text = currListItem.creator
-        holder.binding.tvCommentTime.text = currListItem.creationTime.toString()
-        //        holder.binding.tvCommentTime.text = currListItem.creationTime.toString().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
-//        holder.binding.tvCommentTime.text = LocalDate.parse(currListItem.creationTime.toString(), DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")).toString()
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd-HH:mm")
+        val formatted = currListItem.creationTime?.format(formatter)
+        holder.binding.tvCommentTime.text = "$formatted"
+
         holder.binding.tvCommentText.text = currListItem.content
 
         holder.binding.btnDeleteComment.isEnabled = isAdmin
         holder.binding.btnDeleteComment.isVisible = isAdmin
         holder.binding.btnDeleteComment.setOnClickListener {
-            // TODO Comment torlese!!
-                // TODO: 1. DB-bol - valahogy meghivni a SearchedPictureViewModel.deleteComment(commentId: String) FV-t!!!
-                // TODO: 2. Innen a listabol -> deleteComment(currListItem)
+            CoroutineScope(Dispatchers.IO).launch {
+                searchedPictureViewModel?.deleteComment(currListItem.uuid)
+            }
+            deleteComment(currListItem)
         }
-//        if(isAdmin){
-//
-//        }
     }
 
     override fun getItemCount(): Int {
