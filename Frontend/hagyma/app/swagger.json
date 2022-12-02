@@ -571,7 +571,15 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "image/caff": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -839,6 +847,13 @@
           "uploadTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "canDownload": {
+            "type": "boolean"
+          },
+          "ownerId": {
+            "type": "string",
+            "nullable": true
           },
           "id": {
             "minLength": 1,
