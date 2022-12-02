@@ -18,6 +18,8 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
 
     public DbSet<DbImage> Images { get; set; }
 
+    public DbSet<Log> Logs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<DbUserInfo>().HasMany(u => u.PurchasedImages).WithMany(i => i.Buyers);
