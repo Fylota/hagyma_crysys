@@ -39,10 +39,14 @@ public class CaffService : ICaffService
         var image = await Context.Images.Include(i => i.Comments).ThenInclude(c => c.User).IgnoreQueryFilters()
             .SingleOrDefaultAsync(i => i.Id == imageId);
         if (image == null) return null;
-        if (!image.IsDeleted) return image.ToDetails();
-        var user = await Context.Users.Include(u => u.PurchasedImages).SingleOrDefaultAsync(u => u.Id == userId);
+        var user = await Context.Users.SingleOrDefaultAsync(u => u.Id == userId);
         if (user == null) return null;
-        return user.PurchasedImages.Any(pi => pi.Id == imageId) ? image.ToDetails() : null;
+        var pImage = await Context.Entry(user).Collection(u => u.PurchasedImages).Query().Select(i => i.Id)
+            .SingleOrDefaultAsync(id => id == imageId);
+        var result = image.ToDetails();
+        result.CanDownload = image.OwnerId == userId || pImage != null;
+        if (!image.IsDeleted) return result;
+        return user.PurchasedImages.Any(pi => pi.Id == imageId) ? result : null;
     }
 
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
