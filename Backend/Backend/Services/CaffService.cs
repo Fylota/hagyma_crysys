@@ -95,6 +95,7 @@ public class CaffService : ICaffService
             using var compressStream = new MemoryStream();
             await using (var dStream = new DeflateStream(compressStream, CompressionLevel.Optimal))
             {
+                memStream.Position = 0;
                 await memStream.CopyToAsync(dStream);
             }
 
