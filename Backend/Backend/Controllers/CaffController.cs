@@ -1,4 +1,5 @@
-﻿using System.Net.Mime;
+﻿using System.Net;
+using System.Net.Mime;
 using Backend.Exceptions;
 using Backend.Extensions;
 using Backend.Models;
@@ -171,10 +172,10 @@ public class CaffController : ControllerBase
     [HttpGet]
     [Route("downloadImage")]
     [Produces("image/caff")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DownloadImage([FromQuery] string imageId)
+    public async Task<ActionResult<FileContentResult>> DownloadImage([FromQuery] string imageId)
     {
         var userId = User.GetUserId();
         if (userId == null) return Unauthorized();

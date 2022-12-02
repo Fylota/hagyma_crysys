@@ -14,7 +14,8 @@ public static class ModelConversionExtensions
             Preview = image.Preview,
             Description = image.Description,
             Comments = image.Comments?.Select(c => c.ToModel()).ToList() ?? new List<Comment>(),
-            UploadTime = image.UploadTime
+            UploadTime = image.UploadTime,
+            OwnerId = image.OwnerId
         };
     }
 
