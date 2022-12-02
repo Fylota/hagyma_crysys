@@ -83,8 +83,8 @@ try
         });
     });
     builder.Services.AddSwaggerGenNewtonsoftSupport();
-    builder.Logging.ClearProviders();
-    builder.Host.UseNLog();
+    //builder.Logging.ClearProviders();
+    builder.Host.UseNLog(new NLogAspNetCoreOptions { RemoveLoggerFactoryFilter =false});
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
