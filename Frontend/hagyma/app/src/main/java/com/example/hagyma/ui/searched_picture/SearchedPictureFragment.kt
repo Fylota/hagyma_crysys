@@ -102,7 +102,7 @@ class SearchedPictureFragment: Fragment() {
 
         return root
     }
-
+    // todo dont let owner try to purchase own image
     private fun purchaseImage(searchedPictureUUID: String?) {
         val handler = Handler(Looper.getMainLooper()!!)
         lifecycleScope.launch(Dispatchers.IO) {
