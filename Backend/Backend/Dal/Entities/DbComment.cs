@@ -13,4 +13,5 @@ public class DbComment
 
     [Required] public string Text { get; set; } = null!;
     [Required] public string UserId { get; set; } = null!;
+    [Required] public DbUserInfo User { get; set; } = null!;
 }

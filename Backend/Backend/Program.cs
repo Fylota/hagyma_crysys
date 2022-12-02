@@ -1,6 +1,7 @@
 using System.Text;
 using Backend.Dal;
 using Backend.Dal.Entities;
+using Backend.Extensions;
 using Backend.Services;
 using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -49,6 +50,7 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.Converters.Add(new StringEnumConverter());
+    options.SerializerSettings.Converters.Add(new DateTimeConverter());
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

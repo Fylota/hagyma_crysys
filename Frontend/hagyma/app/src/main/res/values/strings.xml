@@ -2,7 +2,7 @@
     <string name="app_name">HagymApp</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_title">Hagyma Homework Application</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -36,6 +36,8 @@
     <string name="emailTitle">Email:</string>
     <string name="dateTitle">Registration date:</string>
     <string name="passwordTitle">New password:</string>
+    <string name="password2Title">New password again:</string>
+    <string name="currentPasswordTitle">Current password:</string>
     <string name="cancel_btn">Cancel</string>
     <string name="upload_caff_btn">Upload CAFF</string>
     <string name="download_picture_button">Download CAFF</string>

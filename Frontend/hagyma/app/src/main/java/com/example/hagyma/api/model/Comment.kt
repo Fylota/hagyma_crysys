@@ -23,6 +23,7 @@ import com.squareup.moshi.Json
  *
  * @param content 
  * @param id 
+ * @param creatorName 
  * @param creationTime 
  */
 
@@ -34,6 +35,9 @@ data class Comment (
 
     @Json(name = "id")
     val id: kotlin.String,
+
+    @Json(name = "creatorName")
+    val creatorName: kotlin.String,
 
     @Json(name = "creationTime")
     val creationTime: java.time.OffsetDateTime? = null

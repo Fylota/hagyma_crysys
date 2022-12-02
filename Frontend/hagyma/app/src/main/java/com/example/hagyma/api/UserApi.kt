@@ -260,19 +260,20 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param userChangeRequest  (optional)
-     * @return void
+     * @return User
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
      * @throws ClientException If the API returns a client error response
      * @throws ServerException If the API returns a server error response
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun apiUserUpdateUserPut(userChangeRequest: UserChangeRequest? = null) : Unit = withContext(Dispatchers.IO) {
+    suspend fun apiUserUpdateUserPut(userChangeRequest: UserChangeRequest? = null) : User = withContext(Dispatchers.IO) {
         val localVarResponse = apiUserUpdateUserPutWithHttpInfo(userChangeRequest = userChangeRequest)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> Unit
+            ResponseType.Success -> (localVarResponse as Success<*>).data as User
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -290,15 +291,16 @@ class UserApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param userChangeRequest  (optional)
-     * @return ApiResponse<Unit?>
+     * @return ApiResponse<User?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun apiUserUpdateUserPutWithHttpInfo(userChangeRequest: UserChangeRequest?) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
+    suspend fun apiUserUpdateUserPutWithHttpInfo(userChangeRequest: UserChangeRequest?) : ApiResponse<User?> = withContext(Dispatchers.IO) {
         val localVariableConfig = apiUserUpdateUserPutRequestConfig(userChangeRequest = userChangeRequest)
 
-        return@withContext request<UserChangeRequest, Unit>(
+        return@withContext request<UserChangeRequest, User>(
             localVariableConfig
         )
     }

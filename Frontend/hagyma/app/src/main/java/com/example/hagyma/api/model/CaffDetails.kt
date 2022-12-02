@@ -27,6 +27,7 @@ import com.squareup.moshi.Json
  * @param title 
  * @param comments 
  * @param description 
+ * @param uploadTime 
  */
 
 
@@ -45,7 +46,10 @@ data class CaffDetails (
     val comments: kotlin.collections.List<Comment>? = null,
 
     @Json(name = "description")
-    val description: kotlin.String? = null
+    val description: kotlin.String? = null,
+
+    @Json(name = "uploadTime")
+    val uploadTime: java.time.OffsetDateTime? = null
 
 )
 

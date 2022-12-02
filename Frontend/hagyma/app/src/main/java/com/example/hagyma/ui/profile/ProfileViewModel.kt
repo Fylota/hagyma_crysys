@@ -25,12 +25,17 @@ class ProfileViewModel : ViewModel() {
         .asString()
         .toString()}
 
+    val isAdmin: LiveData<String> = _jwt.map { data -> data.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+        .asString()
+        .toString()}
+
     var sdfDate: SimpleDateFormat = SimpleDateFormat(
         "dd-MM-yyyy",
         Locale.getDefault()
     )
+
     val regDate: LiveData<String> = _jwt.map { data ->
         sdfDate.format(
-            Date(((data.getClaim("iat").asString())?.toLong() ?: 1) * 1000))
+            Date(((data.getClaim("RegistrationDate").asString())?.toLong() ?: 1) * 1000))
         }
 }

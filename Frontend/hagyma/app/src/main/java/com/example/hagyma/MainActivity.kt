@@ -63,7 +63,7 @@ class MainActivity : BaseActivity() {
         val add_dialog = AlertDialog.Builder(this)
         add_dialog.setView(v)
 
-        add_dialog.setPositiveButton("Ok") { dialog, _ ->  // TODO: After validation we save the new user data to the DB
+        add_dialog.setPositiveButton("Ok") { dialog, _ ->
             val handler = Handler(Looper.getMainLooper()!!)
             if (!validateRegisterForm(email, username, pass1, pass2)) {
                 Toast.makeText(this, "Invalid form", Toast.LENGTH_SHORT).show()

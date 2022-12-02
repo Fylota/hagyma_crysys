@@ -31,8 +31,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
                 android:layout_width="34dp"
-                android:layout_height="34dp"
-                app:tint="@color/black" />
+                android:layout_height="34dp"/>
             <TextView
                 android:id="@+id/tv_picture_name"
                 android:text="Picture name here"

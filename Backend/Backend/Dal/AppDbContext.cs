@@ -25,6 +25,7 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
         builder.Entity<DbImage>().Property(i => i.IsDeleted).HasDefaultValue(false);
         builder.Entity<DbImage>().HasQueryFilter(p => !p.IsDeleted);
         builder.Entity<DbImage>().Property(i => i.SmallPreview).HasDefaultValue("");
+        builder.Entity<DbComment>().HasOne(c => c.User).WithMany();
         SeedData(builder);
 
         base.OnModelCreating(builder);

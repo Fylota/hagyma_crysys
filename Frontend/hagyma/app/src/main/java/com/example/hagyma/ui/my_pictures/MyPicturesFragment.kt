@@ -6,10 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.R
+import com.example.hagyma.data.ListItem
 import com.example.hagyma.databinding.FragmentMyPicturesBinding
+import com.example.hagyma.helper.ApiHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MyPicturesFragment : Fragment() {
 
@@ -30,11 +35,6 @@ class MyPicturesFragment : Fragment() {
         _binding = FragmentMyPicturesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textMyPictures
-//        myPicturesViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
-
         binding.fltBtnUploadPicture.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("original_page", "my_pictures");
@@ -45,7 +45,28 @@ class MyPicturesFragment : Fragment() {
         binding.rvPictures.adapter = myPicturesAdapter
         binding.rvPictures.layoutManager = LinearLayoutManager(this.context)
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            // Get My CAFF Files
+            initMyCAFFFiles()
+        }
+
         return root
+    }
+
+    suspend fun initMyCAFFFiles(){
+        val caffApi = ApiHelper.getCaffApi()
+        try {
+            val pictures = caffApi.apiCaffUploadedImagesGet()
+            println("PICTURES SIZE: ${pictures.size}")
+            pictures.forEach { item ->
+                println("PICTURE: $item")
+                activity?.runOnUiThread {
+                    myPicturesAdapter.addFile(ListItem(item.title, item.id,item.preview))
+                }
+            }
+        }catch (e:Exception){
+            System.out.println(e)
+        }
     }
 
     override fun onDestroyView() {
