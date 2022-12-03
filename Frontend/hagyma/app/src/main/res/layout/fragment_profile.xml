@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:padding="10dp"
-        android:text="@string/testUser"
+        android:text="@string/testTitle"
         android:gravity="center"
         android:textSize="20sp"
         android:textStyle="bold"

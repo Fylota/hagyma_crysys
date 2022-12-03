@@ -42,7 +42,8 @@
     <string name="deletedUserItem">%1$s [deleted]</string>
     <string name="testDate">test date 2022.02.02</string>
     <string name="testEmail">test@mail.com</string>
-    <string name="testUser">Test User</string>
+    <string name="testTitle">Test title</string>
+    <string name="imageDescription">Caff preview image</string>
     <string name="cancel_btn">Cancel</string>
     <string name="upload_caff_btn">Upload CAFF</string>
     <string name="download_picture_button">Download CAFF</string>

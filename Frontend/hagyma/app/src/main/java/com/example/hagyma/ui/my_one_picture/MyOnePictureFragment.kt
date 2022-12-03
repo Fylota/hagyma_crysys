@@ -1,16 +1,26 @@
 package com.example.hagyma.ui.my_one_picture
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.DocumentsContract
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -20,6 +30,7 @@ import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.FragmentMyOnePictureBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -28,6 +39,8 @@ class MyOnePictureFragment : Fragment() {
     private var _binding: FragmentMyOnePictureBinding? = null
 
     private val binding get() = _binding!!
+
+    private var caffFile: File? = null
 
     private var _viewModel: MyOnePictureViewModel?=null
 
@@ -42,7 +55,7 @@ class MyOnePictureFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val mySearchedPictureUUID = this.arguments?.getString("my_searched_picture_uuid")  // TODO hasznalni
+        val mySearchedPictureUUID = this.arguments?.getString("my_searched_picture_uuid")
 
         _binding = FragmentMyOnePictureBinding.inflate(inflater, container, false)
         _viewModel = MyOnePictureViewModel()
@@ -62,6 +75,10 @@ class MyOnePictureFragment : Fragment() {
             binding.ivPicture.setImageBitmap(decodedByte)
         }
 
+        viewModel.caffFile.observe(viewLifecycleOwner) {
+            caffFile = it
+        }
+
         val root: View = binding.root
 
         myPictureCommentAdapter = MyPictureCommentAdapter(this.context, _viewModel)
@@ -71,6 +88,10 @@ class MyOnePictureFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             // Get CAFF File
             viewModel.getCAFF(mySearchedPictureUUID!!)
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.getDownloadCAFF(mySearchedPictureUUID!!)
         }
 
         binding.addCommentButton.setOnClickListener {
@@ -102,7 +123,66 @@ class MyOnePictureFragment : Fragment() {
             }
         }
 
+        binding.fltBtnDownloadPicture.setOnClickListener {
+            createFileWithActivityForResult()
+        }
+
         return root
+    }
+
+    private fun createFileWithActivityForResult() {
+        verifyStoragePermissions(this.activity)
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            // putExtra(Intent.EXTRA_TITLE, "downloadCaff.caff")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse("/Downloads"))
+            }
+            type = "*/*"
+        }
+        resultLauncher.launch(intent)
+    }
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri: Uri?
+            if (result.data != null) {
+                uri = result.data!!.data
+                // Perform operations on the document using its URI.
+                createFile(uri)
+            }
+        }
+    }
+
+    private fun createFile(uri: Uri?) {
+        if (uri != null) {
+            try {
+                caffFile?.let { it1 -> requireContext().contentResolver.openOutputStream(uri)
+                    ?.let { it2 ->
+                        requireContext().contentResolver.openInputStream(it1.toUri())?.copyTo(it2)
+                    } }
+                val toast = Toast.makeText(context, "Download successful", Toast.LENGTH_SHORT)
+                toast.show()
+            } catch (e: Exception) {
+                e.message?.let { it1 -> Log.e(tag, it1) }
+            }
+        }
+    }
+
+    private fun verifyStoragePermissions(activity: Activity?) {
+        // Check if we have write permission
+        val permission = ActivityCompat.checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            if (activity != null) {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -122,7 +202,7 @@ class MyOnePictureFragment : Fragment() {
                 binding.editTextNewComment.text.clear()
             }
         }catch (e:Exception){
-            System.out.println(e)
+            e.message?.let { it1 -> Log.e(tag, it1) }
         }
     }
 

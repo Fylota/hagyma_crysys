@@ -50,7 +50,7 @@ class UploadCaffFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val uploadCaffViewModel =
-            ViewModelProvider(this).get(UploadCaffViewModel::class.java)
+            ViewModelProvider(this)[UploadCaffViewModel::class.java]
 
         val originalPageName = this.arguments?.getString("original_page")
 
@@ -64,7 +64,6 @@ class UploadCaffFragment : Fragment() {
 
         binding.attachBtn.setOnClickListener {
             openFileSelectorActivityForResult()
-
         }
 
         binding.uploadBtn.setOnClickListener {
@@ -73,6 +72,7 @@ class UploadCaffFragment : Fragment() {
             }
 
             else {
+                Toast.makeText(context, "Uploading file...", Toast.LENGTH_SHORT).show()
                 val handler = Handler(Looper.getMainLooper()!!)
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
