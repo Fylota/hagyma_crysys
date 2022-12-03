@@ -13,9 +13,6 @@ import com.auth0.android.jwt.JWT
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
 import com.example.hagyma.infrastructure.ApiClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 class OnePurchasedPictureCommentAdapter(private val context: Context?, private val onePurchasedPictureViewModel: OnePurchasedPictureViewModel?) :
@@ -63,9 +60,7 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?, private v
         holder.binding.btnDeleteComment.isVisible = isAdmin
 
         holder.binding.btnDeleteComment.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                onePurchasedPictureViewModel?.deleteComment(currListItem.uuid)
-            }
+            onePurchasedPictureViewModel?.deleteComment(currListItem.uuid)
             deleteComment(currListItem)
         }
     }

@@ -19,6 +19,7 @@ import com.example.hagyma.databinding.ActivityMainBinding
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
 import com.example.hagyma.extensions.validateNonEmpty
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -28,6 +29,8 @@ class MainActivity : BaseActivity() {
     private lateinit var authenticationApi: AuthenticationApi
     private lateinit var userApi : UserApi
     private lateinit var binding: ActivityMainBinding
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private lateinit var progressBar: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,10 @@ class MainActivity : BaseActivity() {
         binding.btnRegister.setOnClickListener { registerClick() }
         binding.btnLogin.setOnClickListener { loginClick() }
 
+        val builder  = AlertDialog.Builder(this)
+        builder.setCancelable(false)
+        builder.setView(R.layout.layout_loading_dialog)
+        progressBar = builder.create()
     }
 
     // If someone wants to register then the application calls this function
@@ -58,7 +65,7 @@ class MainActivity : BaseActivity() {
             if (!validateRegisterForm(email, username, pass1, pass2)) {
                 Toast.makeText(this, "Invalid form", Toast.LENGTH_SHORT).show()
             } else {
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(ioDispatcher) {
                     try {
                         authenticationApi.authRegisterPost(
                             RegisterRequest(
@@ -101,11 +108,11 @@ class MainActivity : BaseActivity() {
         binding.btnLogin.isEnabled = false
         val email = findViewById<EditText>(R.id.etEmail).text.toString()
         val password = findViewById<EditText>(R.id.etPassword).text.toString()
-        showProgressDialog()
+        progressBar.show()
 
 
         val handler = Handler(Looper.getMainLooper()!!)
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(ioDispatcher) {
             try {
                 val result = authenticationApi.authLoginPost(LoginRequest(email,password))
                 ApiClient.accessToken = result
@@ -120,7 +127,6 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-
 
     private fun validateForm(): Boolean = binding.etEmail.validateNonEmpty()
             && binding.etPassword.validateNonEmpty()
@@ -139,14 +145,14 @@ class MainActivity : BaseActivity() {
         pass1.text.toString() == pass2.text.toString()
 
     private fun onLoginSuccess() {
-        hideProgressDialog()
+        progressBar.hide()
         binding.btnLogin.isEnabled = true
         Toast.makeText(baseContext, "Login Success", Toast.LENGTH_LONG).show()
         startActivity(Intent(baseContext, SecondActivity::class.java))
     }
 
     private fun onLoginFailed() {
-        hideProgressDialog()
+        progressBar.hide()
         Toast.makeText(baseContext, "Login failed", Toast.LENGTH_LONG).show()
         binding.btnLogin.isEnabled = true
     }
@@ -158,5 +164,11 @@ class MainActivity : BaseActivity() {
             Toast.LENGTH_SHORT
         ).show()
     }
-    private fun onRegisterFailed() {}
+    private fun onRegisterFailed() {
+        Toast.makeText(
+            baseContext,
+            "Registration Failed",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 }

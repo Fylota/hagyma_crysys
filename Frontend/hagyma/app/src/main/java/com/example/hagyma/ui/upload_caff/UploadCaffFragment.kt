@@ -19,7 +19,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.hagyma.R
@@ -49,9 +48,6 @@ class UploadCaffFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val uploadCaffViewModel =
-            ViewModelProvider(this)[UploadCaffViewModel::class.java]
-
         val originalPageName = this.arguments?.getString("original_page")
 
         caffApi = ApiHelper.getCaffApi()
@@ -142,13 +138,12 @@ class UploadCaffFragment : Fragment() {
             requireActivity(),
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
-        if (permission != PackageManager.PERMISSION_GRANTED) {
+        if (permission != PackageManager.PERMISSION_GRANTED && activity != null) {
             // We don't have permission so prompt the user
-            if (activity != null) {
-                ActivityCompat.requestPermissions(
-                    activity,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
-            }
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1
+            )
         }
     }
 

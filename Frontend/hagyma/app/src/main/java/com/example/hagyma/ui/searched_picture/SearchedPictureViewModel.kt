@@ -1,16 +1,14 @@
 package com.example.hagyma.ui.searched_picture
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
+import androidx.lifecycle.*
 import com.auth0.android.jwt.JWT
 import com.example.hagyma.api.model.CaffDetails
 import com.example.hagyma.api.model.CommentRequest
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 class SearchedPictureViewModel : ViewModel()  {
 
@@ -21,14 +19,15 @@ class SearchedPictureViewModel : ViewModel()  {
     private val caffApi = ApiHelper.getCaffApi()
     private val userApi = ApiHelper.getUserApi()
     private val paymentApi = ApiHelper.getPaymentApi()
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    suspend fun getCAFF(uuid:String){
-        try {
-            withContext(Dispatchers.Main){
-                _caff.value = caffApi.apiCaffGetImageGet(uuid)
+    fun getCAFF(uuid:String) {
+        viewModelScope.launch(ioDispatcher) {
+            try {
+                _caff.postValue(caffApi.apiCaffGetImageGet(uuid))
+            }catch (e:Exception){
+                println("SearchedPicture getCaff $e")
             }
-        }catch (e:Exception){
-            println("SearchedPicture getCaff $e")
         }
     }
 
@@ -36,26 +35,27 @@ class SearchedPictureViewModel : ViewModel()  {
         return userApi.apiUserGetUserGet().name
     }
 
-    suspend fun saveComment(uuid: String, newCommentText: String){
-        caffApi.apiCaffAddCommentPost(uuid, CommentRequest(newCommentText))
+    fun saveComment(uuid: String, newCommentText: String){
+        viewModelScope.launch(ioDispatcher) {
+            caffApi.apiCaffAddCommentPost(uuid, CommentRequest(newCommentText))
+        }
     }
 
-    suspend fun deleteComment(commentId: String){
-        caffApi.apiCaffDeleteCommentDelete(commentId)
+    fun deleteComment(commentId: String){
+        viewModelScope.launch {
+            caffApi.apiCaffDeleteCommentDelete(commentId)
+        }
     }
 
-    suspend fun purchaseCaff(imageId: String) {
-        withContext(Dispatchers.IO) {
+    fun purchaseCaff(imageId: String) {
+        viewModelScope.launch {
             paymentApi.apiPaymentPurchasePost(imageId)
         }
     }
 
-
-
     private val _jwt = MutableLiveData<JWT>().apply {
         value = ApiClient.accessToken?.let { JWT(it) }
     }
-
 
     val userName: LiveData<String> = _jwt.map { data ->  data.getClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")
         .asString()

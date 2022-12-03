@@ -16,6 +16,7 @@ import com.example.hagyma.R
 import com.example.hagyma.api.UserApi
 import com.example.hagyma.databinding.FragmentProfileBinding
 import com.example.hagyma.helper.ApiHelper
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -26,6 +27,7 @@ class ProfileFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     private lateinit var userApi : UserApi
 
     override fun onCreateView(
@@ -121,7 +123,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun deleteUser(userId: String, root: View) {
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(ioDispatcher) {
             try {
                 userApi.apiUserDeleteUserDelete(userId)
                 root.findNavController().navigate(R.id.action_nav_profile_to_nav_admin_users)

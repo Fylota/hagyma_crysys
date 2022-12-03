@@ -70,13 +70,8 @@ class SearchedPictureFragment: Fragment() {
         binding.rvComments.adapter = commentAdapter
         binding.rvComments.layoutManager = LinearLayoutManager(this.context)
 
-
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            // Get CAFF File
-            viewModel.getCAFF(searchedPictureUUID!!)
-        }
-
+        // Get CAFF File
+        viewModel.getCAFF(searchedPictureUUID!!)
 
         binding.addCommentButton.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {

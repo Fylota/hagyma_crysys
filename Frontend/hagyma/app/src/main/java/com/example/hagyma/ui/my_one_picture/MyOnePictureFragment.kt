@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.R
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.FragmentMyOnePictureBinding
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -37,13 +38,10 @@ import java.util.*
 class MyOnePictureFragment : Fragment() {
 
     private var _binding: FragmentMyOnePictureBinding? = null
-
     private val binding get() = _binding!!
-
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     private var caffFile: File? = null
-
     private var _viewModel: MyOnePictureViewModel?=null
-
     private val viewModel
         get() = _viewModel!!
 
@@ -85,35 +83,27 @@ class MyOnePictureFragment : Fragment() {
         binding.rvComments.adapter = myPictureCommentAdapter
         binding.rvComments.layoutManager = LinearLayoutManager(this.context)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            // Get CAFF File
-            viewModel.getCAFF(mySearchedPictureUUID!!)
-        }
+        // Get CAFF File
+        viewModel.getCAFF(mySearchedPictureUUID!!)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.getDownloadCAFF(mySearchedPictureUUID!!)
-        }
+        viewModel.getDownloadCAFF(mySearchedPictureUUID)
 
         binding.addCommentButton.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                if(mySearchedPictureUUID != null){
-                    saveComment(mySearchedPictureUUID, binding.editTextNewComment.text.toString())
-                }
+            lifecycleScope.launch(ioDispatcher) {
+                saveComment(mySearchedPictureUUID, binding.editTextNewComment.text.toString())
             }
         }
 
         val handler = Handler(Looper.getMainLooper()!!)
         binding.deleteButton.setOnClickListener { view ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                if(mySearchedPictureUUID != null){
-                    try {
-                        viewModel.deletePicture(mySearchedPictureUUID)
-                        handler.post {
-                            view.findNavController().navigate(R.id.action_nav_my_one_picture_to_nav_my_pictures)
-                        }
-                    } catch (e: Exception) {
-                        e.message?.let { it1 -> Log.e(tag, it1) }
+            lifecycleScope.launch(ioDispatcher) {
+                try {
+                    viewModel.deletePicture(mySearchedPictureUUID)
+                    handler.post {
+                        view.findNavController().navigate(R.id.action_nav_my_one_picture_to_nav_my_pictures)
                     }
+                } catch (e: Exception) {
+                    e.message?.let { it1 -> Log.e(tag, it1) }
                 }
             }
         }
@@ -129,7 +119,6 @@ class MyOnePictureFragment : Fragment() {
         verifyStoragePermissions(this.activity)
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            // putExtra(Intent.EXTRA_TITLE, "downloadCaff.caff")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse("/Downloads"))
             }
@@ -170,13 +159,12 @@ class MyOnePictureFragment : Fragment() {
             requireActivity(),
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-        if (permission != PackageManager.PERMISSION_GRANTED) {
+        if (permission != PackageManager.PERMISSION_GRANTED && activity != null) {
             // We don't have permission so prompt the user
-            if (activity != null) {
-                ActivityCompat.requestPermissions(
-                    activity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
-            }
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1
+            )
         }
     }
 
@@ -184,7 +172,6 @@ class MyOnePictureFragment : Fragment() {
     suspend fun saveComment(uuid: String, newCommentText: String){
         val newComment = Comment(
             UUID.randomUUID().toString(),
-//            viewModel.userName.value.toString(),
             viewModel.getUserName(),
             OffsetDateTime.now(),
             uuid,
