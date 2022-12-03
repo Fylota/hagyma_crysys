@@ -15,9 +15,6 @@ const uint8_t CAFF::animationId = 0x3;
 const uint8_t CAFF::minimumAnimationBlockRead = 1;
 
 CAFF::CAFF() {
-    creator = "";
-    numberOfAnimations = 0;
-    valid = true;
     endianess = Endianess::LITTLE_ENDIAN_MODE;
 }
 
@@ -167,10 +164,14 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     // Read creation date and time
     caff.creationDate.year = ParseUtils::parse2ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 2;
-    caff.creationDate.month = bytes[bytesRead++];
-    caff.creationDate.day = bytes[bytesRead++];
-    caff.creationDate.hour = bytes[bytesRead++];
-    caff.creationDate.minute = bytes[bytesRead++];
+    caff.creationDate.month = bytes[bytesRead];
+    bytesRead += 1;
+    caff.creationDate.day = bytes[bytesRead];
+    bytesRead += 1;
+    caff.creationDate.hour = bytes[bytesRead];
+    bytesRead += 1;
+    caff.creationDate.minute = bytes[bytesRead];
+    bytesRead += 1;
 
     if (!DateValidator::isValidDateTime(caff.creationDate)) {
         caff.handleError("Invalid creation date");
