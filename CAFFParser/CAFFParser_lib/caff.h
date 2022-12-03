@@ -40,6 +40,7 @@ private:
     static const uint8_t headerId;
     static const uint8_t creditsId;
     static const uint8_t animationId;
+    static const uint8_t minimumAnimationBlockRead;
 
     uint64_t numberOfAnimations;
     DateTime creationDate;
@@ -48,6 +49,10 @@ private:
     bool valid;
     Endianess endianess;
     std::vector<std::string> parseFails;
+
+    void addTagsToStream(std::ostringstream &json, int i);
+
+    void addCIFFsToStream(std::ostringstream &json);
 };
 
 

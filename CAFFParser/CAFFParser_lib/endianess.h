@@ -5,7 +5,7 @@
 #ifndef CAFFPARSER_ENDIANESS_H
 #define CAFFPARSER_ENDIANESS_H
 
-enum Endianess {
+enum class Endianess {
     BIG_ENDIAN_MODE = 0,
     LITTLE_ENDIAN_MODE = 1
 };
