@@ -10,6 +10,8 @@ import com.example.hagyma.api.model.CaffDetails
 import com.example.hagyma.api.model.CommentRequest
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class MyOnePictureViewModel : ViewModel() {
@@ -25,20 +27,18 @@ class MyOnePictureViewModel : ViewModel() {
     private val caffApi = ApiHelper.getCaffApi()
     private val userApi = ApiHelper.getUserApi()
 
-    suspend fun getCAFF(uuid:String) {
-        runCatching {
-            _caff.value = caffApi.apiCaffGetImageGet(uuid)
-        }.onFailure { error: Throwable ->
-            error.message?.let { it1 -> Log.e("", it1) }
+    suspend fun getCAFF(uuid:String){
+        try {
+            withContext(Dispatchers.Main){
+                _caff.value = caffApi.apiCaffGetImageGet(uuid)
+            }
+        }catch (e:Exception){
+            println("SearchedPicture getCaff $e")
         }
     }
 
     suspend fun getDownloadCAFF(uuid:String) {
-        runCatching {
-            _caffFile.value = caffApi.apiCaffDownloadImageGet(uuid)
-        }.onFailure { error: Throwable ->
-            error.message?.let { it1 -> Log.e("", it1) }
-        }
+        _caffFile.value = caffApi.apiCaffDownloadImageGet(uuid)
     }
 
     suspend fun getUserName(): String {
@@ -46,27 +46,15 @@ class MyOnePictureViewModel : ViewModel() {
     }
 
     suspend fun saveComment(uuid: String, newCommentText: String) {
-        runCatching {
         caffApi.apiCaffAddCommentPost(uuid, CommentRequest(newCommentText))
-        }.onFailure { error: Throwable ->
-            error.message?.let { it1 -> Log.e("", it1) }
-        }
     }
 
     suspend fun deleteComment(commentId: String) {
-        runCatching {
-            caffApi.apiCaffDeleteCommentDelete(commentId)
-        }.onFailure { error: Throwable ->
-            error.message?.let { it1 -> Log.e("", it1) }
-        }
+        caffApi.apiCaffDeleteCommentDelete(commentId)
     }
 
     suspend fun deletePicture(imageId: String) {
-        runCatching {
-            caffApi.apiCaffDeleteImageDelete(imageId)
-        }.onFailure { error: Throwable ->
-            error.message?.let { it1 -> Log.e("", it1) }
-        }
+        caffApi.apiCaffDeleteImageDelete(imageId)
     }
 
 
