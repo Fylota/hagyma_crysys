@@ -2,6 +2,7 @@ using System.Net;
 
 namespace BackendTest
 {
+    [Collection("Sequential")]
     public class PaymentControllerIntegrationTest : IClassFixture<TestingWebAppFactory<Program>>
     {
         private readonly HttpClient _client;

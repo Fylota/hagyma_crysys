@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BackendTest
 {
+    [Collection("Sequential")]
     public class AuthenticationControllerIntegrationTest : IClassFixture<TestingWebAppFactory<Program>>
     {
         private readonly HttpClient _client;

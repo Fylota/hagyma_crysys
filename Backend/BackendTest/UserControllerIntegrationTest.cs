@@ -4,6 +4,7 @@ using Backend.Models;
 
 namespace BackendTest
 {
+    [Collection("Sequential")]
     public class UserControllerIntegrationTest : IClassFixture<TestingWebAppFactory<Program>>
     {
         private readonly HttpClient _client;
@@ -68,6 +69,16 @@ namespace BackendTest
             request.Headers.Add("Authorization", $"Bearer {token}");
             var response = await _client.SendAsync(request);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Fact]
+        public async void DeleteUser_WhileBeingLoggedInAsAdmin()
+        {
+            var token = await AuthHelper.GetAdminAccessToken(_client!);
+            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/User/deleteUser?userId=ID");
+            request.Headers.Add("Authorization", $"Bearer {token}");
+            var response = await _client.SendAsync(request);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
     }

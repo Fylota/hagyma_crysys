@@ -28,36 +28,28 @@ namespace BackendTest
                     option.UseInMemoryDatabase("TestDB");
                 });
 
-                lock (Lock)
+                //lock (Lock)
                 {
                     var sp = services.BuildServiceProvider();
                     using (var scope = sp.CreateScope())
+                    using (var db = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+                    using (var userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbUserInfo>>())
                     {
-
-                        using (var db = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+                        db.Database.EnsureDeleted();
+                        db.Database.EnsureCreated();
+                        var testUser = userManager.FindByEmailAsync("test@test.com")?.Result;
+                        var adminUser = userManager.FindByEmailAsync("testadmin@testadmin.com")?.Result;
+                        if (testUser == null && adminUser == null)
                         {
-                            db.Database.EnsureDeleted();
-                            db.Database.EnsureCreated();
 
-
-                            using (var userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbUserInfo>>())
-                            {
-                                var testUser = userManager.FindByEmailAsync("test@test.com")?.Result;
-                                var adminUser = userManager.FindByEmailAsync("testadmin@testadmin.com")?.Result;
-                                if (testUser == null && adminUser == null)
-                                {
-
-                                    var user1 = userManager.CreateAsync(new DbUserInfo() { Email = "test@test.com", UserName = "testuser" },
-                                        "Test1!").Result;
-                                    var user2 = userManager
-                                        .CreateAsync(
-                                            new DbUserInfo()
-                                            { Email = "testadmin@testadmin.com", UserName = "testadmin", Role = AuthRoles.Admin },
-                                            "TestAdmin1!").Result;
-                                }
-                            }
+                            var user1 = userManager.CreateAsync(new DbUserInfo() { Email = "test@test.com", UserName = "testuser" },
+                                "Test1!").Result;
+                            var user2 = userManager
+                                .CreateAsync(
+                                    new DbUserInfo()
+                                    { Email = "testadmin@testadmin.com", UserName = "testadmin", Role = AuthRoles.Admin },
+                                    "TestAdmin1!").Result;
                         }
-
                     }
                 }
             });
