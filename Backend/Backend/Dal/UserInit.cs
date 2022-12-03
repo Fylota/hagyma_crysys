@@ -25,16 +25,12 @@ public class UserInit : IHostedService
         await Task.CompletedTask;
     }
 
-    private async Task SeedData(UserManager<DbUserInfo>? userManager)
+    private static async Task SeedData(UserManager<DbUserInfo>? userManager)
     {
         if (userManager == null) return;
         var admin = await userManager.FindByEmailAsync("admin@admin.com");
         if (admin == null)
-        {
-            var adminCreationResult = await userManager.CreateAsync(
+            await userManager.CreateAsync(
                 new DbUserInfo {Email = "admin@admin.com", UserName = "admin", Role = AuthRoles.Admin}, "Admin1!");
-            if (!adminCreationResult.Succeeded)
-                throw new Exception(adminCreationResult.Errors.FirstOrDefault()!.Description);
-        }
     }
 }

@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Text;
+
 // ReSharper disable InconsistentNaming
 
 namespace Backend.Helpers;
@@ -19,12 +21,13 @@ public class PixelMap
     {
         FromStream(stream);
     }
+
     public Bitmap BitMap { get; private set; } = null!;
 
     private byte[] ImageData { get; set; } = null!;
 
     private int BytesPerPixel { get; set; }
-    
+
     private int Stride { get; set; }
 
     private PixelFormat PixelFormat { get; set; }
@@ -43,30 +46,31 @@ public class PixelMap
     {
         var bitmap = new Bitmap(_header.Width, _header.Height, PixelFormat.Format24bppRgb);
         // ReSharper disable once RedundantAssignment
-        var sysColor = new SysColor();
+        Color sysColor;
         int red, green, blue;
         int index;
 
         for (var x = 0; x < _header.Width; x++)
-        for (var y = 0; y < _header.Height; y++)
-        {
-            index = x + y * _header.Width;
-
-            switch (_header.MagicNumber)
+            for (var y = 0; y < _header.Height; y++)
             {
-                case "P6":
-                    index = 3 * index;
-                    blue = ImageData[index];
-                    green = ImageData[index + 1];
-                    red = ImageData[index + 2];
-                    sysColor = SysColor.FromArgb(red, green, blue);
-                    break;
-                default:
-                    throw new NotImplementedException();
+                index = x + y * _header.Width;
+
+                switch (_header.MagicNumber)
+                {
+                    case "P6":
+                        index = 3 * index;
+                        blue = ImageData[index];
+                        green = ImageData[index + 1];
+                        red = ImageData[index + 2];
+                        sysColor = SysColor.FromArgb(red, green, blue);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                bitmap.SetPixel(x, y, sysColor);
             }
 
-            bitmap.SetPixel(x, y, sysColor);
-        }
 
         return bitmap;
     }
@@ -77,12 +81,12 @@ public class PixelMap
         if (image.Height < image.Width)
         {
             width = maxSize;
-            height = (int) Math.Round(maxSize * ((float) image.Height / image.Width));
+            height = (int)Math.Round(maxSize * ((float)image.Height / image.Width));
         }
         else
         {
             height = maxSize;
-            width = (int) Math.Round(maxSize * ((float) image.Width / image.Height));
+            width = (int)Math.Round(maxSize * ((float)image.Width / image.Height));
         }
 
         var destRect = new Rectangle(0, 0, width, height);
@@ -104,12 +108,12 @@ public class PixelMap
         return destImage;
     }
 
-    private int ReadValue(BinaryReader binReader)
+    private static int ReadValue(BinaryReader binReader)
     {
-        var value = string.Empty;
-        while (!char.IsWhiteSpace((char) binReader.PeekChar())) value += binReader.ReadChar().ToString();
+        var value = new StringBuilder();
+        while (!char.IsWhiteSpace((char)binReader.PeekChar())) value.Append(binReader.ReadChar());
         binReader.ReadByte();
-        return int.Parse(value);
+        return int.Parse(value.ToString());
     }
 
     private void FromStream(Stream stream)
@@ -121,11 +125,13 @@ public class PixelMap
         {
             while (headerItemCount < 4)
             {
-                var nextChar = (char) binReader.PeekChar();
+                var nextChar = (char)binReader.PeekChar();
                 if (nextChar == '#') // comment
                     while (binReader.ReadChar() != '\n')
                     {
+                        //Not doing anything
                     }
+
                 else if (char.IsWhiteSpace(nextChar))
                     binReader.ReadChar();
                 else
@@ -150,7 +156,7 @@ public class PixelMap
                             headerItemCount++;
                             break;
                         default:
-                            throw new Exception("Error parsing the file header.");
+                            throw new ArgumentException("Error parsing the file header.");
                     }
             }
 
@@ -161,12 +167,12 @@ public class PixelMap
                     BytesPerPixel = 3;
                     break;
                 default:
-                    throw new Exception("Unknown Magic Number: " + _header.MagicNumber);
+                    throw new ArgumentException("Unknown Magic Number: " + _header.MagicNumber);
             }
 
             ImageData = new byte[_header.Width * _header.Height * BytesPerPixel];
             Stride = _header.Width * BytesPerPixel;
-            var bytesLeft = (int) (binReader.BaseStream.Length - binReader.BaseStream.Position);
+            var bytesLeft = (int)(binReader.BaseStream.Length - binReader.BaseStream.Position);
             ImageData = binReader.ReadBytes(bytesLeft);
             ReorderBGRtoRGB();
             BitMap = Stride % 4 == 0 ? CreateBitMap() : CreateBitmapOffSize();
@@ -176,18 +182,19 @@ public class PixelMap
         catch (EndOfStreamException e)
         {
             Console.WriteLine(e.Message);
-            throw new Exception("Error reading the stream! ", e);
+            throw new ArgumentException("Error reading the stream! ", e);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            throw new Exception("Error reading the stream! ", ex);
+            throw new ArgumentException("Error reading the stream! ", ex);
         }
         finally
         {
             binReader.Close();
         }
     }
+
     // ReSharper disable once InconsistentNaming
     private void ReorderBGRtoRGB()
     {
@@ -199,35 +206,11 @@ public class PixelMap
     [Serializable]
     public struct PixelMapHeader
     {
-        private string magicNumber;
-        public string MagicNumber
-        {
-            get => magicNumber;
-            set => magicNumber = value;
-        }
+        public string MagicNumber { get; set; }
+        public int Width { get; set; }
 
-        private int width;
+        public int Height { get; set; }
 
-        public int Width
-        {
-            get => width;
-            set => width = value;
-        }
-
-        private int height;
-
-        public int Height
-        {
-            get => height;
-            set => height = value;
-        }
-
-        private int depth;
-
-        public int Depth
-        {
-            get => depth;
-            set => depth = value;
-        }
+        public int Depth { get; set; }
     }
 }

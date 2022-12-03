@@ -16,6 +16,7 @@ cmake-build-*/
 
 Backend/Backend/bin
 Backend/Backend/obj
+Backend/.sonarqube
 Backend/BackendTest/bin
 Backend/BackendTest/obj
 Backend/TestResults

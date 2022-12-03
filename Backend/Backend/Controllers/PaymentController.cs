@@ -30,24 +30,26 @@ public class PaymentController : ControllerBase
     public async Task<ActionResult<bool>> PurchaseImage([FromQuery] string imageId)
     {
         var userId = User.GetUserId();
-        if (userId == null){
-            Logger.LogInformation($"Unauthorized user tried to purchase image with id: {imageId}.");
+        if (userId == null)
+        {
+            Logger.LogInformation("Unauthorized user tried to purchase image with id: {}.", imageId);
             return Unauthorized();
         }
+
         try
         {
             var result = await PaymentService.BuyImageAsync(imageId, userId);
-            Logger.LogInformation($"user with id: {User.GetUserId()} purchased image with id: {imageId}.");
+            Logger.LogInformation("user with id: {} purchased image with id: {}.", User.GetUserId(), imageId);
             return Ok(result);
         }
         catch (ImageNotFoundException)
         {
-            Logger.LogInformation($"user with id: {User.GetUserId()} tried to purchase image with id: {imageId}.");
+            Logger.LogInformation("user with id: {} tried to purchase image with id: {}.", User.GetUserId(), imageId);
             return NotFound("Image not found");
         }
         catch (UserNotFoundException)
         {
-            Logger.LogInformation($"Unauthorized user tried to purchase image with id: {imageId}.");
+            Logger.LogInformation("Unauthorized user tried to purchase image with id: {}.", imageId);
             return Unauthorized();
         }
         catch (Exception e)

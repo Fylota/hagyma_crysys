@@ -6,6 +6,6 @@ namespace Backend.Dal.Entities;
 public class DbUserInfo : IdentityUser
 {
     public AuthRoles Role { get; set; }
-    public ICollection<DbImage> PurchasedImages { get; set; } = null!;
     public DateTime RegistrationDate { get; set; }
+    public ICollection<DbImage> PurchasedImages { get; set; } = null!;
 }

@@ -34,7 +34,7 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
         base.OnModelCreating(builder);
     }
 
-    private void SeedData(ModelBuilder builder)
+    private static void SeedData(ModelBuilder builder)
     {
         var dummyUser = new DbUserInfo
         {

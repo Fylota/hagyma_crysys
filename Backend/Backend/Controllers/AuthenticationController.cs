@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Text;
 using Backend.Dal.Entities;
 using Backend.Exceptions;
-using Backend.Extensions;
 using Backend.Helpers;
 using Backend.Models.Auth;
 using Backend.Services.Interfaces;
@@ -50,10 +49,12 @@ public class AuthenticationController : ControllerBase
         {
             var user = await UserService.GetUserByEmailAsync(loginRequest.Email);
             var loginResult = await SignInManager.PasswordSignInAsync(user, loginRequest.Password, false, false);
-            if (!loginResult.Succeeded) {
-                Logger.LogInformation($"{loginRequest.Email}: Email or password is incorrect");
+            if (!loginResult.Succeeded)
+            {
+                Logger.LogInformation("{}: Email or password is incorrect", loginRequest.Email);
                 return BadRequest("Email or password is incorrect");
             }
+
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, Config["Jwt:Subject"]),
@@ -75,12 +76,12 @@ public class AuthenticationController : ControllerBase
                 expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: signIn);
 
-            Logger.LogInformation($"{loginRequest.Email} logged in.");
+            Logger.LogInformation("{} logged in.", loginRequest.Email);
             return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
         catch (UserNotFoundException)
         {
-            Logger.LogInformation($"{loginRequest.Email} user does not exist. Login failed.");
+            Logger.LogInformation("{} user does not exist. Login failed.", loginRequest.Email);
             return Unauthorized();
         }
         catch (Exception e)
@@ -113,13 +114,18 @@ public class AuthenticationController : ControllerBase
     {
         var registerResult =
             await UserManager.CreateAsync(
-                new DbUserInfo {Email = registerRequest.Email, UserName = registerRequest.Username, RegistrationDate = DateTime.Now},
+                new DbUserInfo
+                {
+                    Email = registerRequest.Email, UserName = registerRequest.Username, RegistrationDate = DateTime.Now
+                },
                 registerRequest.Password);
-        if (registerResult.Succeeded) {
-            Logger.LogInformation($"{registerRequest.Email} registered.");
+        if (registerResult.Succeeded)
+        {
+            Logger.LogInformation("{} registered.", registerRequest.Email);
             return Ok();
         }
-        Logger.LogError($"Registration failed: {registerResult.Errors}");
+
+        Logger.LogError("Registration failed: {}", registerResult.Errors);
         return BadRequest(registerResult.Errors);
     }
 }

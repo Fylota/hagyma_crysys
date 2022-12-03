@@ -32,7 +32,7 @@ public class UserController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<List<User>>> GetUsers()
     {
-        Logger.LogInformation($"user with id: {User.GetUserId()} requested all users information.");
+        Logger.LogInformation("user with id: {} requested all users information.", User.GetUserId());
         return await UserService.GetUsersAsync();
     }
 
@@ -44,19 +44,21 @@ public class UserController : ControllerBase
     public async Task<ActionResult<User>> GetUser()
     {
         var userId = User.GetUserId();
-        if (userId == null) {
-            Logger.LogInformation($"Unauthorized user requested user information.");
-            return Unauthorized("Couldn't authenticate user"); 
+        if (userId == null)
+        {
+            Logger.LogInformation("Unauthorized user requested user information.");
+            return Unauthorized("Couldn't authenticate user");
         }
+
         try
         {
             var user = await UserService.GetUserByIdAsync(userId);
-            Logger.LogInformation($"user with id: {User.GetUserId()} requested user information.");
+            Logger.LogInformation("user with id: {} requested user information.", User.GetUserId());
             return Ok(user);
         }
         catch (UserNotFoundException)
         {
-            Logger.LogInformation($"Unauthorized user requested user information.");
+            Logger.LogInformation("Unauthorized user requested user information.");
             return Unauthorized("Couldn't authenticate user");
         }
         catch (Exception e)
@@ -76,19 +78,21 @@ public class UserController : ControllerBase
     public async Task<ActionResult<User>> UpdateUser(UserChangeRequest user)
     {
         var userId = User.GetUserId();
-        if (userId == null) {
-            Logger.LogInformation($"Unauthorized user tried to update user information.");
-            return Unauthorized(); 
+        if (userId == null)
+        {
+            Logger.LogInformation("Unauthorized user tried to update user information.");
+            return Unauthorized();
         }
+
         try
         {
             var result = await UserService.UpdateUserAsync(userId, user);
-            Logger.LogInformation($"user with id: {User.GetUserId()} updated user information.");
+            Logger.LogInformation("user with id: {} updated user information.", User.GetUserId());
             return Ok(result);
         }
         catch (UserNotFoundException)
         {
-            Logger.LogInformation($"Unauthorized user tried to update user information.");
+            Logger.LogInformation("Unauthorized user tried to update user information.");
             return Unauthorized();
         }
         catch (Exception e)
@@ -106,19 +110,21 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<ActionResult> DeleteUser([FromQuery] string userId)
     {
-        if (!User.IsInRole(AuthRoles.Admin.ToString()) && User.GetUserId() != userId) {
-            Logger.LogInformation($"user with id: {User.GetUserId()} tried to delete user with id: {userId}.");
+        if (!User.IsInRole(AuthRoles.Admin.ToString()) && User.GetUserId() != userId)
+        {
+            Logger.LogInformation("user with id: {} tried to delete user with id: {}.", User.GetUserId(), userId);
             return Unauthorized();
         }
+
         try
         {
             await UserService.DeleteUserAsync(userId);
-            Logger.LogInformation($"user with id: {User.GetUserId()} deleted user with id: {userId}.");
+            Logger.LogInformation("user with id: {} deleted user with id: {}.", User.GetUserId(), userId);
             return Ok();
         }
         catch (UserNotFoundException)
         {
-            Logger.LogInformation($"user with id: {User.GetUserId()} tried to delete user with id: {userId}.");
+            Logger.LogInformation("user with id: {} tried to delete user with id: {}.", User.GetUserId(), userId);
             return NotFound("User not found");
         }
         catch (Exception e)

@@ -21,7 +21,8 @@ try
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-    builder.Services.AddDefaultIdentity<DbUserInfo>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+    builder.Services.AddDefaultIdentity<DbUserInfo>().AddEntityFrameworkStores<AppDbContext>()
+        .AddDefaultTokenProviders();
     builder.Services.AddIdentityServer().AddApiAuthorization<DbUserInfo, AppDbContext>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -79,12 +80,12 @@ try
 
         options.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
-        {jwtSecurityScheme, Array.Empty<string>()}
+            {jwtSecurityScheme, Array.Empty<string>()}
         });
     });
     builder.Services.AddSwaggerGenNewtonsoftSupport();
-    //builder.Logging.ClearProviders();
-    builder.Host.UseNLog(new NLogAspNetCoreOptions { RemoveLoggerFactoryFilter =false});
+
+    builder.Host.UseNLog(new NLogAspNetCoreOptions {RemoveLoggerFactoryFilter = false});
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -99,23 +100,25 @@ try
     }
 
 
-
-
     app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();
 
     app.Run();
-
-
 }
 // ReSharper disable once EmptyGeneralCatchClause
-catch (Exception){}
+catch (Exception)
+{
+    //We are not handling it
+}
 finally
 {
-    
     LogManager.Shutdown();
 }
 
-public partial class Program { }
+public partial class Program
+{
+    protected Program()
+    { }
+}

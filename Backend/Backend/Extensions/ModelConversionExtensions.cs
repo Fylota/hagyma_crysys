@@ -36,7 +36,7 @@ public static class ModelConversionExtensions
             Id = comment.Id,
             Content = comment.Text,
             CreationTime = comment.CreatedDate,
-            CreatorName = comment.User.UserName ?? string.Empty,
+            CreatorName = comment.User.UserName ?? string.Empty
         };
     }
 
