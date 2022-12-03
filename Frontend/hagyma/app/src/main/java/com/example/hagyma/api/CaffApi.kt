@@ -280,19 +280,20 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param imageId  (optional)
-     * @return void
+     * @return java.io.File
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      * @throws UnsupportedOperationException If the API returns an informational or redirection response
      * @throws ClientException If the API returns a client error response
      * @throws ServerException If the API returns a server error response
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class, UnsupportedOperationException::class, ClientException::class, ServerException::class)
-    suspend fun apiCaffDownloadImageGet(imageId: kotlin.String? = null) : Unit = withContext(Dispatchers.IO) {
+    suspend fun apiCaffDownloadImageGet(imageId: kotlin.String? = null) : java.io.File = withContext(Dispatchers.IO) {
         val localVarResponse = apiCaffDownloadImageGetWithHttpInfo(imageId = imageId)
 
         return@withContext when (localVarResponse.responseType) {
-            ResponseType.Success -> Unit
+            ResponseType.Success -> (localVarResponse as Success<*>).data as java.io.File
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> {
@@ -310,15 +311,16 @@ class CaffApi(basePath: kotlin.String = defaultBasePath, client: OkHttpClient = 
      * 
      * 
      * @param imageId  (optional)
-     * @return ApiResponse<Unit?>
+     * @return ApiResponse<java.io.File?>
      * @throws IllegalStateException If the request is not correctly configured
      * @throws IOException Rethrows the OkHttp execute method exception
      */
+    @Suppress("UNCHECKED_CAST")
     @Throws(IllegalStateException::class, IOException::class)
-    suspend fun apiCaffDownloadImageGetWithHttpInfo(imageId: kotlin.String?) : ApiResponse<Unit?> = withContext(Dispatchers.IO) {
+    suspend fun apiCaffDownloadImageGetWithHttpInfo(imageId: kotlin.String?) : ApiResponse<java.io.File?> = withContext(Dispatchers.IO) {
         val localVariableConfig = apiCaffDownloadImageGetRequestConfig(imageId = imageId)
 
-        return@withContext request<Unit, Unit>(
+        return@withContext request<Unit, java.io.File>(
             localVariableConfig
         )
     }

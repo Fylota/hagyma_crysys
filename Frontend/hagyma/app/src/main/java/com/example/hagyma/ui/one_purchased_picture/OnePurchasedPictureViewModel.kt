@@ -1,5 +1,6 @@
 package com.example.hagyma.ui.one_purchased_picture
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class OnePurchasedPictureViewModel : ViewModel() {
 
@@ -18,6 +20,12 @@ class OnePurchasedPictureViewModel : ViewModel() {
         value = CaffDetails("","","",null,null)
     }
     val caff: LiveData<CaffDetails> = _caff
+
+    private var _caffFile = MutableLiveData<File>().apply {
+        value = File("example.caff")
+    }
+    val caffFile: LiveData<File> = _caffFile
+
     private val caffApi = ApiHelper.getCaffApi()
     private val userApi = ApiHelper.getUserApi()
 
@@ -28,6 +36,16 @@ class OnePurchasedPictureViewModel : ViewModel() {
             }
         }catch (e:Exception){
             System.out.println("SearchedPicture getCaff " + e)
+        }
+    }
+
+    suspend fun getDownloadCAFF(uuid:String){
+        try {
+            withContext(Dispatchers.Main){
+                _caffFile.value = caffApi.apiCaffDownloadImageGet(uuid)
+            }
+        }catch (e:Exception){
+            e.message?.let { it1 -> Log.e("", it1) }
         }
     }
 

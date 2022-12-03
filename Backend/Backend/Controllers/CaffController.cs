@@ -175,7 +175,7 @@ public class CaffController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<FileContentResult>> DownloadImage([FromQuery] string imageId)
+    public async Task<ActionResult> DownloadImage([FromQuery] string imageId)
     {
         var userId = User.GetUserId();
         if (userId == null) return Unauthorized();
