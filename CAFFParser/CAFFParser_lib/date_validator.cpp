@@ -8,7 +8,7 @@
 #include <chrono>
 #include "date_validator.h"
 
-bool DateValidator::isValidDateTime(DateTime &date) {
+bool DateValidator::isValidDateTime(const DateTime &date) {
     std::tm t = {};
     std::string dateString = mapDateToString(date);
     std::istringstream ss(dateString);
@@ -32,7 +32,7 @@ bool DateValidator::isValidDateTime(DateTime &date) {
     return true;
 }
 
-std::string DateValidator::mapDateToString(DateTime &date) {
+std::string DateValidator::mapDateToString(const DateTime &date) {
     std::ostringstream stringStream;
     stringStream << date.year << "." << mapIntToDatePart(date.month)
     << "." << mapIntToDatePart(date.day)

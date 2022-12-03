@@ -69,12 +69,12 @@ int main(int argc, char *argv[]) {
     CAFF caff = CAFF::parseCAFF(readVectorFromDisk(argv[1]));
     std::cout << argv[1] << '\t' << (caff.isValid() ? "VALID" : "INVALID") << std::endl;
 
+    writeStringToFile(argv[4], caff.generateMetaDataJson());
+
     if (!caff.isValid())
         return -2;
 
     writeVectorToDisk(argv[3], caff.generatePpmPreview());
-
-    writeStringToFile(argv[4], caff.generateMetaDataJson());
 
     return 0;
 }

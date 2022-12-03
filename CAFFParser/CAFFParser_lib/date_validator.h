@@ -11,10 +11,10 @@
 class DateValidator {
 public:
     DateValidator() = delete;
-    static bool isValidDateTime(DateTime &date);
+    static bool isValidDateTime(const DateTime &date);
 
 private:
-    static std::string mapDateToString(DateTime &date);
+    static std::string mapDateToString(const DateTime &date);
     static std::string mapIntToDatePart(uint8_t intToMap);
     static bool isLeapYear(uint16_t year);
     static bool isValidDayInMonth(uint16_t year, uint8_t month, uint8_t day);
