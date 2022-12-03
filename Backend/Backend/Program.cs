@@ -107,6 +107,8 @@ try
     app.MapControllers();
 
     app.Run();
+
+
 }
 // ReSharper disable once EmptyGeneralCatchClause
 catch (Exception){}
@@ -115,3 +117,5 @@ finally
     
     LogManager.Shutdown();
 }
+
+public partial class Program { }

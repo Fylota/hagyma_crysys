@@ -72,6 +72,7 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
         }
 
         image.Preview = Convert.ToBase64String(File.ReadAllBytes(previewFile));
+        image.SmallPreview = image.Preview;
 
         builder.Entity<DbImage>().HasData(image);
 
