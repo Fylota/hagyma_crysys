@@ -102,11 +102,6 @@ class MyOnePictureFragment : Fragment() {
             }
         }
 
-        binding.editButton.setOnClickListener { view ->
-            val bundle = Bundle()
-            bundle.putString("my_editing_picture_uuid", mySearchedPictureUUID)
-            view.findNavController().navigate(R.id.action_nav_my_one_picture_to_nav_edit_my_picture, bundle)
-        }
         val handler = Handler(Looper.getMainLooper()!!)
         binding.deleteButton.setOnClickListener { view ->
             lifecycleScope.launch(Dispatchers.IO) {

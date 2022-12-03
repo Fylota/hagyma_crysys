@@ -44,7 +44,7 @@
         android:layout_marginHorizontal="10dp"
         android:hint="@string/new_comment_hint_text"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/edit_button"
+        app:layout_constraintBottom_toTopOf="@+id/delete_button"
         app:layout_constraintEnd_toStartOf="@+id/add_comment_button"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -69,20 +69,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/flt_btn_download_picture"
-        app:layout_constraintStart_toStartOf="@+id/guideline2" />
-
-    <Button
-        android:id="@+id/edit_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="8dp"
-        app:backgroundTint="#009688"
-        android:text="@string/edit_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintBottom_toTopOf="@+id/flt_btn_download_picture"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
