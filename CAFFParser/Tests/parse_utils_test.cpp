@@ -14,7 +14,7 @@ TEST(ParseUtilsTest, Parse8ByteBigEndian) {
     std::reverse(bytes.begin(), bytes.end());
 
     //when
-    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, BIG_ENDIAN_MODE);
+    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, Endianess::BIG_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
@@ -27,7 +27,7 @@ TEST(ParseUtilsTest, Parse8ByteLittleEndian) {
     std::memcpy(bytes.data(), &expected, sizeof(int64_t));
 
     //when
-    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, LITTLE_ENDIAN_MODE);
+    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, Endianess::LITTLE_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
@@ -40,7 +40,7 @@ TEST(ParseUtilsTest, Parse8ByteLittleEndianNegative) {
     std::memcpy(bytes.data(), &expected, sizeof(int64_t));
 
     //when
-    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, LITTLE_ENDIAN_MODE);
+    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, Endianess::LITTLE_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
@@ -54,7 +54,7 @@ TEST(ParseUtilsTest, Parse8ByteBigEndianNegative) {
     std::reverse(bytes.begin(), bytes.end());
 
     //when
-    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, BIG_ENDIAN_MODE);
+    int64_t actual = ParseUtils::parse8ByteNumber(bytes, 0, Endianess::BIG_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
@@ -68,7 +68,7 @@ TEST(ParseUtilsTest, Parse2ByteBigEndian) {
     std::reverse(bytes.begin(), bytes.end());
 
     //when
-    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, BIG_ENDIAN_MODE);
+    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, Endianess::BIG_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
@@ -81,7 +81,7 @@ TEST(ParseUtilsTest, Parse2ByteLittleEndian) {
     std::memcpy(bytes.data(), &expected, sizeof(int16_t));
 
     //when
-    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, LITTLE_ENDIAN_MODE);
+    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, Endianess::LITTLE_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
@@ -94,7 +94,7 @@ TEST(ParseUtilsTest, Parse2ByteLittleEndianNegative) {
     std::memcpy(bytes.data(), &expected, sizeof(int16_t));
 
     //when
-    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, LITTLE_ENDIAN_MODE);
+    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, Endianess::LITTLE_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
@@ -108,7 +108,7 @@ TEST(ParseUtilsTest, Parse2ByteBigEndianNegative) {
     std::reverse(bytes.begin(), bytes.end());
 
     //when
-    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, BIG_ENDIAN_MODE);
+    int16_t actual = ParseUtils::parse2ByteNumber(bytes, 0, Endianess::BIG_ENDIAN_MODE);
 
     //then
     ASSERT_EQ(expected, actual);
