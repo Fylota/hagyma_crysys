@@ -10,8 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.R
-import com.example.hagyma.api.AuthenticationApi
-import com.example.hagyma.api.UserApi
 import com.example.hagyma.data.ListItem
 import com.example.hagyma.databinding.FragmentGalleryBinding
 import com.example.hagyma.helper.ApiHelper
@@ -29,51 +27,17 @@ class GalleryFragment : Fragment() {
 
     private lateinit var galleryAdapter: GalleryAdapter
 
-    // private lateinit var authenticationApi: AuthenticationApi
-    // private lateinit var userApi : UserApi
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val galleryViewModel =
-            ViewModelProvider(this).get(GalleryViewModel::class.java)
-
-        // authenticationApi = ApiHelper.getAuthenticationApi()
-        // userApi = ApiHelper.getUserApi()
+            ViewModelProvider(this)[GalleryViewModel::class.java]
 
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
-/*
-        binding.searchButton.setOnClickListener {
-            val handler = Handler(Looper.getMainLooper()!!)
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val result = authenticationApi.authLoginPost(LoginRequest("admin@admin.com","Admin1!"))
-                    handler.post {
-                        Toast.makeText(context,result,Toast.LENGTH_LONG).show()
-                    }
-                    ApiClient.accessToken = result;
-                    try {
-                        val userinfowithAccessToken = userApi.apiUserGetUserGet();
-                        handler.post{
-                            Toast.makeText(context,"Try with accesstoken: ${userinfowithAccessToken.email}",Toast.LENGTH_SHORT).show()
-                        }
-                    } catch (e: Exception){
-                        handler.post{
-                            Toast.makeText(context,"Try with accesstoken: ${e.message}",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                } catch (e: Exception){
-                    e.message?.let { it1 -> Log.e(tag, it1) }
-                }
 
-            }
-
-        }
-
- */
         binding.fltBtnUploadPicture.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("original_page", "gallery")
@@ -123,7 +87,7 @@ class GalleryFragment : Fragment() {
             }
             }
         }catch (e:Exception){
-            System.out.println(e)
+            println(e)
         }
     }
 

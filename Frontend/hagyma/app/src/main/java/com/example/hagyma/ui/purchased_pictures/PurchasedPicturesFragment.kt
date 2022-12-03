@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -29,7 +28,7 @@ class PurchasedPicturesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val purchasedPicturesViewModel =
-            ViewModelProvider(this).get(PurchasedPicturesViewModel::class.java)
+            ViewModelProvider(this)[PurchasedPicturesViewModel::class.java]
 
         _binding = FragmentPurchasedPicturesBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -55,7 +54,7 @@ class PurchasedPicturesFragment : Fragment() {
             }
             }
         }catch (e:Exception){
-            System.out.println(e)
+            println(e)
         }
     }
 

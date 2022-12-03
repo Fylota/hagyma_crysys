@@ -30,14 +30,14 @@ class MyPicturesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val myPicturesViewModel =
-            ViewModelProvider(this).get(MyPicturesViewModel::class.java)
+            ViewModelProvider(this)[MyPicturesViewModel::class.java]
 
         _binding = FragmentMyPicturesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.fltBtnUploadPicture.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString("original_page", "my_pictures");
+            bundle.putString("original_page", "my_pictures")
             root.findNavController().navigate(R.id.action_nav_my_pictures_to_nav_upload_caff, bundle)
         }
 
@@ -53,7 +53,7 @@ class MyPicturesFragment : Fragment() {
         return root
     }
 
-    suspend fun initMyCAFFFiles(){
+    private suspend fun initMyCAFFFiles(){
         val caffApi = ApiHelper.getCaffApi()
         try {
             val pictures = caffApi.apiCaffUploadedImagesGet()
@@ -65,7 +65,7 @@ class MyPicturesFragment : Fragment() {
                 }
             }
         }catch (e:Exception){
-            System.out.println(e)
+            println(e)
         }
     }
 

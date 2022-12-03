@@ -44,7 +44,7 @@ class SearchedPictureFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val searchedPictureUUID = this.arguments?.getString("searched_picture_uuid")  // TODO hasznalni
+        val searchedPictureUUID = this.arguments?.getString("searched_picture_uuid")
 
         _binding = FragmentSearchedPictureBinding.inflate(inflater, container, false)
         _viewModel = SearchedPictureViewModel()
@@ -89,10 +89,10 @@ class SearchedPictureFragment: Fragment() {
         val builder  = AlertDialog.Builder(context)
         builder.setTitle("Purchase")
         builder.setMessage("Would you like to purchase this CAFF?")
-        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
+        builder.setPositiveButton(android.R.string.ok) { _, _ ->
             purchaseImage(searchedPictureUUID)
         }
-        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+        builder.setNegativeButton(android.R.string.cancel) { _, _ ->
             Toast.makeText(context,"Payment canceled", Toast.LENGTH_SHORT).show()
         }
 
@@ -102,7 +102,7 @@ class SearchedPictureFragment: Fragment() {
 
         return root
     }
-    // todo dont let owner try to purchase own image
+
     private fun purchaseImage(searchedPictureUUID: String?) {
         val handler = Handler(Looper.getMainLooper()!!)
         lifecycleScope.launch(Dispatchers.IO) {
@@ -128,7 +128,6 @@ class SearchedPictureFragment: Fragment() {
         val newComment = Comment(
             UUID.randomUUID().toString(),
             viewModel.getUserName(),
-//            viewModel.userName.value.toString(),
             OffsetDateTime.now(),
             uuid,
             newCommentText
@@ -140,7 +139,7 @@ class SearchedPictureFragment: Fragment() {
                 binding.editTextNewComment.text.clear()
             }
         }catch (e:Exception){
-            System.out.println(e)
+            println(e)
         }
     }
 

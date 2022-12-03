@@ -35,7 +35,7 @@ class OnePurchasedPictureViewModel : ViewModel() {
                 _caff.value = caffApi.apiCaffGetImageGet(uuid)
             }
         }catch (e:Exception){
-            System.out.println("SearchedPicture getCaff " + e)
+            println("SearchedPicture getCaff $e")
         }
     }
 
@@ -65,10 +65,6 @@ class OnePurchasedPictureViewModel : ViewModel() {
     private val _jwt = MutableLiveData<JWT>().apply {
         value = ApiClient.accessToken?.let { JWT(it) }
     }
-
-    val userId: LiveData<String> = _jwt.map { data -> data.getClaim("UserId")
-        .asString()
-        .toString()}
 
     val userName: LiveData<String> = _jwt.map { data ->  data.getClaim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")
         .asString()

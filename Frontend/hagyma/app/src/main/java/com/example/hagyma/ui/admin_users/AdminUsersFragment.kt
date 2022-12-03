@@ -31,7 +31,7 @@ class AdminUsersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val adminUsersViewModel =
-            ViewModelProvider(this).get(AdminUsersViewModel::class.java)
+            ViewModelProvider(this)[AdminUsersViewModel::class.java]
         userApi = ApiHelper.getUserApi()
 
         _binding = FragmentAdminUsersBinding.inflate(inflater, container, false)

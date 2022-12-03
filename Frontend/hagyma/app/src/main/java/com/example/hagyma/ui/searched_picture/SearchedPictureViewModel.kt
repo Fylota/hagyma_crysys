@@ -1,24 +1,16 @@
 package com.example.hagyma.ui.searched_picture
 
-import android.graphics.drawable.BitmapDrawable
-import android.util.Base64
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import com.auth0.android.jwt.JWT
 import com.example.hagyma.api.model.CaffDetails
-import com.example.hagyma.data.CAFF
-import com.example.hagyma.data.Comment
+import com.example.hagyma.api.model.CommentRequest
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.ByteArrayInputStream
-import java.text.SimpleDateFormat
-import java.time.Instant.now
-import java.util.*
-import androidx.lifecycle.lifecycleScope
-import com.example.hagyma.api.model.CommentRequest
 import kotlinx.coroutines.withContext
-import java.time.OffsetDateTime
 
 class SearchedPictureViewModel : ViewModel()  {
 
@@ -36,7 +28,7 @@ class SearchedPictureViewModel : ViewModel()  {
                 _caff.value = caffApi.apiCaffGetImageGet(uuid)
             }
         }catch (e:Exception){
-            System.out.println("SearchedPicture getCaff " + e)
+            println("SearchedPicture getCaff $e")
         }
     }
 

@@ -18,12 +18,12 @@ class MyPicturesAdapter(private val context: Context?) :
 
     private val listItems: MutableList<ListItem> = mutableListOf()
 
-    class MyPicturesItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root){}
+    class MyPicturesItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyPicturesItemViewHolder {
         return MyPicturesItemViewHolder(
             PictureItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        );
+        )
     }
 
     override fun onBindViewHolder(holder: MyPicturesItemViewHolder, position: Int) {
@@ -43,7 +43,7 @@ class MyPicturesAdapter(private val context: Context?) :
     }
 
     override fun getItemCount(): Int {
-        return listItems.size;
+        return listItems.size
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -51,10 +51,4 @@ class MyPicturesAdapter(private val context: Context?) :
         listItems.add(newItem)
         notifyDataSetChanged()
     }
-
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun deleteFile(file: ListItem){
-//        listItems.remove(file)
-//        notifyDataSetChanged()
-//    }
 }

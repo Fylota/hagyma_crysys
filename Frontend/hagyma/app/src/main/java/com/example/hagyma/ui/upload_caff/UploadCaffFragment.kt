@@ -26,7 +26,7 @@ import com.example.hagyma.R
 import com.example.hagyma.api.CaffApi
 import com.example.hagyma.databinding.FragmentUploadCaffBinding
 import com.example.hagyma.helper.ApiHelper
-import hu.bme.aut.android.onlab.extensions.validateNonEmpty
+import com.example.hagyma.extensions.validateNonEmpty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File

@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.R
 import com.example.hagyma.databinding.FragmentEditMyPictureBinding
 
@@ -24,17 +23,12 @@ class EditMyPictureFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val editMyPictureViewModel =
-            ViewModelProvider(this).get(EditMyPictureViewModel::class.java)
+            ViewModelProvider(this)[EditMyPictureViewModel::class.java]
 
-        val editingPictureUUID = this.arguments?.getString("my_editing_picture_uuid")  // TODO hasznalni
+        val editingPictureUUID = this.arguments?.getString("my_editing_picture_uuid")
 
         _binding = FragmentEditMyPictureBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-//        val textView: TextView = binding.textPictureName
-//        editMyPictureViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
 
         binding.cancelButton.setOnClickListener { view ->
             val toast = Toast.makeText(context, "Editing cancelled", Toast.LENGTH_SHORT)

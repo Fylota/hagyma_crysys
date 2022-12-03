@@ -18,7 +18,7 @@ class PurchasedPicturesAdapter(private val context: Context?) :
 
     private val listItems: MutableList<ListItem> = mutableListOf()
 
-    class PurchasedPictureItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root){}
+    class PurchasedPictureItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PurchasedPictureItemViewHolder {
         return PurchasedPictureItemViewHolder(
@@ -49,6 +49,6 @@ class PurchasedPicturesAdapter(private val context: Context?) :
     }
 
     override fun getItemCount(): Int {
-        return listItems.size;
+        return listItems.size
     }
 }

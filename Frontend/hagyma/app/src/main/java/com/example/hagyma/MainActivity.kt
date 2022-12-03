@@ -18,7 +18,7 @@ import com.example.hagyma.api.model.RegisterRequest
 import com.example.hagyma.databinding.ActivityMainBinding
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
-import hu.bme.aut.android.onlab.extensions.validateNonEmpty
+import com.example.hagyma.extensions.validateNonEmpty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -41,16 +41,6 @@ class MainActivity : BaseActivity() {
 
     }
 
-    // Check if there's a signed-in user
-    override fun onStart(){
-        super.onStart()
-//        val user: FirebaseUser? = firebaseAuth.currentUser
-//        user?.let {
-//            startActivity(Intent(this@MainActivity, SecondActivity::class.java))
-//            toast("Welcome back!")
-//        }
-    }
-
     // If someone wants to register then the application calls this function
     private fun registerClick() {
 
@@ -60,17 +50,17 @@ class MainActivity : BaseActivity() {
         val username = v.findViewById<EditText>(R.id.etregUsername)
         val pass1 = v.findViewById<EditText>(R.id.etregPassword)
         val pass2 = v.findViewById<EditText>(R.id.etregPassword2)
-        val add_dialog = AlertDialog.Builder(this)
-        add_dialog.setView(v)
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.setView(v)
 
-        add_dialog.setPositiveButton("Ok") { dialog, _ ->
+        alertDialog.setPositiveButton("Ok") { _, _ ->
             val handler = Handler(Looper.getMainLooper()!!)
             if (!validateRegisterForm(email, username, pass1, pass2)) {
                 Toast.makeText(this, "Invalid form", Toast.LENGTH_SHORT).show()
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        val result = authenticationApi.authRegisterPost(
+                        authenticationApi.authRegisterPost(
                             RegisterRequest(
                                 email.text.toString(),
                                 pass1.text.toString(),
@@ -95,11 +85,11 @@ class MainActivity : BaseActivity() {
             }
 
         }
-        add_dialog.setNegativeButton("Cancel") { dialog, _ ->
+        alertDialog.setNegativeButton("Cancel") { _, _ ->
             Toast.makeText(this, "Cancel", Toast.LENGTH_SHORT).show()
         }
-        add_dialog.create()
-        add_dialog.show()
+        alertDialog.create()
+        alertDialog.show()
     }
 
     private fun loginClick() {

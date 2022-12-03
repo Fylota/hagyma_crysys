@@ -23,7 +23,7 @@ import com.example.hagyma.api.model.UserChangeRequest
 import com.example.hagyma.databinding.FragmentEditProfileBinding
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
-import hu.bme.aut.android.onlab.extensions.validateNonEmpty
+import com.example.hagyma.extensions.validateNonEmpty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -44,7 +44,7 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val editProfileViewModel =
-            ViewModelProvider(this).get(EditProfileViewModel::class.java)
+            ViewModelProvider(this)[EditProfileViewModel::class.java]
 
         userApi = ApiHelper.getUserApi()
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
@@ -96,10 +96,10 @@ class EditProfileFragment : Fragment() {
         val builder  = AlertDialog.Builder(context)
         builder.setTitle("Deleting user")
         builder.setMessage("Dou you want to delete your profile?")
-        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
+        builder.setPositiveButton(android.R.string.ok) { _, _ ->
             userID?.let { deleteUser(it) }
         }
-        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+        builder.setNegativeButton(android.R.string.cancel) { _, _ ->
             Toast.makeText(context,"Canceled", Toast.LENGTH_SHORT).show()
         }
 

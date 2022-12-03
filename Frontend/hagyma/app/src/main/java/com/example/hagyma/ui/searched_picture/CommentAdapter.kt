@@ -26,7 +26,7 @@ class CommentAdapter(private val context: Context?, private val searchedPictureV
     }
 
     // We need this boolean to hide and disable delete button when the logged in profile is not admin.
-    val isAdmin: Boolean = try {
+    private val isAdmin: Boolean = try {
         val jwt = ApiClient.accessToken?.let { JWT(it) }
         val role = jwt?.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
             ?.asString()
