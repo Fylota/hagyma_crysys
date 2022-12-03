@@ -25,6 +25,7 @@ import com.squareup.moshi.Json
  * @param id 
  * @param name 
  * @param registrationDate 
+ * @param isDeleted 
  */
 
 
@@ -40,7 +41,10 @@ data class User (
     val name: kotlin.String,
 
     @Json(name = "registrationDate")
-    val registrationDate: java.time.OffsetDateTime
+    val registrationDate: java.time.OffsetDateTime,
+
+    @Json(name = "isDeleted")
+    val isDeleted: kotlin.Boolean? = null
 
 )
 

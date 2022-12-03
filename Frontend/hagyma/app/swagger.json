@@ -1028,6 +1028,9 @@
           "registrationDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
