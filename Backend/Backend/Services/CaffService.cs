@@ -95,6 +95,7 @@ public class CaffService : ICaffService
             using var compressStream = new MemoryStream();
             await using (var dStream = new DeflateStream(compressStream, CompressionLevel.Optimal))
             {
+                memStream.Position = 0;
                 await memStream.CopyToAsync(dStream);
             }
 
@@ -130,7 +131,7 @@ public class CaffService : ICaffService
     {
         var image = await Context.Images.SingleOrDefaultAsync(i => i.Id == imageId);
         if (image == null) throw new ImageNotFoundException();
-        var user = Context.Entry(image).Collection(i => i.Buyers).Query().FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await Context.Entry(image).Collection(i => i.Buyers).Query().FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null && image.OwnerId != userId) throw new NotAllowedException();
         using var memStream = new MemoryStream(image.CaffFile);
         await using var dStream = new DeflateStream(memStream, CompressionMode.Decompress);
