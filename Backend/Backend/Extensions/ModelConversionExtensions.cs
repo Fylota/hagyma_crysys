@@ -66,6 +66,7 @@ public static class ModelConversionExtensions
             Id = dbUser.Id,
             Name = dbUser.UserName,
             RegistrationDate = dbUser.RegistrationDate,
+            IsDeleted = dbUser.LockoutEnabled && dbUser.LockoutEnd != null
         };
     }
 }

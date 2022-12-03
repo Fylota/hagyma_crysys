@@ -8,4 +8,5 @@ public class User
     [Required] public string Id { get; set; } = null!;
     [Required] public string Name { get; set; } = null!;
     [Required] public DateTime RegistrationDate { get; set; }
+    public bool IsDeleted { get; set; }
 }
