@@ -15,7 +15,7 @@ class AdminUsersAdapter(private val context: Context?) :
 
     private var userList: MutableList<User> = mutableListOf()
 
-    class AdminUsersItemViewHolder(val binding: UserItemBinding): RecyclerView.ViewHolder(binding.root){}
+    class AdminUsersItemViewHolder(val binding: UserItemBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdminUsersItemViewHolder {
         return AdminUsersItemViewHolder(
@@ -26,11 +26,16 @@ class AdminUsersAdapter(private val context: Context?) :
     override fun onBindViewHolder(holder: AdminUsersItemViewHolder, position: Int) {
         val currUser = userList[position]
         holder.binding.tvUsername.text = currUser.name
+        if (currUser.isDeleted == true) {
+            holder.binding.tvUsername.text = context?.resources
+                ?.getString(R.string.deletedUserItem, currUser.name) ?: currUser.name
+        }
         holder.binding.ivCheckUserBtn.setOnClickListener { view ->
             val bundle = Bundle()
             bundle.putString("userID", currUser.id)
             bundle.putString("userName", currUser.name)
             bundle.putString("email", currUser.email)
+            currUser.isDeleted?.let { bundle.putBoolean("isDeleted", it) }
             view.findNavController().navigate(R.id.action_nav_admin_users_to_nav_profile, bundle)
         }
     }
@@ -41,6 +46,6 @@ class AdminUsersAdapter(private val context: Context?) :
 
     fun addInitUsers(newItem: User){
         userList.add(newItem)
-        notifyDataSetChanged()
+        notifyItemInserted(userList.size -1)
     }
 }

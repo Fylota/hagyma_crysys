@@ -70,6 +70,10 @@
             android:name="regDate"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="isDeleted"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment

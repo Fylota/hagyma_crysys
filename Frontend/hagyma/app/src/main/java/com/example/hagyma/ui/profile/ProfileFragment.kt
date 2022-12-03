@@ -34,7 +34,7 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val viewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
+            ViewModelProvider(this)[ProfileViewModel::class.java]
 
         userApi = ApiHelper.getUserApi()
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -48,9 +48,10 @@ class ProfileFragment : Fragment() {
         val userName = this.arguments?.getString("userName")
         val email = this.arguments?.getString("email")
         val regDate = this.arguments?.getString("regDate")
+        val isDeleted = this.arguments?.getBoolean("isDeleted")
         var isAdminViewing = true
 
-        if (userID == null) { // saját oldal megtekintése, nem az admin navigált ide a Users-ből
+        if (userID == null) { // viewing own profile
             viewModel.userId.observe(viewLifecycleOwner) {
                 userID = it
             }
@@ -87,7 +88,11 @@ class ProfileFragment : Fragment() {
         // only the edit button is visible.
         if (isAdminViewing) {
             binding.editButton.visibility = View.INVISIBLE
-            binding.deleteProfileButton.visibility = View.VISIBLE
+            if (isDeleted == true) {
+                binding.tvDeletedUserLabel.visibility = View.VISIBLE
+            } else {
+                binding.deleteProfileButton.visibility = View.VISIBLE
+            }
         }
 
         binding.editButton.setOnClickListener {
@@ -102,10 +107,10 @@ class ProfileFragment : Fragment() {
         val builder  = AlertDialog.Builder(context)
         builder.setTitle("Deleting user")
         builder.setMessage("Dou you want to delete this user?")
-        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
+        builder.setPositiveButton(android.R.string.ok) { _, _ ->
             userID?.let { deleteUser(it, root) }
         }
-        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+        builder.setNegativeButton(android.R.string.cancel) { _, _ ->
             Toast.makeText(context,"Canceled", Toast.LENGTH_SHORT).show()
         }
 
