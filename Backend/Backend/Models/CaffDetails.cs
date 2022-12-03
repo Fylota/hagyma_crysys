@@ -10,5 +10,5 @@ public class CaffDetails : CaffItem
 
     public bool CanDownload { get; set; }
 
-    public string OwnerId { get; set; }
+    public string OwnerId { get; set; } = null!;
 }

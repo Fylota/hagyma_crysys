@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using Backend.Exceptions;
 using Backend.Extensions;
 using Backend.Models;
@@ -52,7 +51,6 @@ public class CaffController : ControllerBase
     {
         var userId = User.GetUserId();
         if (userId == null) return Unauthorized();
-        var file = Request.Form.Files.First();
         try
         {
             var result = await CaffService.UploadImage(userId, uploadRequest);

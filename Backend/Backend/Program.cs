@@ -67,7 +67,7 @@ try
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.Http,
             Scheme = JwtBearerDefaults.AuthenticationScheme,
-            Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+            Description = "Put **_ONLY_** your JWT Bearer token on text box below!",
 
             Reference = new OpenApiReference
             {
@@ -108,6 +108,7 @@ try
 
     app.Run();
 }
+// ReSharper disable once EmptyGeneralCatchClause
 catch (Exception){}
 finally
 {

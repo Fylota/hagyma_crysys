@@ -14,11 +14,12 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
     {
     }
 
-    public DbSet<DbComment> Comments { get; set; }
+    public DbSet<DbComment> Comments { get; set; } = null!;
 
-    public DbSet<DbImage> Images { get; set; }
+    public DbSet<DbImage> Images { get; set; } = null!;
 
-    public DbSet<Log> Logs { get; set; }
+    // ReSharper disable once UnusedMember.Global
+    public DbSet<Log> Logs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -52,8 +53,8 @@ public class AppDbContext : ApiAuthorizationDbContext<DbUserInfo>
         var caff = new FileInfo(caffFile);
         var image = new DbImage
         {
-            Id = "IMAGEID",
-            Description = "Descr",
+            Id = "ImageID",
+            Description = "Description",
             Title = "Title",
             UploadTime = DateTime.Now,
             OwnerId = dummyUser.Id,

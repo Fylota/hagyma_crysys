@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Backend.Dal.Entities
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Log
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
