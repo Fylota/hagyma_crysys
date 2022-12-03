@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Backend.Dal.Entities;
 using Backend.Exceptions;
+using Backend.Extensions;
 using Backend.Helpers;
 using Backend.Models.Auth;
 using Backend.Services.Interfaces;
@@ -49,8 +50,10 @@ public class AuthenticationController : ControllerBase
         {
             var user = await UserService.GetUserByEmailAsync(loginRequest.Email);
             var loginResult = await SignInManager.PasswordSignInAsync(user, loginRequest.Password, false, false);
-            if (!loginResult.Succeeded)
+            if (!loginResult.Succeeded) {
+                Logger.LogInformation($"{loginRequest.Email}: Email or password is incorrect");
                 return BadRequest("Email or password is incorrect");
+            }
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, Config["Jwt:Subject"]),
@@ -71,10 +74,13 @@ public class AuthenticationController : ControllerBase
                 claims,
                 expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: signIn);
+
+            Logger.LogInformation($"{loginRequest.Email} logged in.");
             return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
         catch (UserNotFoundException)
         {
+            Logger.LogInformation($"{loginRequest.Email} user does not exist. Login failed.");
             return Unauthorized();
         }
         catch (Exception e)
@@ -109,7 +115,11 @@ public class AuthenticationController : ControllerBase
             await UserManager.CreateAsync(
                 new DbUserInfo {Email = registerRequest.Email, UserName = registerRequest.Username, RegistrationDate = DateTime.Now},
                 registerRequest.Password);
-        if (registerResult.Succeeded) return Ok();
+        if (registerResult.Succeeded) {
+            Logger.LogInformation($"{registerRequest.Email} registered.");
+            return Ok();
+        }
+        Logger.LogError($"Registration failed: {registerResult.Errors}");
         return BadRequest(registerResult.Errors);
     }
 }
