@@ -1,5 +1,8 @@
 using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 using Backend.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace BackendTest;
 
@@ -140,5 +143,38 @@ public class CaffControllerIntegrationTest : IClassFixture<TestingWebAppFactory>
         var token = await Helper.GetAccessToken(_client);
         var response = await Helper.DeleteWithAuth(_client, "/api/Caff/deleteImage?imageId=ImageToDelete", token);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DownloadImage_WithoutBeingLoggedIn()
+    {
+        var response = await Helper.GetWithoutAuth(_client, "/api/Caff/downloadImage?imageId=ImageID");
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DownloadImage_NotPurchasedImage()
+    {
+        var token = await Helper.GetAccessToken(_client);
+        var response = await Helper.GetWithAuth(_client, "/api/Caff/downloadImage?imageId=ImageToNotDownload", token);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DownloadImage_PurchasedImage()
+    {
+        var token = await Helper.GetAccessToken(_client);
+        var response = await Helper.GetWithAuth(_client, "/api/Caff/downloadImage?imageId=ImageToDownload", token);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UploadImage_WithoutBeingLoggedIn()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/Caff/uploadImage");
+        var content = new MultipartFormDataContent();
+        request.Content = content;
+        var response = await _client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }

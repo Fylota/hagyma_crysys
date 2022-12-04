@@ -55,9 +55,47 @@ public class TestingWebAppFactory : WebApplicationFactory<Program>
 
                     db.Images.Add(new DbImage()
                     {
-                        CaffFile = Array.Empty<byte>(), Id = "ImageToDelete", CaffFileName = "", Description = "",
-                        IsDeleted = false, OwnerId = newTestUser.Id, Preview = "", SmallPreview = "", Title = "",
-                        UploadTime = DateTime.Now, Buyers = new List<DbUserInfo>(), 
+                        CaffFile = Array.Empty<byte>(),
+                        Id = "ImageToDelete",
+                        CaffFileName = "",
+                        Description = "",
+                        IsDeleted = false,
+                        OwnerId = newTestUser.Id,
+                        Preview = "",
+                        SmallPreview = "",
+                        Title = "",
+                        UploadTime = DateTime.Now,
+                        Buyers = new List<DbUserInfo>(),
+                        Comments = new List<DbComment>()
+                    });
+                    db.Images.Add(new DbImage()
+                    {
+                        CaffFile = Array.Empty<byte>(),
+                        Id = "ImageToNotDownload",
+                        CaffFileName = "",
+                        Description = "",
+                        IsDeleted = false,
+                        OwnerId = newAdminUser.Id,
+                        Preview = "",
+                        SmallPreview = "",
+                        Title = "",
+                        UploadTime = DateTime.Now,
+                        Buyers = new List<DbUserInfo>() { },
+                        Comments = new List<DbComment>()
+                    });
+                    db.Images.Add(new DbImage()
+                    {
+                        CaffFile = Array.Empty<byte>(),
+                        Id = "ImageToDownload",
+                        CaffFileName = "",
+                        Description = "",
+                        IsDeleted = false,
+                        OwnerId = newAdminUser.Id,
+                        Preview = "",
+                        SmallPreview = "",
+                        Title = "",
+                        UploadTime = DateTime.Now,
+                        Buyers = new List<DbUserInfo>() { newTestUser },
                         Comments = new List<DbComment>()
                     });
                     db.SaveChanges();
