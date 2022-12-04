@@ -70,6 +70,10 @@
             android:name="regDate"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="isDeleted"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment
@@ -97,9 +101,6 @@
         android:name="com.example.hagyma.ui.my_one_picture.MyOnePictureFragment"
         android:label="My Picture"
         tools:layout="@layout/fragment_my_one_picture">
-        <action
-            android:id="@+id/action_nav_my_one_picture_to_nav_edit_my_picture"
-            app:destination="@id/nav_edit_my_picture" />
         <argument
             android:name="my_searched_picture_uuid"
             app:argType="string" />
@@ -129,21 +130,6 @@
             android:name="original_page"
             app:argType="string"
             android:defaultValue="gallery" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/nav_edit_my_picture"
-        android:name="com.example.hagyma.ui.edit_my_picture.EditMyPictureFragment"
-        android:label="Edit CAFF file"
-        tools:layout="@layout/fragment_edit_my_picture">
-        <argument
-            android:name="my_editing_picture_uuid"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_nav_edit_my_picture_to_nav_my_one_picture"
-            app:destination="@id/nav_my_one_picture"
-            app:popUpTo="@id/nav_my_one_picture"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

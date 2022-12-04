@@ -28,7 +28,7 @@ class MyPictureCommentAdapter(private val context: Context?, private val myOnePi
     }
 
     // We need this boolean to hide and disable delete button when the logged in profile is not admin.
-    val isAdmin: Boolean = try {
+    private val isAdmin: Boolean = try {
         val jwt = ApiClient.accessToken?.let { JWT(it) }
         val role = jwt?.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
             ?.asString()
@@ -39,12 +39,12 @@ class MyPictureCommentAdapter(private val context: Context?, private val myOnePi
         false
     }
 
-    class SearchedPictureItemViewHolder(val binding: CommentItemBinding): RecyclerView.ViewHolder(binding.root){}
+    class SearchedPictureItemViewHolder(val binding: CommentItemBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchedPictureItemViewHolder {
         return SearchedPictureItemViewHolder(
             CommentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        );
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -87,6 +87,6 @@ class MyPictureCommentAdapter(private val context: Context?, private val myOnePi
     }
 
     override fun getItemCount(): Int {
-        return commentsList.size;
+        return commentsList.size
     }
 }

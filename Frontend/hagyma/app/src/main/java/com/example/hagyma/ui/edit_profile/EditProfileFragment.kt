@@ -23,7 +23,8 @@ import com.example.hagyma.api.model.UserChangeRequest
 import com.example.hagyma.databinding.FragmentEditProfileBinding
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.infrastructure.ApiClient
-import hu.bme.aut.android.onlab.extensions.validateNonEmpty
+import com.example.hagyma.extensions.validateNonEmpty
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -35,7 +36,7 @@ class EditProfileFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     private lateinit var userApi : UserApi
 
     override fun onCreateView(
@@ -44,7 +45,7 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val editProfileViewModel =
-            ViewModelProvider(this).get(EditProfileViewModel::class.java)
+            ViewModelProvider(this)[EditProfileViewModel::class.java]
 
         userApi = ApiHelper.getUserApi()
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
@@ -53,9 +54,6 @@ class EditProfileFragment : Fragment() {
         val textViewUsername: TextView = binding.tvUsername
 
         val userID = this.arguments?.getString("editing_userid")
-        // val userName = this.arguments?.getString("editing_userName")
-        // val email = this.arguments?.getString("editing_email")
-        // val regDate = this.arguments?.getString("editing_regDate")
 
         editProfileViewModel.userName.observe(viewLifecycleOwner) {
             textViewUsername.text = it
@@ -76,14 +74,13 @@ class EditProfileFragment : Fragment() {
                 Toast.makeText(context, "invalid new password", Toast.LENGTH_LONG).show()
             } else {
                 val handler = Handler(Looper.getMainLooper()!!)
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(ioDispatcher) {
                     try {
                         userApi.apiUserUpdateUserPut(
                             UserChangeRequest(currentPassword, newPassword))
                         handler.post {
                             Toast.makeText(context, "Saving...", Toast.LENGTH_SHORT).show()
                             val bundle = Bundle()
-                            //bundle.putString("userID", userID)
                             root.findNavController().navigate(R.id.action_nav_edit_profile_to_nav_profile, bundle)
                         }
                     } catch (e: Exception){
@@ -96,10 +93,10 @@ class EditProfileFragment : Fragment() {
         val builder  = AlertDialog.Builder(context)
         builder.setTitle("Deleting user")
         builder.setMessage("Dou you want to delete your profile?")
-        builder.setPositiveButton(android.R.string.ok) { dialog, which ->
+        builder.setPositiveButton(android.R.string.ok) { _, _ ->
             userID?.let { deleteUser(it) }
         }
-        builder.setNegativeButton(android.R.string.cancel) { dialog, which ->
+        builder.setNegativeButton(android.R.string.cancel) { _, _ ->
             Toast.makeText(context,"Canceled", Toast.LENGTH_SHORT).show()
         }
 
@@ -114,7 +111,7 @@ class EditProfileFragment : Fragment() {
         val toast = Toast.makeText(context, "Deleting user...", Toast.LENGTH_SHORT)
         toast.show()
         val handler = Handler(Looper.getMainLooper()!!)
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(ioDispatcher) {
             try {
                 userApi.apiUserDeleteUserDelete(id)
                 ApiClient.accessToken = null

@@ -19,14 +19,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.hagyma.R
 import com.example.hagyma.api.CaffApi
 import com.example.hagyma.databinding.FragmentUploadCaffBinding
 import com.example.hagyma.helper.ApiHelper
-import hu.bme.aut.android.onlab.extensions.validateNonEmpty
+import com.example.hagyma.extensions.validateNonEmpty
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -43,15 +43,13 @@ class UploadCaffFragment : Fragment() {
     private lateinit var caffApi : CaffApi
     private lateinit var tvAttachedFile : TextView
     private var caffFile: File? = null
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val uploadCaffViewModel =
-            ViewModelProvider(this).get(UploadCaffViewModel::class.java)
-
         val originalPageName = this.arguments?.getString("original_page")
 
         caffApi = ApiHelper.getCaffApi()
@@ -64,7 +62,6 @@ class UploadCaffFragment : Fragment() {
 
         binding.attachBtn.setOnClickListener {
             openFileSelectorActivityForResult()
-
         }
 
         binding.uploadBtn.setOnClickListener {
@@ -73,8 +70,9 @@ class UploadCaffFragment : Fragment() {
             }
 
             else {
+                Toast.makeText(context, "Uploading file...", Toast.LENGTH_SHORT).show()
                 val handler = Handler(Looper.getMainLooper()!!)
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(ioDispatcher) {
                     try {
                         caffFile?.let { it1 ->
                             caffApi.apiCaffUploadImagePost(
@@ -142,13 +140,12 @@ class UploadCaffFragment : Fragment() {
             requireActivity(),
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
-        if (permission != PackageManager.PERMISSION_GRANTED) {
+        if (permission != PackageManager.PERMISSION_GRANTED && activity != null) {
             // We don't have permission so prompt the user
-            if (activity != null) {
-                ActivityCompat.requestPermissions(
-                    activity,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
-            }
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1
+            )
         }
     }
 

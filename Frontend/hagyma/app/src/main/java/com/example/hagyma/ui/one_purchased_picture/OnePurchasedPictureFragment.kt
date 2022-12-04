@@ -23,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.FragmentOnePurchasedPictureBinding
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -35,7 +36,7 @@ class OnePurchasedPictureFragment : Fragment() {
     private var _binding: FragmentOnePurchasedPictureBinding? = null
 
     private val binding get() = _binding!!
-
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     private var caffFile: File? = null
 
     private var _viewModel: OnePurchasedPictureViewModel?=null
@@ -81,20 +82,14 @@ class OnePurchasedPictureFragment : Fragment() {
         binding.rvComments.adapter = onePurchasedPictureCommentAdapter
         binding.rvComments.layoutManager = LinearLayoutManager(this.context)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            // Get CAFF File
-            viewModel.getCAFF(onePurchasedPictureUUID!!)
-        }
+        // Get CAFF File
+        viewModel.getCAFF(onePurchasedPictureUUID!!)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.getDownloadCAFF(onePurchasedPictureUUID!!)
-        }
+        viewModel.getDownloadCAFF(onePurchasedPictureUUID)
 
         binding.addCommentButton.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                if(onePurchasedPictureUUID != null){
-                    saveComment(onePurchasedPictureUUID, binding.editTextNewComment.text.toString())
-                }
+            lifecycleScope.launch(ioDispatcher) {
+                saveComment(onePurchasedPictureUUID, binding.editTextNewComment.text.toString())
             }
         }
 
@@ -109,7 +104,6 @@ class OnePurchasedPictureFragment : Fragment() {
         verifyStoragePermissions(this.activity)
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            // putExtra(Intent.EXTRA_TITLE, "downloadCaff.caff")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse("/Downloads"))
             }
@@ -146,13 +140,12 @@ class OnePurchasedPictureFragment : Fragment() {
             requireActivity(),
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-        if (permission != PackageManager.PERMISSION_GRANTED) {
+        if (permission != PackageManager.PERMISSION_GRANTED && activity != null) {
             // We don't have permission so prompt the user
-            if (activity != null) {
-                ActivityCompat.requestPermissions(
-                    activity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
-            }
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1
+            )
         }
     }
 
@@ -160,7 +153,6 @@ class OnePurchasedPictureFragment : Fragment() {
     suspend fun saveComment(uuid: String, newCommentText: String){
         val newComment = Comment(
             UUID.randomUUID().toString(),
-//            viewModel.userName.value.toString(),
             viewModel.getUserName(),
             OffsetDateTime.now(),
             uuid,

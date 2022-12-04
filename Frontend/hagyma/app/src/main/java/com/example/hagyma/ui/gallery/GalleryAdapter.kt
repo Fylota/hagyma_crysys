@@ -19,12 +19,12 @@ class GalleryAdapter(private val context: Context?) :
     private val originalPictures: MutableList<ListItem> = mutableListOf()
     private var listItems: MutableList<ListItem> = mutableListOf()
 
-    class GalleryItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root){}
+    class GalleryItemViewHolder(val binding: PictureItemBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryItemViewHolder {
         return GalleryItemViewHolder(
             PictureItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        );
+        )
     }
 
     override fun onBindViewHolder(holder: GalleryItemViewHolder, position: Int) {
