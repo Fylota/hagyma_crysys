@@ -53,9 +53,22 @@ internal static class Helper
         return await client.SendAsync(request);
     }
 
+    public static async Task<HttpResponseMessage> PutWithAuth<T>(HttpClient client, string url, string token, T body)
+    {
+        var jsonRequest = JsonContent.Create(body);
+        var request = new HttpRequestMessage(HttpMethod.Put, url);
+        request.Content = jsonRequest;
+        request.Headers.Add("Authorization", $"Bearer {token}");
+        return await client.SendAsync(request);
+    }
+
     public static async Task<string> GetAccessToken(HttpClient client)
     {
         var loginRequest = new LoginRequest {Email = "test@test.com", Password = "Test1!"};
+        return await GetAccessToken(client, loginRequest);
+    }
+    public static async Task<string> GetAccessToken(HttpClient client, LoginRequest loginRequest)
+    {
         var jsonRequest = JsonContent.Create(loginRequest);
         var response = await client.PostAsync("/auth/login", jsonRequest);
         response.EnsureSuccessStatusCode();

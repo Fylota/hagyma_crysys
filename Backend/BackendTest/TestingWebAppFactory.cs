@@ -11,7 +11,6 @@ namespace BackendTest;
 
 public class TestingWebAppFactory : WebApplicationFactory<Program>
 {
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Test");
@@ -37,23 +36,29 @@ public class TestingWebAppFactory : WebApplicationFactory<Program>
                     var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<DbUserInfo>>();
                     db.Database.EnsureDeleted();
                     db.Database.EnsureCreated();
-                    var newTestUser = new DbUserInfo { Email = "test@test.com", UserName = "testUser" };
+                    var newTestUser = new DbUserInfo {Email = "test@test.com", UserName = "testUser"};
                     var hash = passwordHasher.HashPassword(newTestUser, "Test1!");
                     newTestUser.PasswordHash = hash;
                     db.Users.Add(newTestUser);
+                    var newTestUser2 = new DbUserInfo {Email = "test2@test.com", UserName = "testUser2"};
+                    var hash2 = passwordHasher.HashPassword(newTestUser, "Test1!");
+                    newTestUser2.PasswordHash = hash2;
+                    db.Users.Add(newTestUser2);
                     var newAdminUser = new DbUserInfo
-                    { Email = "testadmin@testadmin.com", UserName = "testadmin", Role = AuthRoles.Admin };
+                        {Email = "testadmin@testadmin.com", UserName = "testadmin", Role = AuthRoles.Admin};
                     hash = passwordHasher.HashPassword(newTestUser, "TestAdmin1!");
                     newAdminUser.PasswordHash = hash;
                     db.Users.Add(newAdminUser);
                     db.SaveChanges();
                     var image = db.Images.Include(i => i.Comments).FirstOrDefault();
                     if (image != null)
-                    {
-                        db.Comments.Add(new DbComment() { CreatedDate = DateTime.Now, DbImageId = image.Id, Id = "CommentToDelete", Text = "Text", UserId = newTestUser.Id });
-                    }
+                        db.Comments.Add(new DbComment
+                        {
+                            CreatedDate = DateTime.Now, DbImageId = image.Id, Id = "CommentToDelete", Text = "Text",
+                            UserId = newTestUser.Id
+                        });
 
-                    db.Images.Add(new DbImage()
+                    db.Images.Add(new DbImage
                     {
                         CaffFile = Array.Empty<byte>(),
                         Id = "ImageToDelete",
@@ -68,7 +73,7 @@ public class TestingWebAppFactory : WebApplicationFactory<Program>
                         Buyers = new List<DbUserInfo>(),
                         Comments = new List<DbComment>()
                     });
-                    db.Images.Add(new DbImage()
+                    db.Images.Add(new DbImage
                     {
                         CaffFile = Array.Empty<byte>(),
                         Id = "ImageToNotDownload",
@@ -80,10 +85,10 @@ public class TestingWebAppFactory : WebApplicationFactory<Program>
                         SmallPreview = "",
                         Title = "",
                         UploadTime = DateTime.Now,
-                        Buyers = new List<DbUserInfo>() { },
+                        Buyers = new List<DbUserInfo>(),
                         Comments = new List<DbComment>()
                     });
-                    db.Images.Add(new DbImage()
+                    db.Images.Add(new DbImage
                     {
                         CaffFile = Array.Empty<byte>(),
                         Id = "ImageToDownload",
@@ -95,7 +100,7 @@ public class TestingWebAppFactory : WebApplicationFactory<Program>
                         SmallPreview = "",
                         Title = "",
                         UploadTime = DateTime.Now,
-                        Buyers = new List<DbUserInfo>() { newTestUser },
+                        Buyers = new List<DbUserInfo> {newTestUser},
                         Comments = new List<DbComment>()
                     });
                     db.SaveChanges();
