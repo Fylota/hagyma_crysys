@@ -6,6 +6,7 @@ namespace Backend.Dal.Entities;
 public class DbComment
 {
     [Required] public DateTime CreatedDate { get; set; }
+    [Required] public DbUserInfo User { get; set; } = null!;
     [ForeignKey(nameof(DbImage))] public string DbImageId { get; set; } = null!;
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,5 +14,4 @@ public class DbComment
 
     [Required] public string Text { get; set; } = null!;
     [Required] public string UserId { get; set; } = null!;
-    [Required] public DbUserInfo User { get; set; } = null!;
 }

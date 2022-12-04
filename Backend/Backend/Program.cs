@@ -21,7 +21,8 @@ try
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-    builder.Services.AddDefaultIdentity<DbUserInfo>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+    builder.Services.AddDefaultIdentity<DbUserInfo>().AddEntityFrameworkStores<AppDbContext>()
+        .AddDefaultTokenProviders();
     builder.Services.AddIdentityServer().AddApiAuthorization<DbUserInfo, AppDbContext>();
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -67,7 +68,7 @@ try
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.Http,
             Scheme = JwtBearerDefaults.AuthenticationScheme,
-            Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+            Description = "Put **_ONLY_** your JWT Bearer token on text box below!",
 
             Reference = new OpenApiReference
             {
@@ -79,12 +80,12 @@ try
 
         options.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
-        {jwtSecurityScheme, Array.Empty<string>()}
+            {jwtSecurityScheme, Array.Empty<string>()}
         });
     });
     builder.Services.AddSwaggerGenNewtonsoftSupport();
-    //builder.Logging.ClearProviders();
-    builder.Host.UseNLog(new NLogAspNetCoreOptions { RemoveLoggerFactoryFilter =false});
+
+    builder.Host.UseNLog(new NLogAspNetCoreOptions {RemoveLoggerFactoryFilter = false});
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -99,8 +100,6 @@ try
     }
 
 
-
-
     app.UseAuthentication();
     app.UseAuthorization();
 
@@ -108,9 +107,18 @@ try
 
     app.Run();
 }
-catch (Exception){}
+// ReSharper disable once EmptyGeneralCatchClause
+catch (Exception)
+{
+    //We are not handling it
+}
 finally
 {
-    
     LogManager.Shutdown();
+}
+
+public partial class Program
+{
+    protected Program()
+    { }
 }

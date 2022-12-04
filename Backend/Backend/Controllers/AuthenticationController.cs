@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
@@ -51,7 +50,11 @@ public class AuthenticationController : ControllerBase
             var user = await UserService.GetUserByEmailAsync(loginRequest.Email);
             var loginResult = await SignInManager.PasswordSignInAsync(user, loginRequest.Password, false, false);
             if (!loginResult.Succeeded)
+            {
+                Logger.LogInformation("{}: Email or password is incorrect", loginRequest.Email);
                 return BadRequest("Email or password is incorrect");
+            }
+
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, Config["Jwt:Subject"]),
@@ -72,10 +75,13 @@ public class AuthenticationController : ControllerBase
                 claims,
                 expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: signIn);
+
+            Logger.LogInformation("{} logged in.", loginRequest.Email);
             return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
         catch (UserNotFoundException)
         {
+            Logger.LogInformation("{} user does not exist. Login failed.", loginRequest.Email);
             return Unauthorized();
         }
         catch (Exception e)
@@ -108,9 +114,18 @@ public class AuthenticationController : ControllerBase
     {
         var registerResult =
             await UserManager.CreateAsync(
-                new DbUserInfo {Email = registerRequest.Email, UserName = registerRequest.Username, RegistrationDate = DateTime.Now},
+                new DbUserInfo
+                {
+                    Email = registerRequest.Email, UserName = registerRequest.Username, RegistrationDate = DateTime.Now
+                },
                 registerRequest.Password);
-        if (registerResult.Succeeded) return Ok();
+        if (registerResult.Succeeded)
+        {
+            Logger.LogInformation("{} registered.", registerRequest.Email);
+            return Ok();
+        }
+
+        Logger.LogError("Registration failed: {}", registerResult.Errors);
         return BadRequest(registerResult.Errors);
     }
 }
