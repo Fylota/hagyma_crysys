@@ -26,6 +26,7 @@ import com.example.hagyma.api.CaffApi
 import com.example.hagyma.databinding.FragmentUploadCaffBinding
 import com.example.hagyma.helper.ApiHelper
 import com.example.hagyma.extensions.validateNonEmpty
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -42,6 +43,7 @@ class UploadCaffFragment : Fragment() {
     private lateinit var caffApi : CaffApi
     private lateinit var tvAttachedFile : TextView
     private var caffFile: File? = null
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +72,7 @@ class UploadCaffFragment : Fragment() {
             else {
                 Toast.makeText(context, "Uploading file...", Toast.LENGTH_SHORT).show()
                 val handler = Handler(Looper.getMainLooper()!!)
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(ioDispatcher) {
                     try {
                         caffFile?.let { it1 ->
                             caffApi.apiCaffUploadImagePost(
