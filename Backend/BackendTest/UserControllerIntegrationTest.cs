@@ -1,3 +1,5 @@
+using Backend.Models.Auth;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -69,5 +71,18 @@ public class UserControllerIntegrationTest : IClassFixture<TestingWebAppFactory>
         var token = await Helper.GetAccessToken(_client);
         var response = await Helper.GetWithAuth(_client, "/api/User/getUsers", token);
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+    [Fact]
+    public async void UpdateUser_PasswordUpdate()
+    {
+
+        var token = await Helper.GetAccessToken(_client);
+        var updateRequest = new UserChangeRequest()
+        { CurrentPassword = "Test1!", NewPassword = "ShouldNotBeWeak1!" };
+
+        var response = await Helper.PutWithAuth(_client, "/api/User/updateUser", token, updateRequest);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
     }
 }

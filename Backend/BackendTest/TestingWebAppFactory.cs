@@ -41,6 +41,10 @@ public class TestingWebAppFactory : WebApplicationFactory<Program>
                     var hash = passwordHasher.HashPassword(newTestUser, "Test1!");
                     newTestUser.PasswordHash = hash;
                     db.Users.Add(newTestUser);
+                    var newTestUser2 = new DbUserInfo { Email = "test2@test.com", UserName = "testUser2" };
+                    var hash2 = passwordHasher.HashPassword(newTestUser, "Test1!");
+                    newTestUser2.PasswordHash = hash2;
+                    db.Users.Add(newTestUser2);
                     var newAdminUser = new DbUserInfo
                     { Email = "testadmin@testadmin.com", UserName = "testadmin", Role = AuthRoles.Admin };
                     hash = passwordHasher.HashPassword(newTestUser, "TestAdmin1!");

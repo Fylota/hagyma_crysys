@@ -95,6 +95,11 @@ public class UserController : ControllerBase
             Logger.LogInformation("Unauthorized user tried to update user information.");
             return Unauthorized();
         }
+        catch (PasswordChangeException)
+        {
+            Logger.LogInformation("user with id: {} added from password when updating password", User.GetUserId());
+            return BadRequest();
+        }
         catch (Exception e)
         {
             Logger.LogError("{}", e.Message);
