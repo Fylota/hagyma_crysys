@@ -13,7 +13,7 @@ public static class ModelConversionExtensions
             Title = image.Title,
             Preview = image.Preview,
             Description = image.Description,
-            Comments = image.Comments.Select(c => c.ToModel()).ToList(),
+            Comments = image.Comments?.Where(c => c != null).Select(c => c.ToModel()).ToList() ?? new List<Comment>(),
             UploadTime = image.UploadTime,
             OwnerId = image.OwnerId
         };
@@ -36,7 +36,7 @@ public static class ModelConversionExtensions
             Id = comment.Id,
             Content = comment.Text,
             CreationTime = comment.CreatedDate,
-            CreatorName = comment.User.UserName ?? string.Empty
+            CreatorName = comment.User?.UserName ?? string.Empty
         };
     }
 

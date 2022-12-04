@@ -1,85 +1,73 @@
 using System.Net;
 using System.Net.Http.Json;
-using Backend.Models;
 
-namespace BackendTest
+namespace BackendTest;
+
+[Collection("Sequential")]
+public class UserControllerIntegrationTest : IClassFixture<TestingWebAppFactory>
 {
-    [Collection("Sequential")]
-    public class UserControllerIntegrationTest : IClassFixture<TestingWebAppFactory<Program>>
+    private readonly HttpClient _client;
+
+    public UserControllerIntegrationTest(TestingWebAppFactory factory)
     {
-        private readonly HttpClient _client;
+        _client = factory.CreateClient();
+    }
 
-        public UserControllerIntegrationTest(TestingWebAppFactory<Program> factory) => _client = factory.CreateClient();
+    [Fact]
+    public async Task DeleteUser_WhileBeingLoggedInAsAdmin()
+    {
+        var token = await Helper.GetAdminAccessToken(_client);
+        var response = await Helper.DeleteWithAuth(_client, "/api/User/deleteUser?userId=ID", token);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteUser_WhileBeingLoggedInNotAsTheTarget()
+    {
+        var token = await Helper.GetAccessToken(_client);
+        var response = await Helper.DeleteWithAuth(_client, "/api/User/deleteUser?userId=ID", token);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteUser_WithoutBeingLoggedIn()
+    {
+        var response = await Helper.DeleteWithoutAuth(_client, "/api/User/deleteUser?userId=ID");
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetUser_WhileBeingLoggedIn()
+    {
+        var token = await Helper.GetAccessToken(_client);
+        var response = await Helper.GetWithAuth(_client, "/api/User/getUser", token);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetUser_WithoutBeingLoggedIn()
+    {
+        var response = await Helper.GetWithoutAuth(_client, "/api/User/getUser");
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetUsers_AsAdmin()
+    {
+        var token = await Helper.GetAdminAccessToken(_client);
+        var response = await Helper.GetWithAuth(_client, "/api/User/getUsers", token);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<List<object>>();
+        Assert.NotNull(result);
+        Assert.True(result.Count >= 2);
+    }
 
 
-        [Fact]
-        public async void GetUsers_AsNotAdmin()
-        {
-            var token = await AuthHelper.GetAccessToken(_client!);
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/User/getUsers");
-            request.Headers.Add("Authorization", $"Bearer {token}");
-            var response = await _client.SendAsync(request);
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
-        public async void GetUsers_AsAdmin()
-        {
-            var token = await AuthHelper.GetAdminAccessToken(_client!);
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/User/getUsers");
-            request.Headers.Add("Authorization", $"Bearer {token}");
-            var response = await _client.SendAsync(request);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            List<object>? result = await response.Content.ReadFromJsonAsync<List<object>>();
-            Assert.NotNull(result);
-            Assert.True(result.Count >= 2);
-        }
-
-        [Fact]
-        public async void GetUser_WhileBeingLoggedIn()
-        {
-            var token = await AuthHelper.GetAccessToken(_client!);
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/User/getUser");
-            request.Headers.Add("Authorization", $"Bearer {token}");
-            var response = await _client.SendAsync(request);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
-
-        [Fact]
-        public async void GetUser_WithoutBeingLoggedIn()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/User/getUser");
-            var response = await _client.SendAsync(request);
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        [Fact]
-        public async void DeleteUser_WithoutBeingLoggedIn()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/User/deleteUser?userId=ID");
-            var response = await _client.SendAsync(request);
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        [Fact]
-        public async void DeleteUser_WhileBeingLoggedInNotAsTheTarget()
-        {
-            var token = await AuthHelper.GetAccessToken(_client!);
-            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/User/deleteUser?userId=ID");
-            request.Headers.Add("Authorization", $"Bearer {token}");
-            var response = await _client.SendAsync(request);
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        [Fact]
-        public async void DeleteUser_WhileBeingLoggedInAsAdmin()
-        {
-            var token = await AuthHelper.GetAdminAccessToken(_client!);
-            var request = new HttpRequestMessage(HttpMethod.Delete, "/api/User/deleteUser?userId=ID");
-            request.Headers.Add("Authorization", $"Bearer {token}");
-            var response = await _client.SendAsync(request);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
-
+    [Fact]
+    public async Task GetUsers_AsNotAdmin()
+    {
+        var token = await Helper.GetAccessToken(_client);
+        var response = await Helper.GetWithAuth(_client, "/api/User/getUsers", token);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 }
