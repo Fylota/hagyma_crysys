@@ -76,15 +76,6 @@ internal static class Helper
         return token.Replace("\"", "");
     }
 
-    public static async Task<string> GetAccessToken(HttpClient client, LoginRequest loginRequest)
-    {
-        var jsonRequest = JsonContent.Create(loginRequest);
-        var response = await client.PostAsync("/auth/login", jsonRequest);
-        response.EnsureSuccessStatusCode();
-        var token = await response.Content.ReadAsStringAsync();
-        return token.Replace("\"", "");
-    }
-
     public static async Task<string> GetAdminAccessToken(HttpClient client)
     {
         var loginRequest = new LoginRequest {Email = "testadmin@testadmin.com", Password = "TestAdmin1!"};
