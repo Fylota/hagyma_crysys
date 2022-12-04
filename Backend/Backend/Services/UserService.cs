@@ -39,7 +39,6 @@ public class UserService : IUserService
         if (user == null) throw new UserNotFoundException();
         await UserManager.SetLockoutEnabledAsync(user, true);
         await UserManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
-        //TODO Figure out deleting;
         return user.ToModel();
     }
 
