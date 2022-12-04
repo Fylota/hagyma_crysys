@@ -75,8 +75,8 @@ public class UserControllerIntegrationTest : IClassFixture<TestingWebAppFactory>
     [Fact]
     public async void UpdateUser_PasswordUpdate()
     {
-
-        var token = await Helper.GetAccessToken(_client);
+        var loginRequest = new LoginRequest { Email = "test2@test.com", Password = "Test1!" };
+        var token = await Helper.GetAccessToken(_client, loginRequest);
         var updateRequest = new UserChangeRequest()
         { CurrentPassword = "Test1!", NewPassword = "ShouldNotBeWeak1!" };
 

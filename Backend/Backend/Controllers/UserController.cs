@@ -97,7 +97,7 @@ public class UserController : ControllerBase
         }
         catch (PasswordChangeException)
         {
-            Logger.LogInformation("user with id: {} added from password when updating password", User.GetUserId());
+            Logger.LogInformation("user with id: {} added wrong password when updating password", User.GetUserId());
             return BadRequest();
         }
         catch (Exception e)
