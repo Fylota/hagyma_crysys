@@ -1,7 +1,6 @@
-using Backend.Models.Auth;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Net;
 using System.Net.Http.Json;
+using Backend.Models.Auth;
 
 namespace BackendTest;
 
@@ -72,17 +71,28 @@ public class UserControllerIntegrationTest : IClassFixture<TestingWebAppFactory>
         var response = await Helper.GetWithAuth(_client, "/api/User/getUsers", token);
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
+
     [Fact]
-    public async void UpdateUser_PasswordUpdate()
+    public async Task UpdateUser_PasswordUpdate()
     {
-        var loginRequest = new LoginRequest { Email = "test2@test.com", Password = "Test1!" };
+        var loginRequest = new LoginRequest {Email = "test2@test.com", Password = "Test1!"};
         var token = await Helper.GetAccessToken(_client, loginRequest);
-        var updateRequest = new UserChangeRequest()
-        { CurrentPassword = "Test1!", NewPassword = "ShouldNotBeWeak1!" };
+        var updateRequest = new UserChangeRequest {CurrentPassword = "Test1!", NewPassword = "ShouldNotBeWeak1!"};
 
         var response = await Helper.PutWithAuth(_client, "/api/User/updateUser", token, updateRequest);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
 
+    [Fact]
+    public async Task UpdateUser_PasswordUpdateWithWeak()
+    {
+        var loginRequest = new LoginRequest { Email = "test2@test.com", Password = "Test1!" };
+        var token = await Helper.GetAccessToken(_client, loginRequest);
+        var updateRequest = new UserChangeRequest { CurrentPassword = "Test1!", NewPassword = "weak" };
+
+        var response = await Helper.PutWithAuth(_client, "/api/User/updateUser", token, updateRequest);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }
