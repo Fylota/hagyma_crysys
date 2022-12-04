@@ -67,6 +67,14 @@ internal static class Helper
         var loginRequest = new LoginRequest { Email = "test@test.com", Password = "Test1!" };
         return await GetAccessToken(client, loginRequest);
     }
+    public static async Task<string> GetAccessToken(HttpClient client, LoginRequest loginRequest)
+    {
+        var jsonRequest = JsonContent.Create(loginRequest);
+        var response = await client.PostAsync("/auth/login", jsonRequest);
+        response.EnsureSuccessStatusCode();
+        var token = await response.Content.ReadAsStringAsync();
+        return token.Replace("\"", "");
+    }
 
     public static async Task<string> GetAdminAccessToken(HttpClient client)
     {
@@ -78,12 +86,5 @@ internal static class Helper
         return token.Replace("\"", "");
     }
 
-    public static async Task<string> GetAccessToken(HttpClient client, LoginRequest loginRequest)
-    {
-        var jsonRequest = JsonContent.Create(loginRequest);
-        var response = await client.PostAsync("/auth/login", jsonRequest);
-        response.EnsureSuccessStatusCode();
-        var token = await response.Content.ReadAsStringAsync();
-        return token.Replace("\"", "");
-    }
+
 }
