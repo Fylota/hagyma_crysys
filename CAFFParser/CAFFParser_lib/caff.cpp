@@ -12,12 +12,10 @@ const std::string CAFF::magicChars = "CAFF";
 const uint8_t CAFF::headerId = 0x1;
 const uint8_t CAFF::creditsId = 0x2;
 const uint8_t CAFF::animationId = 0x3;
+const uint8_t CAFF::minimumAnimationBlockRead = 1;
 
 CAFF::CAFF() {
-    creator = "";
-    numberOfAnimations = 0;
-    valid = true;
-    endianess = LITTLE_ENDIAN_MODE;
+    endianess = Endianess::LITTLE_ENDIAN_MODE;
 }
 
 CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
@@ -61,7 +59,7 @@ CAFF CAFF::parseCAFF(std::vector<uint8_t> bytes) {
             break;
     }
 
-    if (caff.valid && caff.numberOfAnimations != animationBlocksRead) {
+    if (caff.valid && caff.numberOfAnimations != animationBlocksRead || caff.numberOfAnimations < CAFF::minimumAnimationBlockRead) {
         caff.handleError("Animation blocks are missing");
     }
 
@@ -89,14 +87,14 @@ uint64_t CAFF::parseHeaderBlock(CAFF &caff, std::vector<uint8_t> &bytes) {
     }
 
     // Read length
-    int64_t lengthLittleEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, LITTLE_ENDIAN_MODE);
-    int64_t lengthBigEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, BIG_ENDIAN_MODE);
+    int64_t lengthLittleEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, Endianess::LITTLE_ENDIAN_MODE);
+    int64_t lengthBigEndian = ParseUtils::parse8ByteNumber(bytes, bytesRead, Endianess::BIG_ENDIAN_MODE);
     bytesRead += 8;
 
     if (lengthLittleEndian == headerSize)
-        caff.endianess = LITTLE_ENDIAN_MODE;
+        caff.endianess = Endianess::LITTLE_ENDIAN_MODE;
     else if (lengthBigEndian == headerSize)
-        caff.endianess = BIG_ENDIAN_MODE;
+        caff.endianess = Endianess::BIG_ENDIAN_MODE;
     else {
         caff.handleError("Invalid CAFF header block size");
         return bytesRead;
@@ -166,10 +164,14 @@ uint64_t CAFF::parseCreditsBlock(CAFF &caff, std::vector<uint8_t> &bytes, uint64
     // Read creation date and time
     caff.creationDate.year = ParseUtils::parse2ByteNumber(bytes, bytesRead, caff.endianess);
     bytesRead += 2;
-    caff.creationDate.month = bytes[bytesRead++];
-    caff.creationDate.day = bytes[bytesRead++];
-    caff.creationDate.hour = bytes[bytesRead++];
-    caff.creationDate.minute = bytes[bytesRead++];
+    caff.creationDate.month = bytes[bytesRead];
+    bytesRead += 1;
+    caff.creationDate.day = bytes[bytesRead];
+    bytesRead += 1;
+    caff.creationDate.hour = bytes[bytesRead];
+    bytesRead += 1;
+    caff.creationDate.minute = bytes[bytesRead];
+    bytesRead += 1;
 
     if (!DateValidator::isValidDateTime(caff.creationDate)) {
         caff.handleError("Invalid creation date");
@@ -314,31 +316,39 @@ std::string CAFF::generateMetaDataJson() {
                 << "\"hour\":" << (int)creationDate.hour << ","
                 << "\"minute\":" << (int)creationDate.minute << "},"
                 << "\"ciffs\":[";
-                    for (int i = 0; i < ciffsWithDuration.size(); ++i) {
-                        if (i != 0)
-                            json << ",";
-
-                        json << "{" << "\"duration\":" << ciffsWithDuration[i].first << ","
-                             << "\"width\":" << ciffsWithDuration[i].second.getImageWidth() << ","
-                             << "\"height\":" << ciffsWithDuration[i].second.getImageHeight() << ","
-                             << "\"caption\":" << "\"" << ciffsWithDuration[i].second.getCaption() << "\","
-                             << "\"tags\":[";
-                                    const std::vector<std::string> &tags = ciffsWithDuration[i].second.getTags();
-                                    for (int j = 0; j < tags.size(); ++j) {
-                                        if (j != 0)
-                                            json << ",";
-
-                                        json << "\"" << tags[j] << "\"";
-                                    }
-                            json << "]";
-                        json << "}";
-                    }
-                json << "]";
+                addCIFFsToStream(json);
+            json << "]";
             json << "}";
         }
     json << "}";
 
     return json.str();
+}
+
+void CAFF::addCIFFsToStream(std::ostringstream &json) {
+    for (int i = 0; i < ciffsWithDuration.size(); ++i) {
+        if (i != 0)
+            json << ",";
+
+        json << "{" << "\"duration\":" << ciffsWithDuration[i].first << ","
+             << "\"width\":" << ciffsWithDuration[i].second.getImageWidth() << ","
+             << "\"height\":" << ciffsWithDuration[i].second.getImageHeight() << ","
+             << "\"caption\":" << "\"" << ciffsWithDuration[i].second.getCaption() << "\","
+             << "\"tags\":[";
+                addTagsToStream(json, i);
+        json << "]";
+        json << "}";
+    }
+}
+
+void CAFF::addTagsToStream(std::ostringstream &json, int i) {
+    const std::vector<std::string> &tags = ciffsWithDuration[i].second.getTags();
+    for (int j = 0; j < tags.size(); ++j) {
+        if (j != 0)
+            json << ",";
+
+        json << "\"" << tags[j] << "\"";
+    }
 }
 
 const std::vector<std::string> &CAFF::getParseFails() const {

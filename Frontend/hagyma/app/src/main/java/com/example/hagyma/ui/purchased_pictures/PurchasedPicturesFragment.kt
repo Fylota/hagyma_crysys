@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.data.ListItem
@@ -14,6 +12,7 @@ import com.example.hagyma.databinding.FragmentPurchasedPicturesBinding
 import com.example.hagyma.helper.ApiHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PurchasedPicturesFragment : Fragment() {
 
@@ -28,9 +27,6 @@ class PurchasedPicturesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val purchasedPicturesViewModel =
-            ViewModelProvider(this).get(PurchasedPicturesViewModel::class.java)
-
         _binding = FragmentPurchasedPicturesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -38,7 +34,7 @@ class PurchasedPicturesFragment : Fragment() {
         binding.rvPictures.adapter = purchasedPicturesAdapter
         binding.rvPictures.layoutManager = LinearLayoutManager(this.context)
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch {
             // Get Purchased CAFF Files
             initPurchasedCAFFFiles()
         }
@@ -49,13 +45,14 @@ class PurchasedPicturesFragment : Fragment() {
     private suspend fun initPurchasedCAFFFiles(){
         val caffApi = ApiHelper.getCaffApi()
         try {
-            val pictures = caffApi.apiCaffPurchasedImagesGet()
-            pictures.forEach { item -> activity?.runOnUiThread {
-                purchasedPicturesAdapter.addFile(ListItem(item.title, item.id,item.preview))
-            }
+            withContext(Dispatchers.IO) {
+                val pictures = caffApi.apiCaffPurchasedImagesGet()
+                pictures.forEach { item -> activity?.runOnUiThread {
+                    purchasedPicturesAdapter.addFile(ListItem(item.title, item.id,item.preview)) }
+                }
             }
         }catch (e:Exception){
-            System.out.println(e)
+            println(e)
         }
     }
 

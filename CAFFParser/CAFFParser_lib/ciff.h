@@ -39,17 +39,17 @@ private:
     static uint64_t parseTags(CIFF &ciff, std::vector<uint8_t> &bytes, uint64_t startIndex, uint64_t headerSize);
     void handleError(const std::string &message);
 
-    CIFF(Endianess endianess);
+    explicit CIFF(Endianess endianess);
 
     static const std::string magicChars;
-    int64_t headerSize;
-    int64_t contentSize;
-    int64_t imageWidth;
-    int64_t imageHeight;
+    int64_t headerSize = 0;
+    int64_t contentSize = 0;
+    int64_t imageWidth = 0;
+    int64_t imageHeight = 0;
     std::string caption;
     std::vector<std::string> tags;
     std::vector<uint8_t> pixels;
-    bool valid;
+    bool valid = true;
     Endianess endianess;
     std::vector<std::string> parseFails;
 public:

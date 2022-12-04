@@ -5,18 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hagyma.R
-import com.example.hagyma.api.AuthenticationApi
-import com.example.hagyma.api.UserApi
 import com.example.hagyma.data.ListItem
 import com.example.hagyma.databinding.FragmentGalleryBinding
 import com.example.hagyma.helper.ApiHelper
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class GalleryFragment : Fragment() {
@@ -26,54 +25,17 @@ class GalleryFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     private lateinit var galleryAdapter: GalleryAdapter
-
-    // private lateinit var authenticationApi: AuthenticationApi
-    // private lateinit var userApi : UserApi
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val galleryViewModel =
-            ViewModelProvider(this).get(GalleryViewModel::class.java)
-
-        // authenticationApi = ApiHelper.getAuthenticationApi()
-        // userApi = ApiHelper.getUserApi()
-
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
-/*
-        binding.searchButton.setOnClickListener {
-            val handler = Handler(Looper.getMainLooper()!!)
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val result = authenticationApi.authLoginPost(LoginRequest("admin@admin.com","Admin1!"))
-                    handler.post {
-                        Toast.makeText(context,result,Toast.LENGTH_LONG).show()
-                    }
-                    ApiClient.accessToken = result;
-                    try {
-                        val userinfowithAccessToken = userApi.apiUserGetUserGet();
-                        handler.post{
-                            Toast.makeText(context,"Try with accesstoken: ${userinfowithAccessToken.email}",Toast.LENGTH_SHORT).show()
-                        }
-                    } catch (e: Exception){
-                        handler.post{
-                            Toast.makeText(context,"Try with accesstoken: ${e.message}",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                } catch (e: Exception){
-                    e.message?.let { it1 -> Log.e(tag, it1) }
-                }
 
-            }
-
-        }
-
- */
         binding.fltBtnUploadPicture.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("original_page", "gallery")
@@ -88,7 +50,7 @@ class GalleryFragment : Fragment() {
             searchRefreshList(binding.etSearchingText.text.toString())
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch {
             // Get CAFF Files
             initCAFFFiles()
         }
@@ -117,13 +79,15 @@ class GalleryFragment : Fragment() {
     private suspend fun initCAFFFiles(){
         val caffApi = ApiHelper.getCaffApi()
         try {
-            val pictures = caffApi.apiCaffListImagesGet()
-            pictures.forEach { item -> activity?.runOnUiThread {
-                galleryAdapter.addInitFile(ListItem(item.title, item.id,item.preview))
-            }
+            withContext(ioDispatcher) {
+                val pictures = caffApi.apiCaffListImagesGet()
+                pictures.forEach { item -> activity?.runOnUiThread {
+                    galleryAdapter.addInitFile(ListItem(item.title, item.id,item.preview))
+                }
+                }
             }
         }catch (e:Exception){
-            System.out.println(e)
+            println(e)
         }
     }
 

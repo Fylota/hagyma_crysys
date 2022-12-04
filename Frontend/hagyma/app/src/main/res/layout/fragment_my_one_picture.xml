@@ -8,11 +8,11 @@
 
     <TextView
         android:id="@+id/text_picture_name"
-        android:text="texts"
+        android:text="@string/testTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:textAlignment="center"
+        android:gravity="center"
         android:textSize="20sp"
         android:textStyle="bold"
         android:padding="10dp"
@@ -27,7 +27,8 @@
         android:padding="10dp"
         android:src="@drawable/ic_image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_picture_name" />
+        app:layout_constraintTop_toBottomOf="@+id/text_picture_name"
+        android:contentDescription="@string/imageDescription" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_comments"
@@ -43,16 +44,16 @@
         android:layout_marginHorizontal="10dp"
         android:hint="@string/new_comment_hint_text"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/edit_button"
+        app:layout_constraintBottom_toTopOf="@+id/delete_button"
         app:layout_constraintEnd_toStartOf="@+id/add_comment_button"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
         android:id="@+id/add_comment_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:backgroundTint="@color/design_default_color_secondary_variant"
+        app:backgroundTint="@color/design_default_color_secondary_variant"
         android:text="@string/new_comment_btn"
         app:layout_constraintBottom_toTopOf="@+id/delete_button"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -63,23 +64,13 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="8dp"
-        android:backgroundTint="#016057"
+        app:backgroundTint="#016057"
         android:text="@string/delete_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline2" />
-
-    <Button
-        android:id="@+id/edit_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="8dp"
-        android:backgroundTint="#009688"
-        android:text="@string/edit_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintBottom_toTopOf="@+id/flt_btn_download_picture"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -87,4 +78,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="197dp" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/flt_btn_download_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:layout_marginBottom="4dp"
+        app:backgroundTint="@color/dark_blue"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:text="@string/download_picture_button"
+        android:gravity="center"
+        app:icon="@drawable/ic_menu_purchased_pictures"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

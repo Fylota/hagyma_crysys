@@ -1,4 +1,4 @@
-package hu.bme.aut.android.onlab.extensions
+package com.example.hagyma.extensions
 
 import android.widget.EditText
 

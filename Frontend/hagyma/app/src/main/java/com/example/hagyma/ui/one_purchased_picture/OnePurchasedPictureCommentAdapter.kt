@@ -13,9 +13,6 @@ import com.auth0.android.jwt.JWT
 import com.example.hagyma.data.Comment
 import com.example.hagyma.databinding.CommentItemBinding
 import com.example.hagyma.infrastructure.ApiClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
 class OnePurchasedPictureCommentAdapter(private val context: Context?, private val onePurchasedPictureViewModel: OnePurchasedPictureViewModel?) :
@@ -28,7 +25,7 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?, private v
     }
 
     // We need this boolean to hide and disable delete button when the logged in profile is not admin.
-    val isAdmin: Boolean = try {
+    private val isAdmin: Boolean = try {
         val jwt = ApiClient.accessToken?.let { JWT(it) }
         val role = jwt?.getClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
             ?.asString()
@@ -39,12 +36,12 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?, private v
         false
     }
 
-    class SearchedPictureItemViewHolder(val binding: CommentItemBinding): RecyclerView.ViewHolder(binding.root){}
+    class SearchedPictureItemViewHolder(val binding: CommentItemBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchedPictureItemViewHolder {
         return SearchedPictureItemViewHolder(
             CommentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        );
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -63,9 +60,7 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?, private v
         holder.binding.btnDeleteComment.isVisible = isAdmin
 
         holder.binding.btnDeleteComment.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                onePurchasedPictureViewModel?.deleteComment(currListItem.uuid)
-            }
+            onePurchasedPictureViewModel?.deleteComment(currListItem.uuid)
             deleteComment(currListItem)
         }
     }
@@ -87,6 +82,6 @@ class OnePurchasedPictureCommentAdapter(private val context: Context?, private v
     }
 
     override fun getItemCount(): Int {
-        return commentsList.size;
+        return commentsList.size
     }
 }

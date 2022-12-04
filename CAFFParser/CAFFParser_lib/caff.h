@@ -40,14 +40,19 @@ private:
     static const uint8_t headerId;
     static const uint8_t creditsId;
     static const uint8_t animationId;
+    static const uint8_t minimumAnimationBlockRead;
 
-    uint64_t numberOfAnimations;
+    uint64_t numberOfAnimations = 0;
     DateTime creationDate;
     std::string creator;
     std::vector<std::pair<int64_t, CIFF>> ciffsWithDuration;
-    bool valid;
+    bool valid = true;
     Endianess endianess;
     std::vector<std::string> parseFails;
+
+    void addTagsToStream(std::ostringstream &json, int i);
+
+    void addCIFFsToStream(std::ostringstream &json);
 };
 
 
