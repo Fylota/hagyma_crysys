@@ -9,9 +9,10 @@ import com.example.hagyma.api.UserApi
 
 class ApiHelper {
     companion object {
-        private val ADDRESS = (if(BuildConfig.DEBUG) "http" else "https") + "://10.0.2.2:"+ if(BuildConfig.DEBUG) "5226" else "7226" //Emulator
+        //private val ADDRESS = (if(BuildConfig.DEBUG) "http" else "https") + "://10.0.2.2:"+ if(BuildConfig.DEBUG) "5226" else "7226" //Emulator
         //private val ADDRESS = (if(BuildConfig.DEBUG) "http" else "https") + "://192.168.1.103:"+ if(BuildConfig.DEBUG) "5226" else "7226"
 //        private val ADDRESS = (if(BuildConfig.DEBUG) "http" else "https") + "://192.168.68.106:"+ if(BuildConfig.DEBUG) "5226" else "7226"
+        private const val ADDRESS = "https://hagymabackend.azurewebsites.net";
         fun getAuthenticationApi(): AuthenticationApi {
             Log.d("ApiHelper", ADDRESS)
             return AuthenticationApi(ADDRESS)
